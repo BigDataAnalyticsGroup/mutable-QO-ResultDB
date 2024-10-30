@@ -222,6 +222,11 @@ struct SmallBitset
     /** Returns the set where the elements of `right` have been subtracted from `left`, i.e.\ `left` - `right`. */
     friend SmallBitset operator-(SmallBitset left, SmallBitset right) { return subtract(left, right); }
 
+    /** Returns the set where the elements of `left` are shifted by `n` positions to the left. */
+    friend SmallBitset operator<<(SmallBitset left, uint64_t n) { return SmallBitset(left.bits_ << n); }
+    /** Returns the set where the elements of `left` are shifted by `n` positions to the right. */
+    friend SmallBitset operator>>(SmallBitset left, uint64_t n) { return SmallBitset(left.bits_ >> n); }
+
     SmallBitset & operator|=(SmallBitset other) { return *this = *this | other; }
     SmallBitset & operator&=(SmallBitset other) { return *this = *this & other; }
     SmallBitset & operator-=(SmallBitset other) { return *this = *this - other; }
@@ -271,6 +276,11 @@ inline SmallBitset next_subset(SmallBitset subset, SmallBitset set)
 {
     return SmallBitset(uint64_t(subset) - uint64_t(set)) & set;
 }
+
+struct SmallBitsetHash
+{
+    std::size_t operator()(SmallBitset S) const { return murmur3_64(uint64_t(S)); }
+};
 
 /** Implements an array of dynamic but fixed size. */
 template<typename T>

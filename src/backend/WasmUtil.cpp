@@ -5,6 +5,7 @@
 #include "mutable/util/macro.hpp"
 #include <mutable/util/concepts.hpp>
 #include <optional>
+#include <regex>
 #include <tuple>
 
 
@@ -357,6 +358,14 @@ void ExprCompiler::operator()(const ast::BinaryExpr &e)
             M_insist(CodeGenContext::Get().num_simd_lanes() == 1, "invalid number of SIMD lanes");
             (*this)(*e.lhs);
             NChar str = get<NChar>();
+            if (auto static_pattern = cast<ast::Constant>(e.rhs.get())) { // check whether specialization is applicable
+                auto pattern = static_pattern->tok.text.assert_not_none();
+                if (std::regex_match(*pattern, std::regex("\"%[^_%]+%\""))) { // contains expression
+                    set(like_contains(str, pattern));
+                    break;
+                }
+            }
+            /* no specialization applicable, fallback to general dynamic programming approach */
             (*this)(*e.rhs);
             NChar pattern = get<NChar>();
             set(like(str, pattern));
@@ -555,7 +564,7 @@ requires (L > 0) and (is_pow_2(L))
 std::tuple<Block, Block, Block>
 compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &_tuple_addr_schema,
                                Ptr<void> base_address, const storage::DataLayout &layout, const Schema &layout_schema,
-                               Variable<uint32_t, Kind, false> &tuple_id)
+                               Variable<uint64_t, Kind, false> &tuple_id)
 {
     const auto tuple_value_schema = _tuple_value_schema.deduplicate().drop_constants();
     const auto tuple_addr_schema = _tuple_addr_schema.deduplicate().drop_constants();
@@ -609,7 +618,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
 
     if constexpr (L > 1) {
         BLOCK_OPEN(inits) {
-            Wasm_insist(tuple_id % uint32_t(L) == 0U, "must start at a tuple ID beginning a SIMD batch");
+            Wasm_insist(tuple_id % uint64_t(L) == 0U, "must start at a tuple ID beginning a SIMD batch");
         }
     }
 
@@ -639,14 +648,14 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
             if (is_predicated) {
                 M_insist(L == 1);
                 M_insist(bool(pred));
-                tuple_id += pred->to<uint32_t>();
+                tuple_id += pred->to<uint64_t>();
             } else {
-                tuple_id += uint32_t(L);
+                tuple_id += uint64_t(L);
             }
         }
     } else {
         BLOCK_OPEN(jumps) {
-            tuple_id += uint32_t(L);
+            tuple_id += uint64_t(L);
         }
     }
 
@@ -666,24 +675,24 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
         uint64_t null_bitmap_stride_in_bits;
 
         /*----- Compute INode offset in bytes and INode iteration depending on the given tuple ID. -----*/
-        auto compute_additional_inode_byte_offset = [&](U32x1 tuple_id) -> U64x1 {
-            auto rec = [&](U32x1 curr_tuple_id, decltype(levels.cbegin()) curr, const decltype(levels.cend()) end,
+        auto compute_additional_inode_byte_offset = [&](U64x1 tuple_id) -> U64x1 {
+            auto rec = [&](U64x1 curr_tuple_id, decltype(levels.cbegin()) curr, const decltype(levels.cend()) end,
                            auto rec) -> U64x1
             {
                 if (curr == end) {
-                    Wasm_insist(curr_tuple_id == tuple_id % uint32_t(levels.back().num_tuples));
+                    Wasm_insist(curr_tuple_id == tuple_id % uint64_t(levels.back().num_tuples));
                     return U64x1(0);
                 }
 
                 if (is_pow_2(curr->num_tuples)) {
-                    U32x1 child_iter = curr_tuple_id.clone() >> uint32_t(__builtin_ctzl(curr->num_tuples));
-                    U32x1 inner_tuple_id = curr_tuple_id bitand uint32_t(curr->num_tuples - 1U);
+                    U64x1 child_iter = curr_tuple_id.clone() >> uint64_t(__builtin_ctzl(curr->num_tuples));
+                    U64x1 inner_tuple_id = curr_tuple_id bitand uint64_t(curr->num_tuples - 1U);
                     M_insist(curr->stride_in_bits % 8 == 0, "INode stride must be byte aligned");
                     U64x1 offset_in_bytes = child_iter * uint64_t(curr->stride_in_bits / 8);
                     return offset_in_bytes + rec(inner_tuple_id, std::next(curr), end, rec);
                 } else {
-                    U32x1 child_iter = curr_tuple_id.clone() / uint32_t(curr->num_tuples);
-                    U32x1 inner_tuple_id = curr_tuple_id % uint32_t(curr->num_tuples);
+                    U64x1 child_iter = curr_tuple_id.clone() / uint64_t(curr->num_tuples);
+                    U64x1 inner_tuple_id = curr_tuple_id % uint64_t(curr->num_tuples);
                     M_insist(curr->stride_in_bits % 8 == 0, "INode stride must be byte aligned");
                     U64x1 offset_in_bytes = child_iter * uint64_t(curr->stride_in_bits / 8);
                     return offset_in_bytes + rec(inner_tuple_id, std::next(curr), end, rec);
@@ -691,19 +700,18 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
             };
             return rec(tuple_id.clone(), levels.cbegin(), levels.cend(), rec);
         };
-        std::optional<const Var<I32x1>> inode_byte_offset;
-        std::optional<const Var<U32x1>> inode_iter;
+        std::optional<const Var<I64x1>> inode_byte_offset;
+        std::optional<const Var<U64x1>> inode_iter;
         BLOCK_OPEN(inits) {
             M_insist(inode_offset_in_bits % 8 == 0, "INode offset must be byte aligned");
             inode_byte_offset.emplace(
-                int32_t(inode_offset_in_bits / 8)
-                + compute_additional_inode_byte_offset(tuple_id).make_signed().template to<int32_t>()
+                int64_t(inode_offset_in_bits / 8) + compute_additional_inode_byte_offset(tuple_id).make_signed()
             );
             M_insist(levels.back().num_tuples != 0, "INode must be large enough for at least one tuple");
             if (levels.back().num_tuples != 1) {
                 inode_iter.emplace(
-                    is_pow_2(levels.back().num_tuples) ? tuple_id bitand uint32_t(levels.back().num_tuples - 1U)
-                                                       : tuple_id % uint32_t(levels.back().num_tuples)
+                    is_pow_2(levels.back().num_tuples) ? tuple_id bitand uint64_t(levels.back().num_tuples - 1U)
+                                                       : tuple_id % uint64_t(levels.back().num_tuples)
                 );
             } else {
                 /* omit computation of INode iteration since it is always the first iteration, i.e. equals 0 */
@@ -727,7 +735,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     M_insist(bool(inode_iter), "stride requires repetition");
                     U64x1 leaf_offset_in_bits = leaf_info.offset_in_bits + *inode_iter * leaf_info.stride_in_bits;
                     U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>() ; // mod 8
-                    I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                    I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
 
                     null_bitmap_bit_offset = leaf_info.offset_in_bits % 8;
                     null_bitmap_stride_in_bits = leaf_info.stride_in_bits;
@@ -752,7 +760,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                             M_insist(*tuple_it->type == *layout_entry.type);
                             const auto delta = layout_idx - prev_layout_idx;
                             const uint8_t bit_delta  = delta % 8;
-                            const int32_t byte_delta = delta / 8;
+                            const int64_t byte_delta = delta / 8;
 
                             auto advance_to_next_bit = [&]() {
                                 if (bit_delta) {
@@ -764,7 +772,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                                         *null_bitmap_mask <<= bit_delta; // advance mask
                                     }
                                     /* If the mask surpasses the first byte, advance pointer to the next byte... */
-                                    *null_bitmap_ptr += (*null_bitmap_mask bitand 0xffU).eqz().template to<int32_t>();
+                                    *null_bitmap_ptr += (*null_bitmap_mask bitand 0xffU).eqz().template to<int64_t>();
                                     /* ... and remove lowest byte from the mask. */
                                     *null_bitmap_mask = Select((*null_bitmap_mask bitand 0xffU).eqz(),
                                                                *null_bitmap_mask >> 8U, *null_bitmap_mask);
@@ -892,7 +900,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                      * to advance by `delta` bits since we already have advanced by `prev_layout_idx` bits. */
                     const auto delta = leaf_info.stride_in_bits - prev_layout_idx;
                     const uint8_t bit_delta  = delta % 8;
-                    const int32_t byte_delta = delta / 8;
+                    const int64_t byte_delta = delta / 8;
                     if (bit_delta) {
                         BLOCK_OPEN(jumps) {
                             if (is_predicated) {
@@ -902,7 +910,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                                 *null_bitmap_mask <<= bit_delta; // advance mask
                             }
                             /* If the mask surpasses the first byte, advance pointer to the next byte... */
-                            *null_bitmap_ptr += (*null_bitmap_mask bitand 0xffU).eqz().template to<int32_t>();
+                            *null_bitmap_ptr += (*null_bitmap_mask bitand 0xffU).eqz().template to<int64_t>();
                             /* ... and remove the lowest byte from the mask. */
                             *null_bitmap_mask = Select((*null_bitmap_mask bitand 0xffU).eqz(),
                                                        *null_bitmap_mask >> 8U, *null_bitmap_mask);
@@ -930,14 +938,14 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     M_insist(L == 1 or leaf_info.offset_in_bits % 8 == 0,
                              "NULL bitmaps must not start with bit offset when loading SIMDfied");
 
-                    auto byte_offset = [&]() -> I32x1 {
+                    auto byte_offset = [&]() -> I64x1 {
                         if (inode_iter and leaf_info.stride_in_bits) {
                             /* omit `leaf_info.offset_in_bits` here to add it to the static offsets and masks;
                              * this is valid since no bit stride means that the leaf byte offset computation is
                              * independent of the static parts */
                             U64x1 leaf_offset_in_bits = *inode_iter * leaf_info.stride_in_bits;
                             U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>(); // mod 8
-                            I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                            I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
                             BLOCK_OPEN(inits) {
                                 Wasm_insist(leaf_bit_offset == 0U, "no leaf bit offset without bit stride");
                             }
@@ -962,7 +970,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     const auto &ptr = it->second.ptr;
 
                     ///> maps static byte offsets to already loaded bytes to reuse them; only needed for scalar loading
-                    std::unordered_map<int32_t, Var<U8x1>> loaded_bytes;
+                    std::unordered_map<int64_t, Var<U8x1>> loaded_bytes;
 
                     using bytes_t = std::variant<std::monostate, Var<U8<L>>, Var<U16<L>>, Var<U32<L>>, Var<U64<L>>>;
                     ///> a SIMD vector containing all loaded NULL bitmaps; only needed for SIMDfied loading
@@ -992,7 +1000,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                         M_insist(*tuple_entry.type == *layout_entry.type);
                         if (layout_entry.nullable()) { // layout entry may be NULL
                             const uint8_t static_bit_offset  = (leaf_info.offset_in_bits + layout_idx) % 8;
-                            const int32_t static_byte_offset = (leaf_info.offset_in_bits + layout_idx) / 8;
+                            const int64_t static_byte_offset = (leaf_info.offset_in_bits + layout_idx) / 8;
                             if constexpr (IsStore) {
                                 /*----- Store NULL bit depending on its type. -----*/
                                 auto store = overloaded{
@@ -1159,7 +1167,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     M_insist(bool(inode_iter), "stride requires repetition");
                     U64x1 leaf_offset_in_bits = leaf_info.offset_in_bits + *inode_iter * leaf_info.stride_in_bits;
                     U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>() ; // mod 8
-                    I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                    I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
 
                     if constexpr (L > 1) {
                         BLOCK_OPEN(inits) {
@@ -1249,14 +1257,14 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                         }
                     }
                 } else { // entry without bit stride; if masking is required, we can use a static mask
-                    auto byte_offset = [&]() -> I32x1 {
+                    auto byte_offset = [&]() -> I64x1 {
                         if (inode_iter and leaf_info.stride_in_bits) {
                             /* omit `leaf_info.offset_in_bits` here to use it as static offset and mask;
                              * this is valid since no bit stride means that the leaf byte offset computation is
                              * independent of the static parts */
                             U64x1 leaf_offset_in_bits = *inode_iter * leaf_info.stride_in_bits;
                             U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>(); // mod 8
-                            I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                            I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
                             BLOCK_OPEN(inits) {
                                 Wasm_insist(leaf_bit_offset == 0U, "no leaf bit offset without bit stride");
                             }
@@ -1267,7 +1275,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     }();
 
                     const uint8_t static_bit_offset  = leaf_info.offset_in_bits % 8;
-                    const int32_t static_byte_offset = leaf_info.offset_in_bits / 8;
+                    const int64_t static_byte_offset = leaf_info.offset_in_bits / 8;
 
                     key_t key(leaf_info.offset_in_bits % 8, leaf_info.stride_in_bits);
                     auto [it, inserted] =
@@ -1314,10 +1322,12 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                                     );
                                     new (&values[tuple_value_idx]) SQL_t(T(value));
                                 }
-                                if (tuple_addr_it != tuple_addr_schema.end())
+                                if (tuple_addr_it != tuple_addr_schema.end()) {
+                                    Wasm_insist(not ((ptr + static_byte_offset).template to<type*, lanes>()).is_nullptr(), "compile_data_layout_sequential: inserting nullptr");
                                     new (&addrs[tuple_addr_idx]) SQL_addr_t(
                                         (ptr + static_byte_offset).template to<type*, lanes>()
                                     );
+                                }
                             }
                         },
                         []<typename>() {
@@ -1429,11 +1439,11 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                          "remaining stride of INodes must be whole multiple of a byte");
 
                 /*----- If there is a remaining stride for this level, emit conditional stride jump. -----*/
-                if (const int32_t remaining_stride_in_bytes = stride_remaining_in_bits / 8) [[likely]] {
+                if (const int64_t remaining_stride_in_bytes = stride_remaining_in_bits / 8) [[likely]] {
                     M_insist(curr->num_tuples > 0);
                     if (curr->num_tuples != 1U) {
-                        Boolx1 cond_mod = (tuple_id % uint32_t(curr->num_tuples)).eqz();
-                        Boolx1 cond_and = (tuple_id bitand uint32_t(curr->num_tuples - 1U)).eqz();
+                        Boolx1 cond_mod = (tuple_id % uint64_t(curr->num_tuples)).eqz();
+                        Boolx1 cond_and = (tuple_id bitand uint64_t(curr->num_tuples - 1U)).eqz();
                         const bool use_and = is_pow_2(curr->num_tuples) and options::remainder_removal;
                         Boolx1 cond = use_and ? cond_and : cond_mod; // select implementation to use...
                         (use_and ? cond_mod : cond_and).discard(); // ... and discard the other
@@ -1497,7 +1507,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
             /*----- Emit the per-leaf stride jumps, i.e. from one instance of the leaf to the next. -----*/
             for (auto &[key, value] : loading_context) {
                 const uint8_t bit_stride  = key.second % 8;
-                const int32_t byte_stride = key.second / 8;
+                const int64_t byte_stride = key.second / 8;
                 if (bit_stride) {
                     M_insist(L == 1);
                     M_insist(bool(value.mask));
@@ -1508,7 +1518,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                         *value.mask <<= bit_stride; // advance mask
                     }
                     /* If the mask surpasses the first byte, advance pointer to the next byte... */
-                    value.ptr += (*value.mask bitand 0xffU).eqz().template to<int32_t>();
+                    value.ptr += (*value.mask bitand 0xffU).eqz().template to<int64_t>();
                     /* ... and remove the lowest byte from the mask. */
                     *value.mask = Select((*value.mask bitand 0xffU).eqz(), *value.mask >> 8U, *value.mask);
                 }
@@ -1518,7 +1528,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                         M_insist(bool(pred));
                         value.ptr += Select(*pred, byte_stride, 0); // possibly advance pointer
                     } else {
-                        value.ptr += int32_t(L) * byte_stride; // advance pointer
+                        value.ptr += int64_t(L) * byte_stride; // advance pointer
                     }
                 }
             }
@@ -1533,7 +1543,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     const auto stride_remaining_in_bits = levels.back().stride_in_bits -
                                                           levels.back().num_tuples * key.second;
                     const uint8_t remaining_bit_stride  = stride_remaining_in_bits % 8;
-                    const int32_t remaining_byte_stride = stride_remaining_in_bits / 8;
+                    const int64_t remaining_byte_stride = stride_remaining_in_bits / 8;
                     if (remaining_bit_stride) {
                         M_insist(L == 1);
                         M_insist(bool(value.mask));
@@ -1550,9 +1560,9 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                             /* ... and advance pointer to next byte if resetting of the mask surpasses the current byte. */
                             if (is_predicated) {
                                 M_insist(bool(pred));
-                                value.ptr += Select(*pred, int32_t(end_bit_offset > key.first), 0);
+                                value.ptr += Select(*pred, int64_t(end_bit_offset > key.first), 0);
                             } else {
-                                value.ptr += int32_t(end_bit_offset > key.first);
+                                value.ptr += int64_t(end_bit_offset > key.first);
                             }
                         }
                     }
@@ -1576,7 +1586,7 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                     const auto stride_remaining_in_bits = levels.back().stride_in_bits -
                                                           levels.back().num_tuples * null_bitmap_stride_in_bits;
                     const uint8_t remaining_bit_stride  = stride_remaining_in_bits % 8;
-                    const int32_t remaining_byte_stride = stride_remaining_in_bits / 8;
+                    const int64_t remaining_byte_stride = stride_remaining_in_bits / 8;
                     if (remaining_bit_stride) {
                         BLOCK_OPEN(lowest_inode_jumps) {
                             const uint8_t end_bit_offset =
@@ -1593,9 +1603,9 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                             if (is_predicated) {
                                 M_insist(bool(pred));
                                 *null_bitmap_ptr +=
-                                    Select(*pred, int32_t(end_bit_offset > null_bitmap_bit_offset), 0);
+                                    Select(*pred, int64_t(end_bit_offset > null_bitmap_bit_offset), 0);
                             } else {
-                                *null_bitmap_ptr += int32_t(end_bit_offset > null_bitmap_bit_offset);
+                                *null_bitmap_ptr += int64_t(end_bit_offset > null_bitmap_bit_offset);
                             }
                         }
                     }
@@ -1616,8 +1626,8 @@ compile_data_layout_sequential(const Schema &_tuple_value_schema, const Schema &
                 if (not lowest_inode_jumps.empty()) [[likely]] {
                     M_insist(levels.back().num_tuples > 0);
                     if (levels.back().num_tuples != 1U) {
-                        Boolx1 cond_mod = (tuple_id % uint32_t(levels.back().num_tuples)).eqz();
-                        Boolx1 cond_and = (tuple_id bitand uint32_t(levels.back().num_tuples - 1U)).eqz();
+                        Boolx1 cond_mod = (tuple_id % uint64_t(levels.back().num_tuples)).eqz();
+                        Boolx1 cond_and = (tuple_id bitand uint64_t(levels.back().num_tuples - 1U)).eqz();
                         const bool use_and = is_pow_2(levels.back().num_tuples) and options::remainder_removal;
                         Boolx1 cond = use_and ? cond_and : cond_mod; // select implementation to use...
                         (use_and ? cond_mod : cond_and).discard(); // ... and discard the other
@@ -1725,7 +1735,7 @@ template<VariableKind Kind>
 std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block>
 m::wasm::compile_store_sequential(const Schema &tuple_value_schema, const Schema &tuple_addr_schema,
                                   Ptr<void> base_address, const storage::DataLayout &layout, std::size_t num_simd_lanes,
-                                  const Schema &layout_schema, Variable<uint32_t, Kind, false> &tuple_id)
+                                  const Schema &layout_schema, Variable<uint64_t, Kind, false> &tuple_id)
 {
     if (options::pointer_sharing) {
         switch (num_simd_lanes) {
@@ -1779,7 +1789,7 @@ std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block>
 m::wasm::compile_store_sequential_single_pass(const Schema &tuple_value_schema, const Schema &tuple_addr_schema,
                                               Ptr<void> base_address, const storage::DataLayout &layout,
                                               std::size_t num_simd_lanes, const Schema &layout_schema,
-                                              Variable<uint32_t, Kind, false> &tuple_id)
+                                              Variable<uint64_t, Kind, false> &tuple_id)
 {
     if (options::pointer_sharing) {
         switch (num_simd_lanes) {
@@ -1832,7 +1842,7 @@ template<VariableKind Kind>
 std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block>
 m::wasm::compile_load_sequential(const Schema &tuple_value_schema, const Schema &tuple_addr_schema,
                                  Ptr<void> base_address, const storage::DataLayout &layout, std::size_t num_simd_lanes,
-                                 const Schema &layout_schema, Variable<uint32_t, Kind, false> &tuple_id)
+                                 const Schema &layout_schema, Variable<uint64_t, Kind, false> &tuple_id)
 {
     if (options::pointer_sharing) {
         switch (num_simd_lanes) {
@@ -1883,34 +1893,34 @@ m::wasm::compile_load_sequential(const Schema &tuple_value_schema, const Schema 
 
 // explicit instantiations to prevent linker errors
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_store_sequential(
-    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Var<U32x1>&
+    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Var<U64x1>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_store_sequential(
-    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Global<U32x1>&
+    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Global<U64x1>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_store_sequential(
     const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&,
-    Variable<uint32_t, VariableKind::Param, false>&
+    Variable<uint64_t, VariableKind::Param, false>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_store_sequential_single_pass(
-    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Var<U32x1>&
+    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Var<U64x1>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_store_sequential_single_pass(
-    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Global<U32x1>&
+    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Global<U64x1>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_store_sequential_single_pass(
     const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&,
-    Variable<uint32_t, VariableKind::Param, false>&
+    Variable<uint64_t, VariableKind::Param, false>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_load_sequential(
-    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Var<U32x1>&
+    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Var<U64x1>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_load_sequential(
-    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Global<U32x1>&
+    const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&, Global<U64x1>&
 );
 template std::tuple<m::wasm::Block, m::wasm::Block, m::wasm::Block> m::wasm::compile_load_sequential(
     const Schema&, const Schema&, Ptr<void>, const storage::DataLayout&, std::size_t, const Schema&,
-    Variable<uint32_t, VariableKind::Param, false>&
+    Variable<uint64_t, VariableKind::Param, false>&
 );
 
 namespace m {
@@ -1926,7 +1936,7 @@ namespace wasm {
 template<bool IsStore>
 void compile_data_layout_point_access(const Schema &_tuple_value_schema, const Schema &_tuple_addr_schema,
                                       Ptr<void> base_address, const storage::DataLayout &layout,
-                                      const Schema &layout_schema, U32x1 tuple_id)
+                                      const Schema &layout_schema, U64x1 tuple_id)
 {
     const auto tuple_value_schema = _tuple_value_schema.deduplicate().drop_constants();
     const auto tuple_addr_schema = _tuple_addr_schema.deduplicate().drop_constants();
@@ -1973,24 +1983,24 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                                   const DataLayout::level_info_stack_t &levels, uint64_t inode_offset_in_bits)
     {
         /*----- Compute INode pointer and INode iteration depending on the given tuple ID. -----*/
-        auto compute_additional_inode_byte_offset = [&](U32x1 tuple_id) -> U64x1 {
-            auto rec = [&](U32x1 curr_tuple_id, decltype(levels.cbegin()) curr, const decltype(levels.cend()) end,
+        auto compute_additional_inode_byte_offset = [&](U64x1 tuple_id) -> U64x1 {
+            auto rec = [&](U64x1 curr_tuple_id, decltype(levels.cbegin()) curr, const decltype(levels.cend()) end,
                            auto rec) -> U64x1
             {
                 if (curr == end) {
-                    Wasm_insist(curr_tuple_id == tuple_id % uint32_t(levels.back().num_tuples));
+                    Wasm_insist(curr_tuple_id == tuple_id % uint64_t(levels.back().num_tuples));
                     return U64x1(0);
                 }
 
                 if (is_pow_2(curr->num_tuples)) {
-                    U32x1 child_iter = curr_tuple_id.clone() >> uint32_t(__builtin_ctzl(curr->num_tuples));
-                    U32x1 inner_tuple_id = curr_tuple_id bitand uint32_t(curr->num_tuples - 1U);
+                    U64x1 child_iter = curr_tuple_id.clone() >> uint64_t(__builtin_ctzl(curr->num_tuples));
+                    U64x1 inner_tuple_id = curr_tuple_id bitand uint64_t(curr->num_tuples - 1U);
                     M_insist(curr->stride_in_bits % 8 == 0, "INode stride must be byte aligned");
                     U64x1 offset_in_bytes = child_iter * uint64_t(curr->stride_in_bits / 8);
                     return offset_in_bytes + rec(inner_tuple_id, std::next(curr), end, rec);
                 } else {
-                    U32x1 child_iter = curr_tuple_id.clone() / uint32_t(curr->num_tuples);
-                    U32x1 inner_tuple_id = curr_tuple_id % uint32_t(curr->num_tuples);
+                    U64x1 child_iter = curr_tuple_id.clone() / uint64_t(curr->num_tuples);
+                    U64x1 inner_tuple_id = curr_tuple_id % uint64_t(curr->num_tuples);
                     M_insist(curr->stride_in_bits % 8 == 0, "INode stride must be byte aligned");
                     U64x1 offset_in_bytes = child_iter * uint64_t(curr->stride_in_bits / 8);
                     return offset_in_bytes + rec(inner_tuple_id, std::next(curr), end, rec);
@@ -2001,15 +2011,15 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
         M_insist(inode_offset_in_bits % 8 == 0, "INode offset must be byte aligned");
         const Var<Ptr<void>> inode_ptr(
             base_address.clone()
-            + int32_t(inode_offset_in_bits / 8)
-            + compute_additional_inode_byte_offset(tuple_id.clone()).make_signed().template to<int32_t>()
+            + int64_t(inode_offset_in_bits / 8)
+            + compute_additional_inode_byte_offset(tuple_id.clone()).make_signed()
         );
-        std::optional<const Var<U32x1>> inode_iter;
+        std::optional<const Var<U64x1>> inode_iter;
         M_insist(levels.back().num_tuples != 0, "INode must be large enough for at least one tuple");
         if (levels.back().num_tuples != 1) {
             inode_iter.emplace(
-                is_pow_2(levels.back().num_tuples) ? tuple_id bitand uint32_t(levels.back().num_tuples - 1U)
-                                                   : tuple_id % uint32_t(levels.back().num_tuples)
+                is_pow_2(levels.back().num_tuples) ? tuple_id bitand uint64_t(levels.back().num_tuples - 1U)
+                                                   : tuple_id % uint64_t(levels.back().num_tuples)
             );
         } else {
             /* omit computation of INode iteration since it is always the first iteration, i.e. equals 0 */
@@ -2032,7 +2042,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                     const Var<U8x1> leaf_bit_offset(
                         (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>() // mod 8
                     );
-                    I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                    I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
 
                     const Var<Ptr<void>> ptr(inode_ptr + leaf_byte_offset); // pointer to NULL bitmap
 
@@ -2044,7 +2054,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                         if (layout_entry.nullable()) { // layout entry may be NULL
                             U64x1 offset_in_bits = leaf_bit_offset + layout_idx;
                             U8x1  bit_offset  = (offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>() ; // mod 8
-                            I32x1 byte_offset = (offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                            I64x1 byte_offset = (offset_in_bits >> uint64_t(3)).make_signed(); // div 8
                             if constexpr (IsStore) {
                                 /*----- Store NULL bit depending on its type. -----*/
                                 auto store = [&]<typename T>() {
@@ -2138,7 +2148,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                              * independent of the static parts */
                             U64x1 leaf_offset_in_bits = *inode_iter * leaf_info.stride_in_bits;
                             U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>(); // mod 8
-                            I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                            I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
                             Wasm_insist(leaf_bit_offset == 0U, "no leaf bit offset without bit stride");
                             const Var<Ptr<void>> ptr(inode_ptr + leaf_byte_offset);
                             return ptr;
@@ -2154,7 +2164,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                         M_insist(*tuple_entry.type == *layout_entry.type);
                         if (layout_entry.nullable()) { // layout entry may be NULL
                             const uint8_t static_bit_offset  = (leaf_info.offset_in_bits + layout_idx) % 8;
-                            const int32_t static_byte_offset = (leaf_info.offset_in_bits + layout_idx) / 8;
+                            const int64_t static_byte_offset = (leaf_info.offset_in_bits + layout_idx) / 8;
                             if constexpr (IsStore) {
                                 /*----- Store NULL bit depending on its type. -----*/
                                 auto store = [&]<typename T>() {
@@ -2261,7 +2271,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                     M_insist(bool(inode_iter), "stride requires repetition");
                     U64x1 leaf_offset_in_bits = leaf_info.offset_in_bits + *inode_iter * leaf_info.stride_in_bits;
                     U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>() ; // mod 8
-                    I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                    I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
 
                     Ptr<U8x1> byte_ptr = (inode_ptr + leaf_byte_offset).template to<uint8_t*>();
                     U8x1 mask = uint8_t(1) << leaf_bit_offset;
@@ -2290,7 +2300,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                              * independent of the static parts */
                             U64x1 leaf_offset_in_bits = *inode_iter * leaf_info.stride_in_bits;
                             U8x1  leaf_bit_offset  = (leaf_offset_in_bits.clone() bitand uint64_t(7)).to<uint8_t>(); // mod 8
-                            I32x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed().to<int32_t>(); // div 8
+                            I64x1 leaf_byte_offset = (leaf_offset_in_bits >> uint64_t(3)).make_signed(); // div 8
                             Wasm_insist(leaf_bit_offset == 0U, "no leaf bit offset without bit stride");
                             return inode_ptr + leaf_byte_offset;
                         } else {
@@ -2299,7 +2309,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                     }(); // pointer to entry
 
                     const uint8_t static_bit_offset  = leaf_info.offset_in_bits % 8;
-                    const int32_t static_byte_offset = leaf_info.offset_in_bits / 8;
+                    const int64_t static_byte_offset = leaf_info.offset_in_bits / 8;
 
                     /*----- Store value depending on its type. -----*/
                     auto store = [&]<typename T>() {
@@ -2319,10 +2329,12 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
                             Var<PrimitiveExpr<type>> value(*(ptr.clone() + static_byte_offset).template to<type*>());
                             new (&values[tuple_value_idx]) SQL_t(T(value));
                         }
-                        if (tuple_addr_it != tuple_addr_schema.end())
+                        if (tuple_addr_it != tuple_addr_schema.end()) {
+                            Wasm_insist(not ((ptr.clone() + static_byte_offset).template to<type*>()).is_nullptr(), "compile_data_layout_point_access: inserting nullptr");
                             new (&addrs[tuple_addr_idx]) SQL_addr_t(
                                 (ptr.clone() + static_byte_offset).template to<type*>()
                             );
+                        }
                         ptr.discard();
                     };
                     /*----- Select call target (store or load) and visit attribute type. -----*/
@@ -2452,7 +2464,7 @@ void compile_data_layout_point_access(const Schema &_tuple_value_schema, const S
 
 void m::wasm::compile_store_point_access(const Schema &tuple_value_schema, const Schema &tuple_addr_schema,
                                          Ptr<void> base_address, const DataLayout &layout, const Schema &layout_schema,
-                                         U32x1 tuple_id)
+                                         U64x1 tuple_id)
 {
     return compile_data_layout_point_access<true>(tuple_value_schema, tuple_addr_schema, base_address, layout,
                                                   layout_schema, tuple_id);
@@ -2460,7 +2472,7 @@ void m::wasm::compile_store_point_access(const Schema &tuple_value_schema, const
 
 void m::wasm::compile_load_point_access(const Schema &tuple_value_schema, const Schema &tuple_addr_schema,
                                          Ptr<void> base_address, const DataLayout &layout, const Schema &layout_schema,
-                                         U32x1 tuple_id)
+                                         U64x1 tuple_id)
 {
     return compile_data_layout_point_access<false>(tuple_value_schema, tuple_addr_schema, base_address, layout,
                                                    layout_schema, tuple_id);
@@ -2486,8 +2498,8 @@ Buffer<IsGlobal>::Buffer(const Schema &schema, const DataLayoutFactory &factory,
     if constexpr (IsGlobal) {
         if (layout_.is_finite()) {
             /*----- Pre-allocate memory for entire buffer. Use maximal possible alignment requirement of 8 bytes. ----*/
-            const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
-            const uint32_t num_children =
+            const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+            const uint64_t num_children =
                 (layout_.num_tuples() + layout_.child().num_tuples() - 1) / layout_.child().num_tuples();
             storage_.base_address_ =
                 Module::Allocator().pre_allocate(num_children * child_size_in_bytes, /* alignment= */ 8);
@@ -2504,9 +2516,9 @@ Buffer<IsGlobal>::~Buffer()
         if (not layout_.is_finite()) {
             /*----- Deallocate memory for buffer. -----*/
             M_insist(bool(storage_.capacity_));
-            const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+            const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
             auto buffer_size_in_bytes =
-                (*storage_.capacity_ / uint32_t(layout_.child().num_tuples())) * child_size_in_bytes;
+                (*storage_.capacity_ / uint64_t(layout_.child().num_tuples())) * child_size_in_bytes;
             Module::Allocator().deallocate(storage_.base_address_, buffer_size_in_bytes);
         }
     }
@@ -2591,8 +2603,8 @@ void Buffer<IsGlobal>::setup()
             *base_address_ = storage_.base_address_; // buffer always already pre-allocated
         } else {
             /*----- Pre-allocate memory for entire buffer. Use maximal possible alignment requirement of 8 bytes. ----*/
-            const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
-            const uint32_t num_children =
+            const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+            const uint64_t num_children =
                 (layout_.num_tuples() + layout_.child().num_tuples() - 1) / layout_.child().num_tuples();
             *base_address_ = Module::Allocator().pre_allocate(num_children * child_size_in_bytes, /* alignment= */ 8);
         }
@@ -2600,20 +2612,20 @@ void Buffer<IsGlobal>::setup()
         if constexpr (IsGlobal) {
             IF (*capacity_ == 0U) { // buffer not yet allocated
                 /*----- Set initial capacity. -----*/
-                *capacity_ = uint32_t(layout_.child().num_tuples());
+                *capacity_ = uint64_t(layout_.child().num_tuples());
 
                 /*----- Allocate memory for one child instance. Use max. possible alignment requirement of 8 bytes. --*/
-                const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+                const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
                 *base_address_ = Module::Allocator().allocate(child_size_in_bytes, /* alignment= */ 8);
             } ELSE {
                 *base_address_ = storage_.base_address_;
             };
         } else {
             /*----- Set initial capacity. -----*/
-            *capacity_ = uint32_t(layout_.child().num_tuples());
+            *capacity_ = uint64_t(layout_.child().num_tuples());
 
             /*----- Allocate memory for one child instance. Use max. possible alignment requirement of 8 bytes. -----*/
-            const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+            const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
             *base_address_ = Module::Allocator().allocate(child_size_in_bytes, /* alignment= */ 8);
         }
     }
@@ -2630,8 +2642,8 @@ void Buffer<IsGlobal>::teardown()
     if constexpr (not IsGlobal) { // free memory of local buffer when user calls teardown method
         if (not layout_.is_finite()) {
             /*----- Deallocate memory for buffer. -----*/
-            const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
-            auto buffer_size_in_bytes = (*capacity_ / uint32_t(layout_.child().num_tuples())) * child_size_in_bytes;
+            const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+            auto buffer_size_in_bytes = (*capacity_ / uint64_t(layout_.child().num_tuples())) * child_size_in_bytes;
             Module::Allocator().deallocate(*base_address_, buffer_size_in_bytes);
         }
     }
@@ -2676,13 +2688,13 @@ void Buffer<IsGlobal>::resume_pipeline(param_t _tuple_value_schema, param_t _tup
     /*----- Create function on-demand to assert that all needed identifiers are already created. -----*/
     if (not resume_pipeline_) {
         /*----- Create function to resume the pipeline for each tuple contained in the buffer. -----*/
-        FUNCTION(resume_pipeline, void(void*, uint32_t))
+        FUNCTION(resume_pipeline, void(void*, uint64_t))
         {
             auto S = CodeGenContext::Get().scoped_environment(); // create scoped environment for this function
 
             /*----- Access base address and size parameters. -----*/
             Ptr<void> base_address = PARAMETER(0);
-            U32x1 size = PARAMETER(1);
+            U64x1 size = PARAMETER(1);
 
             /*----- Compute poss. number of SIMD lanes and decide which to use with regard to other ops. preferences. */
             const auto num_simd_lanes_preferred =
@@ -2690,19 +2702,19 @@ void Buffer<IsGlobal>::resume_pipeline(param_t _tuple_value_schema, param_t _tup
             const std::size_t num_simd_lanes =
                 load_simdfied_ ? std::max<std::size_t>({ num_simd_lanes_preferred,
                                                        get_num_simd_lanes(layout_, schema_, tuple_value_schema),
-                                                       tuple_addr_schema.empty() ? 0UL : 4UL }) // 32-bit pointers and 128-bit SIMD vectors
+                                                       tuple_addr_schema.empty() ? 0UL : 2UL }) // 64-bit pointers and 128-bit SIMD vectors
                                : 1;
             CodeGenContext::Get().set_num_simd_lanes(num_simd_lanes);
 
             /*----- Emit setup code *before* compiling data layout to not overwrite its temporary boolean variables. -*/
             setup_();
 
-            Var<U32x1> load_tuple_id; // default initialized to 0
+            Var<U64x1> load_tuple_id; // default initialized to 0
 
             if (tuple_value_schema.num_entries() == 0 and tuple_addr_schema.num_entries() == 0) {
                 /*----- If no attributes must be loaded, generate a loop just executing the pipeline `size`-times. -----*/
                 WHILE (load_tuple_id < size) {
-                    load_tuple_id += uint32_t(num_simd_lanes);
+                    load_tuple_id += uint64_t(num_simd_lanes);
                     pipeline_();
                 }
                 base_address.discard(); // since it is not needed
@@ -2757,13 +2769,13 @@ void Buffer<IsGlobal>::execute_pipeline(setup_t setup, pipeline_t pipeline, tear
 #endif
 
     /*----- Create function to resume the pipeline for each tuple contained in the buffer. -----*/
-    FUNCTION(resume_pipeline, void(void*, uint32_t))
+    FUNCTION(resume_pipeline, void(void*, uint64_t))
     {
         auto S = CodeGenContext::Get().scoped_environment(); // create scoped environment for this function
 
         /*----- Access base address and size parameters. -----*/
         Ptr<void> base_address = PARAMETER(0);
-        U32x1 size = PARAMETER(1);
+        U64x1 size = PARAMETER(1);
 
         /*----- Compute poss. number of SIMD lanes and decide which to use with regard to other ops. preferences. */
         const auto num_simd_lanes_preferred =
@@ -2771,19 +2783,19 @@ void Buffer<IsGlobal>::execute_pipeline(setup_t setup, pipeline_t pipeline, tear
         const std::size_t num_simd_lanes =
             load_simdfied_ ? std::max<std::size_t>({ num_simd_lanes_preferred,
                                                    get_num_simd_lanes(layout_, schema_, tuple_value_schema),
-                                                   tuple_addr_schema.empty() ? 0UL : 4UL }) // 32-bit pointers and 128-bit SIMD vectors
+                                                   tuple_addr_schema.empty() ? 0UL : 2UL }) // 64-bit pointers and 128-bit SIMD vectors
                            : 1;
         CodeGenContext::Get().set_num_simd_lanes(num_simd_lanes);
 
         /*----- Emit setup code *before* compiling data layout to not overwrite its temporary boolean variables. -*/
         setup();
 
-        Var<U32x1> load_tuple_id; // default initialized to 0
+        Var<U64x1> load_tuple_id; // default initialized to 0
 
         if (tuple_value_schema.num_entries() == 0 and tuple_addr_schema.num_entries() == 0) {
             /*----- If no attributes must be loaded, generate a loop just executing the pipeline `size`-times. -----*/
             WHILE (load_tuple_id < size) {
-                load_tuple_id += uint32_t(num_simd_lanes);
+                load_tuple_id += uint64_t(num_simd_lanes);
                 pipeline();
             }
             base_address.discard(); // since it is not needed
@@ -2833,9 +2845,9 @@ void Buffer<IsGlobal>::execute_pipeline_inline(setup_t setup, pipeline_t pipelin
         M_CONSTEXPR_COND(IsGlobal,
                          base_address_ ? base_address_->val() : Var<Ptr<void>>(storage_.base_address_.val()).val(),
                          ({ M_insist(bool(base_address_)); base_address_->val(); }));
-    U32x1 size =
+    U64x1 size =
         M_CONSTEXPR_COND(IsGlobal,
-                         size_ ? size_->val() : Var<U32x1>(storage_.size_.val()).val(),
+                         size_ ? size_->val() : Var<U64x1>(storage_.size_.val()).val(),
                          ({ M_insist(bool(size_)); size_->val(); }));
 
     /*----- If predication is used, compute number of tuples to load from buffer depending on predicate. -----*/
@@ -2844,7 +2856,7 @@ void Buffer<IsGlobal>::execute_pipeline_inline(setup_t setup, pipeline_t pipelin
         M_insist(CodeGenContext::Get().num_simd_lanes() == 1, "invalid number of SIMD lanes");
         pred = env.extract_predicate<_Boolx1>().is_true_and_not_null();
     }
-    U32x1 num_tuples = pred ? Select(*pred, size, 0U) : size;
+    U64x1 num_tuples = pred ? Select(*pred, size, 0U) : size;
 
     /*----- Compute possible number of SIMD lanes and decide which to use with regard to other operators preferences. */
     const auto num_simd_lanes_preferred =
@@ -2852,19 +2864,19 @@ void Buffer<IsGlobal>::execute_pipeline_inline(setup_t setup, pipeline_t pipelin
     const std::size_t num_simd_lanes =
         load_simdfied_ ? std::max<std::size_t>({ num_simd_lanes_preferred,
                                                get_num_simd_lanes(layout_, schema_, tuple_value_schema),
-                                               tuple_addr_schema.empty() ? 0UL : 4UL }) // 32-bit pointers and 128-bit SIMD vectors
+                                               tuple_addr_schema.empty() ? 0UL : 2UL }) // 64-bit pointers and 128-bit SIMD vectors
                        : 1;
     CodeGenContext::Get().set_num_simd_lanes(num_simd_lanes);
 
     /*----- Emit setup code *before* compiling data layout to not overwrite its temporary boolean variables. -----*/
     setup();
 
-    Var<U32x1> load_tuple_id(0); // explicitly (re-)set tuple ID to 0
+    Var<U64x1> load_tuple_id(0); // explicitly (re-)set tuple ID to 0
 
     if (tuple_value_schema.num_entries() == 0 and tuple_addr_schema.num_entries() == 0) {
         /*----- If no attributes must be loaded, generate a loop just executing the pipeline `size`-times. -----*/
         WHILE (load_tuple_id < num_tuples) {
-            load_tuple_id += uint32_t(num_simd_lanes);
+            load_tuple_id += uint64_t(num_simd_lanes);
             pipeline();
         }
         base_address.discard(); // since it is not needed
@@ -2913,8 +2925,8 @@ void Buffer<IsGlobal>::consume()
     } else {
         IF (*size_ == *capacity_) { // buffer full
             /*----- Resize buffer by doubling its capacity. -----*/
-            const uint32_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
-            auto buffer_size_in_bytes = (*capacity_ / uint32_t(layout_.child().num_tuples())) * child_size_in_bytes;
+            const uint64_t child_size_in_bytes = (layout_.stride_in_bits() + 7) / 8;
+            auto buffer_size_in_bytes = (*capacity_ / uint64_t(layout_.child().num_tuples())) * child_size_in_bytes;
             auto ptr = Module::Allocator().allocate(buffer_size_in_bytes.clone());
             Wasm_insist(ptr == *base_address_ + buffer_size_in_bytes.make_signed(),
                         "buffer could not be resized sequentially in memory");
@@ -2933,9 +2945,9 @@ void Buffer<IsGlobal>::consume()
     stores.attach_to_current();
 
     if (layout_.is_finite()) {
-        IF (*size_ == uint32_t(layout_.num_tuples() - CodeGenContext::Get().num_simd_lanes())) { // buffer full
+        IF (*size_ == uint64_t(layout_.num_tuples() - CodeGenContext::Get().num_simd_lanes())) { // buffer full
             /*----- Resume pipeline for each tuple in buffer and reset size of buffer to 0. -----*/
-            *size_ = uint32_t(layout_.num_tuples()); // increment size of buffer to resume pipeline even for last tuple
+            *size_ = uint64_t(layout_.num_tuples()); // increment size of buffer to resume pipeline even for last tuple
             resume_pipeline();
             *size_ = 0U;
         } ELSE { // buffer not full
@@ -2958,7 +2970,7 @@ template struct m::wasm::Buffer<true>;
  *====================================================================================================================*/
 
 template<bool IsGlobal>
-void buffer_swap_proxy_t<IsGlobal>::operator()(U32x1 first, U32x1 second)
+void buffer_swap_proxy_t<IsGlobal>::operator()(U64x1 first, U64x1 second)
 {
     /*----- Create load proxy. -----*/
     auto load = buffer_.get().create_load_proxy(schema_.get());
@@ -2974,7 +2986,7 @@ void buffer_swap_proxy_t<IsGlobal>::operator()(U32x1 first, U32x1 second)
 }
 
 template<bool IsGlobal>
-void buffer_swap_proxy_t<IsGlobal>::operator()(U32x1 first, U32x1 second, const Environment &env_first)
+void buffer_swap_proxy_t<IsGlobal>::operator()(U64x1 first, U64x1 second, const Environment &env_first)
 {
     /*----- Create load and store proxies. -----*/
     auto load  = buffer_.get().create_load_proxy(schema_.get());
@@ -3023,7 +3035,7 @@ void buffer_swap_proxy_t<IsGlobal>::operator()(U32x1 first, U32x1 second, const 
 }
 
 template<bool IsGlobal>
-void buffer_swap_proxy_t<IsGlobal>::operator()(U32x1 first, U32x1 second, const Environment &env_first,
+void buffer_swap_proxy_t<IsGlobal>::operator()(U64x1 first, U64x1 second, const Environment &env_first,
                                                const Environment &env_second)
 {
     /*----- Create store proxy. -----*/
@@ -3492,6 +3504,98 @@ _Boolx1 m::wasm::like(NChar _str, NChar _pattern, const char escape_char)
         return result;
     } else {
         const Var<Boolx1> result(like_non_null(_str, _pattern)); // to prevent duplicated computation due to `clone()`
+        return _Boolx1(result);
+    }
+}
+
+_Boolx1 m::wasm::like_contains(NChar _str, const ThreadSafePooledString &_pattern)
+{
+    static thread_local struct {} _; // unique caller handle
+    struct data_t : GarbageCollectedData
+    {
+        public:
+        ///> one function per static pattern
+        std::unordered_map<ThreadSafePooledString, FunctionProxy<bool(int32_t, char*)>> contains_map;
+
+        data_t(GarbageCollectedData &&d) : GarbageCollectedData(std::move(d)) { }
+    };
+    auto &d = Module::Get().add_garbage_collected_data<data_t>(&_); // garbage collect the `data_t` instance
+
+    M_insist(std::regex_match(*_pattern, std::regex("\"%[^_%]+%\"")), "invalid contains pattern");
+
+    if (_str.length() == 0) {
+        _str.discard();
+        return _Boolx1(false);
+    }
+
+    auto contains_non_null = [&d, &_str, &_pattern](Ptr<Charx1> str) -> Boolx1 {
+        Wasm_insist(str.clone().not_null(), "string operand must not be NULL");
+
+        auto it = d.contains_map.find(_pattern);
+        if (it == d.contains_map.end()) {
+            /*----- Create function to compute the result. -----*/
+            FUNCTION(contains, bool(int32_t, char*))
+            {
+                auto S = CodeGenContext::Get().scoped_environment(); // create scoped environment for this function
+
+                const auto len_ty_str = PARAMETER(0);
+                auto val_str = PARAMETER(1);
+
+                /*----- Copy pattern without enclosing `"` and `%` to make it accessible with runtime offset. -----*/
+                const int32_t len_pattern = strlen(*_pattern) - 4; // minus 4 due to enclosing `"` and `%`
+                auto pattern = Module::Allocator().raw_malloc<char>(len_pattern);
+                for (std::size_t i = 0; i < len_pattern; ++i)
+                    pattern[i] = (*_pattern)[i + 2]; // access _pattern with offset +2 due to starting `"` and `%`
+
+                /*----- Precompute prefix table. -----*/
+                auto tbl = Module::Allocator().raw_malloc<int32_t>(len_pattern + 1);
+                int32_t len_prefix = -1;
+
+                tbl[0] = len_prefix;
+                for (std::size_t i = 1; i < len_pattern + 1; ++i) {
+                    while (len_prefix >= 0 and pattern[len_prefix] != pattern[i - 1])
+                        len_prefix = tbl[len_prefix];
+                    ++len_prefix;
+                    tbl[i] = len_prefix;
+                }
+
+                /*----- Search pattern in string. -----*/
+                const Var<Ptr<Charx1>> end_str(val_str + len_ty_str);
+                Var<I32x1> pos_pattern(0);
+                WHILE (val_str < end_str and *val_str != '\0') {
+                    WHILE(pos_pattern >= 0 and *val_str != *(Ptr<Charx1>(pattern) + pos_pattern)) {
+                        Wasm_insist(pos_pattern < len_pattern + 1);
+                        pos_pattern = *(Ptr<I32x1>(tbl) + pos_pattern);
+                    }
+                    val_str += 1;
+                    pos_pattern += 1;
+                    IF (pos_pattern == len_pattern) {
+                        RETURN(true);
+                    };
+                }
+                RETURN(false);
+            }
+            it = d.contains_map.emplace_hint(it, _pattern, std::move(contains));
+        }
+
+        /*----- Call contains function. ------*/
+        M_insist(it != d.contains_map.end());
+        return (it->second)(_str.length(), str);
+    };
+
+    if (_str.can_be_null()) {
+        auto [_val_str, is_null_str] = _str.split();
+        Ptr<Charx1> val_str(_val_str); // since structured bindings cannot be used in lambda capture
+
+        _Var<Boolx1> result; // always set here
+        IF (is_null_str) {
+            result = _Boolx1::Null();
+        } ELSE {
+            result = contains_non_null(val_str);
+        };
+        return result;
+    } else {
+        const Var<Boolx1> result(contains_non_null(_str)); // to prevent duplicated computation due to `clone()`
         return _Boolx1(result);
     }
 }

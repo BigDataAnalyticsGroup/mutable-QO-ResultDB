@@ -6,6 +6,7 @@
 #include <mutable/storage/DataLayoutFactory.hpp>
 #include <mutable/util/macro.hpp>
 #include <mutable/util/memory.hpp>
+#include <queue>
 #include <unordered_map>
 
 
@@ -14,10 +15,10 @@ namespace m {
 /** A `WasmEngine` provides an environment to compile and execute WebAssembly modules. */
 struct WasmEngine
 {
-    /** the size of a WebAssembly memory page, 64 KiB. */
+    /** The size of a WebAssembly memory page, 64 KiB. */
     static constexpr std::size_t WASM_PAGE_SIZE = 1UL << 16;
-    /** The maximum memory of a WebAssembly module:  2^32 - 2^16 bytes ≈ 4 GiB */
-    static constexpr std::size_t WASM_MAX_MEMORY = (1UL << 32) - (1UL << 16);
+    /** The maximum memory of a WebAssembly module, 16 GiB */
+    static constexpr std::size_t WASM_MAX_MEMORY = 1UL << 34;
     /** The alignment that is suitable for all built-in types. */
     static constexpr std::size_t WASM_ALIGNMENT = 8;
 
@@ -37,8 +38,10 @@ struct WasmEngine
         const MatchBase &plan; ///< current plan
         ///> factory used to create the result set data layout
         std::unique_ptr<const storage::DataLayoutFactory> result_set_factory;
+        ///> names and schemas of all result sets, only used for `read_semi_join_reduction_result_set` host function
+        std::queue<std::pair<ThreadSafePooledString, Schema>> result_set_infos;
         memory::AddressSpace vm; ///<  WebAssembly module instance's virtual address space aka.\ *linear memory*
-        uint32_t heap = 0; ///< beginning of the heap, encoded as offset from the beginning of the virtual address space
+        uint64_t heap = 0; ///< beginning of the heap, encoded as offset from the beginning of the virtual address space
 
         WasmContext(uint32_t id, const MatchBase &plan, config_t configuration, std::size_t size);
 
@@ -47,7 +50,7 @@ struct WasmEngine
         /** Maps a table at the current start of `heap` and advances `heap` past the mapped region.  Returns the address
          * (in linear memory) of the mapped table.  Installs guard pages after each mapping.  Acknowledges
          * `TRAP_GUARD_PAGES`.  */
-        uint32_t map_table(const Table &table);
+        uint64_t map_table(const Table &table);
 
         /** Installs a guard page at the current `heap` and increments `heap` to the next page.  Acknowledges
          * `TRAP_GUARD_PAGES`. */

@@ -3,6 +3,7 @@
 #include "backend/Interpreter.hpp"
 #include "backend/WasmOperator.hpp"
 #include "backend/WasmUtil.hpp"
+#include "mutable/util/macro.hpp"
 #include "storage/Store.hpp"
 #include <chrono>
 #include <cstdint>
@@ -253,9 +254,16 @@ void m::wasm::detail::_throw(const v8::FunctionCallbackInfo<v8::Value> &info)
 
     std::ostringstream oss;
     oss << filename << ':' << line << ": Exception `" << m::wasm::exception::names_[type] << "` thrown.";
-    if (*msg)
+    if (msg)
         oss << "  " << msg << '.';
     oss << std::endl;
+
+#ifdef NDEBUG
+    /* Print message of thrown exception in release build as it is not printed by default if the exception is never
+     * catched (which seems to be impossible since the `_throw()` callback itself cannot be enclosed by a
+     * try-catch-block at host side). */
+    std::cerr << oss.str() << std::endl;
+#endif
 
     throw m::wasm::exception(type, oss.str());
 }
@@ -281,8 +289,8 @@ void m::wasm::detail::print_memory_consumption(const v8::FunctionCallbackInfo<v8
 {
     M_insist(Options::Get().statistics);
 
-    auto alloc_total_mem = info[0].As<v8::Uint32>()->Value();
-    auto alloc_peak_mem = info[1].As<v8::Uint32>()->Value();
+    auto alloc_total_mem = info[0].As<v8::BigInt>()->Uint64Value();
+    auto alloc_peak_mem = info[1].As<v8::BigInt>()->Uint64Value();
 
     std::cout << "Allocated memory overall consumption: " << alloc_total_mem / (1024.0 * 1024.0) << " MiB"<< std::endl;
     std::cout << "Allocated memory peak consumption: " << alloc_peak_mem / (1024.0 * 1024.0) << " MiB"<< std::endl;
@@ -302,23 +310,15 @@ void m::wasm::detail::set_wasm_instance_raw_memory(const v8::FunctionCallbackInf
     v8::SetWasmInstanceRawMemory(wasm_instance, wasm_context.vm.as<uint8_t*>(), wasm_context.vm.size());
 }
 
-void m::wasm::detail::read_result_set(const v8::FunctionCallbackInfo<v8::Value> &info)
+void read_result_set_(uint32_t result_set_offset, uint32_t num_tuples, const Schema &schema, const Operator &root_op)
 {
-    auto &context = WasmEngine::Get_Wasm_Context_By_ID(Module::ID());
-
-    auto &root_op = context.plan.get_matched_root();
-    auto &schema = root_op.schema();
-    auto deduplicated_schema = schema.deduplicate();
-    auto deduplicated_schema_without_constants = deduplicated_schema.drop_constants();
-
-    /* Get number of result tuples. */
-    auto num_tuples = info[1].As<v8::Uint32>()->Value();
     if (num_tuples == 0)
         return;
 
-    /* Compute address of result set. */
-    M_insist(info.Length() == 2);
-    auto result_set_offset = info[0].As<v8::Uint32>()->Value();
+    auto &context = WasmEngine::Get_Wasm_Context_By_ID(Module::ID());
+    auto deduplicated_schema = schema.deduplicate();
+    auto deduplicated_schema_without_constants = deduplicated_schema.drop_constants();
+
     M_insist((result_set_offset == 0) == (deduplicated_schema_without_constants.num_entries() == 0),
              "result set offset equals 0 (i.e. nullptr) iff schema contains only constants");
     auto result_set = context.vm.as<uint8_t*>() + result_set_offset;
@@ -328,9 +328,7 @@ void m::wasm::detail::read_result_set(const v8::FunctionCallbackInfo<v8::Value> 
         auto find_projection_impl = [](const Operator &op, auto &find_projection_ref) -> const ProjectionOperator * {
             if (auto projection_op = cast<const ProjectionOperator>(&op)) {
                 return projection_op;
-            } else if (auto c = cast<const Consumer>(&op)) {
-                M_insist(c->children().size() == 1,
-                         "at least one projection without siblings in the operator tree must be contained");
+            } else if (auto c = cast<const Consumer>(&op); c and c->children().size() == 1) {
                 M_insist(c->schema().num_entries() == c->child(0)->schema().num_entries(),
                          "at least one projection with the same schema as the plan's root must be contained");
 #ifndef NDEBUG
@@ -340,7 +338,7 @@ void m::wasm::detail::read_result_set(const v8::FunctionCallbackInfo<v8::Value> 
 #endif
                 return find_projection_ref(*c->child(0), find_projection_ref);
             } else {
-                return nullptr; // no projection found
+                return nullptr; // no projection found in linear plan from `root_op` to first non-unary operator
             }
         };
         return find_projection_impl(op, find_projection_impl);
@@ -530,6 +528,50 @@ void m::wasm::detail::read_result_set(const v8::FunctionCallbackInfo<v8::Value> 
     }
 }
 
+void m::wasm::detail::read_result_set(const v8::FunctionCallbackInfo<v8::Value> &info)
+{
+    auto &context = WasmEngine::Get_Wasm_Context_By_ID(Module::ID());
+
+    /* Get root operator and its schema. */
+    auto &root_op = context.plan.get_matched_root();
+    auto &result_set_schema = root_op.schema();
+
+    /* Get number of result tuples. */
+    auto num_tuples = info[1].As<v8::BigInt>()->Uint64Value();
+
+    /* Get offset of result set. */
+    M_insist(info.Length() == 2);
+    auto result_set_offset = info[0].As<v8::BigInt>()->Uint64Value();
+
+    read_result_set_(result_set_offset, num_tuples, result_set_schema, root_op);
+}
+
+void m::wasm::detail::read_semi_join_reduction_result_set(const v8::FunctionCallbackInfo<v8::Value> &info)
+{
+    auto &context = WasmEngine::Get_Wasm_Context_By_ID(Module::ID());
+
+    /* Create dummy `PrintOperator` as root operator. */
+    PrintOperator root_op(std::cout); // TODO: add ostream to `SemiJoinReductionOperator`
+
+    /* Get result set name and schema. */
+    M_insist(not context.result_set_infos.empty(), "no result set info available");
+    auto &[result_set_name, result_set_schema] = context.result_set_infos.front();
+
+    /* Get number of result tuples. */
+    auto num_tuples = info[1].As<v8::BigInt>()->Uint64Value();
+
+    std::cout << "Result set for " << result_set_name << ':' << std::endl;
+    if (not Options::Get().benchmark) {
+        /* Get offset of result set. */
+        auto result_set_offset = info[0].As<v8::BigInt>()->Uint64Value();
+
+        read_result_set_(result_set_offset, num_tuples, result_set_schema, root_op);
+    }
+    std::cout << num_tuples << " rows" << std::endl;
+
+    context.result_set_infos.pop(); // remove current result set info
+}
+
 
 /*======================================================================================================================
  * V8Engine helper classes
@@ -575,6 +617,18 @@ struct CollectStringLiterals : ConstOperatorVisitor, ast::ConstASTExprVisitor
     }
     void operator()(const JoinOperator &op) override {
         (*this)(op.predicate());
+        recurse(op);
+    }
+    void operator()(const SemiJoinReductionOperator & op) override {
+        for (auto p : op.projections())
+            (*this)(p.first.get());
+        for (auto &join : op.joins())
+            (*this)(join->condition());
+        recurse(op);
+    }
+    void operator()(const DecomposeOperator & op) override {
+        for (auto p : op.projections())
+            (*this)(p.first.get());
         recurse(op);
     }
     void operator()(const ProjectionOperator &op) override {
@@ -661,6 +715,8 @@ struct CollectTables : ConstOperatorVisitor
     void operator()(const FilterOperator &op) override { recurse(op); }
     void operator()(const DisjunctiveFilterOperator &op) override { recurse(op); }
     void operator()(const JoinOperator &op) override { recurse(op); }
+    void operator()(const SemiJoinReductionOperator &op) override { recurse(op); }
+    void operator()(const DecomposeOperator &op) override { recurse(op); }
     void operator()(const ProjectionOperator &op) override { recurse(op); }
     void operator()(const LimitOperator &op) override { recurse(op); }
     void operator()(const GroupingOperator &op) override { recurse(op); }
@@ -694,7 +750,8 @@ void V8Engine::initialize()
     /* A documentation of these flags can be found at
      * https://chromium.googlesource.com/v8/v8/+/2c22fd50128ad130e9dba77fce828e5661559121/src/flags/flag-definitions.h.*/
     std::ostringstream flags;
-    flags << "--stack_size 1000000 ";
+    flags << "--stack_size 1000000 "
+          << "--experimental-wasm-memory64 ";
     if (options::wasm_adaptive) {
         flags << "--opt "
               << "--liftoff "
@@ -739,7 +796,7 @@ void V8Engine::compile(const m::MatchBase &plan) const
 #if 1
     /*----- Add print function. --------------------------------------------------------------------------------------*/
     Module::Get().emit_function_import<void(uint32_t)>("print");
-    Module::Get().emit_function_import<void(uint32_t, uint32_t)>("print_memory_consumption");
+    Module::Get().emit_function_import<void(uint64_t, uint64_t)>("print_memory_consumption");
 #endif
 
     /*----- Emit code for run function which computes the last pipeline and calls other pipeline functions. ----------*/
@@ -750,7 +807,7 @@ void V8Engine::compile(const m::MatchBase &plan) const
     }
 
     /*----- Create function `main` which executes the given query. ---------------------------------------------------*/
-    m::wasm::Function<uint32_t(uint32_t)> main("main");
+    m::wasm::Function<uint64_t(uint32_t)> main("main");
     BLOCK_OPEN(main.body())
     {
         auto S = CodeGenContext::Get().scoped_environment(); // create scoped environment for this function
@@ -824,6 +881,9 @@ void V8Engine::execute(const m::MatchBase &plan)
         v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate_);
         global->Set(isolate_, "set_wasm_instance_raw_memory", v8::FunctionTemplate::New(isolate_, set_wasm_instance_raw_memory));
         global->Set(isolate_, "read_result_set", v8::FunctionTemplate::New(isolate_, read_result_set));
+        global->Set(isolate_, "read_semi_join_reduction_result_set",
+                    v8::FunctionTemplate::New(isolate_, read_semi_join_reduction_result_set));
+
         v8::Local<v8::Context> context = v8::Context::New(isolate_, /* extensions= */ nullptr, global);
         v8::Context::Scope context_scope(context);
 
@@ -867,8 +927,8 @@ void V8Engine::execute(const m::MatchBase &plan)
 
         /* Invoke the exported function `main` of the module. */
         args_t args { v8::Int32::New(isolate_, wasm_context.id), };
-        const uint32_t num_rows =
-            M_TIME_EXPR(main->Call(context, context->Global(), 1, args).ToLocalChecked().As<v8::Uint32>()->Value(),
+        const uint64_t num_rows =
+            M_TIME_EXPR(main->Call(context, context->Global(), 1, args).ToLocalChecked().As<v8::BigInt>()->Uint64Value(),
                         "Execute machine code", C.timer());
 
         /* Print total number of result tuples. */
@@ -1010,14 +1070,14 @@ v8::Local<v8::Object> m::wasm::detail::create_env(v8::Isolate &isolate, const m:
         /* Add memory address to env. */
         std::ostringstream oss;
         oss << table.get().name() << "_mem";
-        M_DISCARD env->Set(Ctx, to_v8_string(&isolate, oss.str()), v8::Int32::New(&isolate, off));
+        M_DISCARD env->Set(Ctx, to_v8_string(&isolate, oss.str()), v8::BigInt::New(&isolate, off));
         Module::Get().emit_import<void*>(oss.str().c_str());
 
         /* Add table size (num_rows) to env. */
         oss.str("");
         oss << table.get().name() << "_num_rows";
-        M_DISCARD env->Set(Ctx, to_v8_string(&isolate, oss.str()), v8::Int32::New(&isolate, table.get().store().num_rows()));
-        Module::Get().emit_import<uint32_t>(oss.str().c_str());
+        M_DISCARD env->Set(Ctx, to_v8_string(&isolate, oss.str()), v8::BigInt::New(&isolate, table.get().store().num_rows()));
+        Module::Get().emit_import<uint64_t>(oss.str().c_str());
     }
 
     /* Map all string literals into the Wasm module. */
@@ -1042,7 +1102,8 @@ v8::Local<v8::Object> m::wasm::detail::create_env(v8::Isolate &isolate, const m:
     M_insist(Is_Page_Aligned(context.heap));
 
     /* Add functions to environment. */
-    Module::Get().emit_function_import<void(void*,uint32_t)>("read_result_set");
+    Module::Get().emit_function_import<void(void*,uint64_t)>("read_result_set");
+    Module::Get().emit_function_import<void(void*,uint64_t)>("read_semi_join_reduction_result_set");
 #define ADD_FUNC(FUNC) { \
     auto func = v8::Function::New(Ctx, (FUNC)).ToLocalChecked(); \
     env->Set(Ctx, mkstr(isolate, #FUNC), func).Check(); \
@@ -1051,6 +1112,7 @@ v8::Local<v8::Object> m::wasm::detail::create_env(v8::Isolate &isolate, const m:
     ADD_FUNC(print)
     ADD_FUNC(print_memory_consumption)
     ADD_FUNC(read_result_set)
+    ADD_FUNC(read_semi_join_reduction_result_set)
 #undef ADD_FUNC
     {
         auto func = v8::Function::New(Ctx, _throw).ToLocalChecked();
@@ -1081,6 +1143,7 @@ std::string m::wasm::detail::create_js_debug_script(v8::Isolate &isolate, v8::Lo
     env_str.insert(env_str.length() - 1, "\"print\": function (arg) { console.log(arg); },");
     env_str.insert(env_str.length() - 1, "\"throw\": function (ex) { console.error(ex); },");
     env_str.insert(env_str.length() - 1, "\"read_result_set\": read_result_set,");
+    env_str.insert(env_str.length() - 1, "\"read_semi_join_reduction_result_set\": read_semi_join_reduction_result_set,");
 
     /* Construct import object. */
     oss << "\

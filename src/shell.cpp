@@ -309,6 +309,58 @@ int main(int argc, const char **argv)
         nullptr, "--dryrun",                                /* Short, Long      */
         "don't actually execute the query",                 /* Description      */
         [&](bool) { Options::Get().dryrun = true; });       /* Callback         */
+    ADD(bool, Options::Get().result_db, false,                      /* Type, Var, Init  */
+        nullptr, "--result-db",                                     /* Short, Long      */
+        "compute multipe result sets using semi-join reduction",    /* Description      */
+        [&](bool) { Options::Get().result_db = true; });            /* Callback         */
+    ADD(bool, Options::Get().optimize_result_db, false,                      /* Type, Var, Init  */
+        nullptr, "--optimize-result-db",                                     /* Short, Long      */
+        "enumerate best way to apply semi-join reductions",    /* Description      */
+        [&](bool) { Options::Get().optimize_result_db = true; });            /* Callback         */
+    ADD(bool, Options::Get().greedy_cuts, false,                      /* Type, Var, Init  */
+        nullptr, "--greedy-cuts",                                     /* Short, Long      */
+        "use greedy two-vertex cuts",    /* Description      */
+        [&](bool) { Options::Get().greedy_cuts = true; });            /* Callback         */
+    ADD(bool, Options::Get().top_down, false,                      /* Type, Var, Init  */
+        nullptr, "--top-down",                                     /* Short, Long      */
+        "use top down enum for resultdb optimization",    /* Description      */
+        [&](bool) { Options::Get().top_down = true; });            /* Callback         */
+    ADD(bool, Options::Get().yannakakis_heuristic, Options::YH_WeakCardinality,                      /* Type, Var, Init  */
+        nullptr, "--yh-d",                                     /* Short, Long      */
+        "use the decompose based heuristic for result db",    /* Description      */
+        [&](bool) { Options::Get().yannakakis_heuristic = Options::YH_Decompose; });
+    ADD(bool, Options::Get().yannakakis_heuristic, Options::YH_WeakCardinality,                      /* Type, Var, Init  */
+        nullptr, "--yh-s",                                     /* Short, Long      */
+        "use the sized based heuristic for result db",    /* Description      */
+        [&](bool) { Options::Get().yannakakis_heuristic = Options::YH_Size; });
+    ADD(bool, Options::Get().yannakakis_heuristic, Options::YH_WeakCardinality,                      /* Type, Var, Init  */
+        nullptr, "--yh-wc",                                     /* Short, Long      */
+        "use the weak cardinality based heuristic for result db",    /* Description      */
+        [&](bool) { Options::Get().yannakakis_heuristic = Options::YH_WeakCardinality; });
+    ADD(bool, Options::Get().yannakakis_heuristic, Options::YH_WeakCardinality,                      /* Type, Var, Init  */
+        nullptr, "--yh-sc",                                     /* Short, Long      */
+        "use the strong cardinality based heuristic for result db",    /* Description      */
+        [&](bool) { Options::Get().yannakakis_heuristic = Options::YH_StrongCardinality; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
+        nullptr, "--td_root",                                     /* Short, Long      */
+        "Use TD_Root for the ResultDB enumeration",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::TD_Root; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
+        nullptr, "--dp_fold",                                     /* Short, Long      */
+        "Use DP_Fold for the ResultDB enumeration",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::DP_Fold; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
+        nullptr, "--dp_fold_greedy",                                     /* Short, Long      */
+        "Use DP_Fold-Greedy for the ResultDB enumeration",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::DP_Fold_Greedy; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
+        nullptr, "--dp_resultdb",                                     /* Short, Long      */
+        "Use DP_ResultDB for the ResultDB enumeration",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB; });
+    ADD(bool, Options::Get().decompose, false,                      /* Type, Var, Init  */
+        nullptr, "--decompose",                                     /* Short, Long      */
+        "decompose single-table result into multiple result sets",   /* Description      */
+        [&](bool) { Options::Get().decompose = true; });            /* Callback         */
     ADD(bool, Options::Get().benchmark, false,              /* Type, Var, Init  */
         nullptr, "--benchmark",                             /* Short, Long      */
         "run queries in benchmark mode",                    /* Description      */
