@@ -150,6 +150,15 @@ struct M_EXPORT CardinalityEstimator : estimate_join_all_tag::base_type
     virtual std::unique_ptr<DataModel>
     estimate_full_reduction(const QueryGraph &G, const DataModel &model, Subproblem except = Subproblem()) const = 0;
 
+    /** Form a new `DataModel` by computing the size of the given `DataModel` after it was reduced by all its neighbors`.
+*
+* @param model     the `DataModel` describing the model from the model to be reduced
+* @param model     the `Subproblem` describing which reducation to ignore
+* @return          the `DataModel` describing the fully reduced result
+*/
+    virtual std::unique_ptr<DataModel>
+    estimate_reduction(const QueryGraph &G, const DataModel &model, Subproblem reduced_by = Subproblem()) const = 0;
+
     /** Compute a `DataModel` for the result of joining *all* `DataSource`s in `to_join` by `condition`. */
     template<typename PlanTable>
     std::unique_ptr<DataModel>
@@ -236,6 +245,9 @@ struct M_EXPORT CartesianProductEstimator : CardinalityEstimatorCRTP<CartesianPr
                   const cnf::CNF &condition) const override;
     std::unique_ptr<DataModel>
     estimate_full_reduction(const QueryGraph &G, const DataModel &model, Subproblem except = Subproblem()) const override;
+
+    std::unique_ptr<DataModel>
+    estimate_reduction(const QueryGraph &G, const DataModel &model, Subproblem reduced_by = Subproblem()) const override;
 
     template<typename PlanTable>
     std::unique_ptr<DataModel>
@@ -341,6 +353,8 @@ struct M_EXPORT InjectionCardinalityEstimator : CardinalityEstimatorCRTP<Injecti
                   const cnf::CNF &condition) const override;
     std::unique_ptr<DataModel>
     estimate_full_reduction(const QueryGraph &G, const DataModel &model, Subproblem except = Subproblem()) const override;
+    std::unique_ptr<DataModel>
+estimate_reduction(const QueryGraph &G, const DataModel &model, Subproblem reduced_by = Subproblem()) const override;
 
     template<typename PlanTable>
     std::unique_ptr<DataModel>
@@ -457,6 +471,8 @@ struct M_EXPORT SpnEstimator : CardinalityEstimatorCRTP<SpnEstimator>
                   const cnf::CNF &condition) const override;
     std::unique_ptr<DataModel>
     estimate_full_reduction(const QueryGraph &G, const DataModel &model, Subproblem except = Subproblem()) const override;
+    std::unique_ptr<DataModel>
+estimate_reduction(const QueryGraph &G, const DataModel &model, Subproblem reduced_by = Subproblem()) const override;
 
     template<typename PlanTable>
     std::unique_ptr<DataModel>

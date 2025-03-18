@@ -10,6 +10,8 @@ benchmark/job/data
 benchmark/result-db-eval/synthetic/data
 paper_benchmarks/
 postgres/
+*.DS_STORE
+*__pycache__*
 
 # Git version information
 include/mutable/gitversion.tbl

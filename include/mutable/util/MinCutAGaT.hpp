@@ -15,7 +15,7 @@ struct MinCutAGaT
 
     template<typename Callback>
     void min_cut_advanced_generate_and_test(const AdjacencyMatrix &M, Callback &&callback, const Subproblem S,
-                                            const Subproblem C, const Subproblem X, const Subproblem T) const
+                                            const Subproblem C, const Subproblem X, const Subproblem T, bool stop_after_first_pair = false) const
     {
         M_insist(not S.empty());
         M_insist(not S.is_singleton());
@@ -52,6 +52,7 @@ struct MinCutAGaT
                 M_insist(M.is_connected(S - C));
                 M_insist(M.is_connected(C, S - C));
                 callback(C, S - C);
+                if (stop_after_first_pair) break;
             } else {
                 M_insist(not M.is_connected(S - C) or not M.is_connected(C, S - C));
                 T_tmp = C;
@@ -70,7 +71,7 @@ struct MinCutAGaT
     }
 
     template<typename Callback>
-    void partition(const AdjacencyMatrix &M, Callback &&callback, const Subproblem S) const {
+    void partition(const AdjacencyMatrix &M, Callback &&callback, const Subproblem S, bool stop_after_first_pair = false) const {
         M_insist(not S.empty());
         M_insist(not S.is_singleton());
         const Subproblem C = S.begin().as_set();
@@ -81,7 +82,7 @@ struct MinCutAGaT
             /* S=        */ S,
             /* C=        */ C,
             /* X=        */ Subproblem(),
-            /* T=        */ C
+            /* T=        */ C, stop_after_first_pair
         );
     }
 };

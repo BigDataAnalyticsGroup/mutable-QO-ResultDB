@@ -244,6 +244,7 @@ endif()
 include_directories(include src)
 if(APPLE)
     include_directories(SYSTEM "/usr/local/include") # Fix macOS system includes
+	include_directories("/opt/homebrew/Cellar/graphviz/12.2.1/include")
 endif()
 
 # Link directories

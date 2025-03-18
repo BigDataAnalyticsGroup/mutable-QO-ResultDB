@@ -1,14 +1,13 @@
 #pragma once
 
 #include <cstdint>
-#include <mutable/catalog/CostFunction.hpp>
 #include <mutable/IR/QueryGraph.hpp>
 #include <mutable/mutable-config.hpp>
 #include <mutable/util/crtp.hpp>
 #include <mutable/util/macro.hpp>
 #include <mutable/util/MinCutAGaT.hpp>
 #include <unordered_map>
-
+#include <mutable/IR/PlanTable.hpp>
 
 
 namespace m {
@@ -16,7 +15,7 @@ namespace m {
 struct estimate_tag : const_virtual_crtp_helper<estimate_tag>::
                        returns<double>::
                        crtp_args<const PlanTableSmallOrDense&, const PlanTableLargeAndSparse&>::
-                       args<SmallBitset, SmallBitset, const QueryGraph&, const CardinalityEstimator&>  { };
+                       args<SmallBitset, SmallBitset, const QueryGraph&, const AdjacencyMatrix&, const CardinalityEstimator&, const std::unordered_map<Subproblem, Subproblem, SubproblemHash>&>  { };
 
 
 struct PlanTableLargeAndSparse;
@@ -27,7 +26,7 @@ struct CardinalityEstimator;
 /** An interface for all yannakakis heuristics. */
 struct M_EXPORT YannakakisHeuristic : estimate_tag::base_type
 {
-    using Subproblem = QueryGraph::Subproblem;
+    using Subproblem = SmallBitset;
     using estimate_tag::base_type::operator();
 
 
@@ -37,8 +36,8 @@ struct M_EXPORT YannakakisHeuristic : estimate_tag::base_type
 
     /** Estimate the costs of a pair of subproblems yielded for semi-join reductions. */
     template<typename PlanTable>
-    double estimate(const QueryGraph &G, const CardinalityEstimator &CE, const PlanTable &PT, Subproblem left, Subproblem right) const {
-        return operator()(estimate_tag{}, PT, left, right, G, CE);
+    double estimate(const QueryGraph &G,  const AdjacencyMatrix&M, const CardinalityEstimator &CE, const PlanTable &PT, const std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, Subproblem left, Subproblem right) const {
+        return operator()(estimate_tag{}, PT, left, right, G, M, CE, folded_mapping);
     }
 
     public:
@@ -52,36 +51,6 @@ namespace {
     };
 }
 
-/**
- * DummyEstimator that always returns the size of the cartesian product of the given subproblems
- */
-struct M_EXPORT DecomposeHeuristic : YannakakisHeuristicCRTP<DecomposeHeuristic>
-{
-
-    using base_type = YannakakisHeuristicCRTP<DecomposeHeuristic>;
-
-    template<typename PlanTable>
-    DecomposeHeuristic(const PlanTable &PT, Subproblem problem , const QueryGraph &G, const CardinalityEstimator &CE);
-
-    template<typename PlanTable>
-    double operator()(estimate_tag, const PlanTable &PT, Subproblem left, Subproblem right, const QueryGraph &G, const CardinalityEstimator &CE) const;
-
-};
-
-/**
- * DummyEstimator that always returns the size of the cartesian product of the given subproblems
- */
-struct M_EXPORT SizeHeuristic : YannakakisHeuristicCRTP<SizeHeuristic>
-{
-
-    template<typename PlanTable>
-    SizeHeuristic(const PlanTable &PT, Subproblem problem, const QueryGraph &G, const CardinalityEstimator &CE);
-
-
-    template<typename PlanTable>
-    double operator()(estimate_tag, const PlanTable &PT, Subproblem left, Subproblem right, const QueryGraph &G, const CardinalityEstimator &CE) const;
-
-};
 
 /**
 * DummyEstimator that always returns the size of the cartesian product of the given subproblems
@@ -89,31 +58,19 @@ struct M_EXPORT SizeHeuristic : YannakakisHeuristicCRTP<SizeHeuristic>
 struct M_EXPORT WeakCardinalityHeuristic : YannakakisHeuristicCRTP<WeakCardinalityHeuristic>
 {
     template<typename PlanTable>
-    WeakCardinalityHeuristic(const PlanTable &PT, Subproblem problem, const QueryGraph &G, const CardinalityEstimator &CE);
+    WeakCardinalityHeuristic(const PlanTable &PT, Subproblem problem, const QueryGraph &G, const AdjacencyMatrix &M, const CardinalityEstimator &CE, const std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping);
 
     template<typename PlanTable>
-    double operator()(estimate_tag, const PlanTable &PT, Subproblem left, Subproblem right, const QueryGraph &G, const CardinalityEstimator &CE) const;
+    double operator()(estimate_tag, const PlanTable &PT, Subproblem left, Subproblem right, const QueryGraph &G, const AdjacencyMatrix&M, const CardinalityEstimator &CE, const std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping) const;
 
 private:
     std::unordered_map<std::size_t, std::unique_ptr<DataModel>> models;
     std::vector<std::pair<std::size_t, std::size_t>> card_order;
 
-};
-
-/**
-* DummyEstimator that always returns the size of the cartesian product of the given subproblems
-*/
-struct M_EXPORT StrongCardinalityHeuristic : YannakakisHeuristicCRTP<StrongCardinalityHeuristic>
-{
-    template<typename PlanTable>
-    StrongCardinalityHeuristic(const PlanTable &PT, Subproblem problem, const QueryGraph &G, const CardinalityEstimator &CE);
-
-
-    template<typename PlanTable>
-    double operator()(estimate_tag, const PlanTable &PT, Subproblem left, Subproblem right, const QueryGraph &G, const CardinalityEstimator &CE) const;
-
-private:
-    std::unordered_map<std::size_t, std::unique_ptr<DataModel>> models;
+    [[nodiscard]] static Subproblem get_folded_problem(const Subproblem problem, const std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping) {
+        if (folded_mapping.empty()) return problem;
+        return folded_mapping.at(problem);
+    }
 
 };
 

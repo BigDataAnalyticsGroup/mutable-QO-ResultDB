@@ -1,0 +1,11 @@
+{
+	"job": [
+		{"relations": ["ci"], "size": 1244716, "reductions": [{"right_relations": ["mi", "it1"], "size": 68552}, {"right_relations": ["mi_idx", "it2", "t"], "size": 333558}, {"right_relations": ["n"], "size": 558518}, {"right_relations": ["it1", "mi", "it2", "t", "mi_idx"], "size": 38275}, {"right_relations": ["it1", "n", "mi"], "size": 32415}, {"right_relations": ["it2", "n", "t", "mi_idx"], "size": 166987}, {"right_relations": ["it1", "mi", "it2", "t", "mi_idx", "n"], "size": 19417}]},
+		{"relations": ["it1"], "size": 1, "reductions": [{"right_relations": ["mi", "mi_idx", "t", "n", "ci", "it2"], "size": 1}]},
+		{"relations": ["it2"], "size": 1, "reductions": [{"right_relations": ["mi_idx", "mi", "n", "ci", "t", "it1"], "size": 1}]},
+		{"relations": ["mi"], "size": 188971, "reductions": [{"right_relations": ["ci", "t", "it2", "mi_idx", "n"], "size": 23438}, {"right_relations": ["it1"], "size": 186594}, {"right_relations": ["it1", "ci", "n", "t", "mi_idx", "it2"], "size": 22405}]},
+		{"relations": ["mi_idx"], "size": 1380035, "reductions": [{"right_relations": ["t"], "size": 1380035}, {"right_relations": ["ci", "it1", "n", "mi"], "size": 46730}, {"right_relations": ["it2"], "size": 459925}, {"right_relations": ["ci", "n", "mi", "it1", "it2"], "size": 15556}, {"right_relations": ["ci", "n", "mi", "it1", "t"], "size": 46730}, {"right_relations": ["it2", "t"], "size": 459925}, {"right_relations": ["ci", "n", "mi", "it1", "it2", "t"], "size": 15556}]},
+		{"relations": ["n"], "size": 1739579, "reductions": [{"right_relations": ["ci", "it1", "t", "mi_idx", "mi", "it2"], "size": 11493}]},
+		{"relations": ["t"], "size": 2528312, "reductions": [{"right_relations": ["mi_idx", "mi", "n", "ci", "it2", "it1"], "size": 15556}]},
+	]
+}

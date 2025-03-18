@@ -1,0 +1,13 @@
+{
+	"job": [
+		{"relations": ["cn"], "size": 48302, "reductions": [{"right_relations": ["mc", "mi", "t", "mk", "ct", "k", "ml", "lt"], "size": 7}]},
+		{"relations": ["ct"], "size": 1, "reductions": [{"right_relations": ["mc", "mk", "ml", "cn", "mi", "t", "k", "lt"], "size": 1}]},
+		{"relations": ["k"], "size": 1, "reductions": [{"right_relations": ["mk", "ct", "cn", "mc", "t", "mi", "ml", "lt"], "size": 1}]},
+		{"relations": ["lt"], "size": 2, "reductions": [{"right_relations": ["ml", "ct", "cn", "mc", "mi", "mk", "t", "k"], "size": 2}]},
+		{"relations": ["mc"], "size": 1271989, "reductions": [{"right_relations": ["ct"], "size": 1193928}, {"right_relations": ["cn"], "size": 240875}, {"right_relations": ["mk", "k", "t"], "size": 8128}, {"right_relations": ["mi", "lt", "ml"], "size": 254}, {"right_relations": ["k", "t", "mk", "lt", "ml", "mi"], "size": 38}, {"right_relations": ["k", "cn", "t", "mk"], "size": 1495}, {"right_relations": ["k", "ct", "t", "mk"], "size": 6642}, {"right_relations": ["lt", "cn", "ml", "mi"], "size": 86}, {"right_relations": ["lt", "ct", "ml", "mi"], "size": 223}, {"right_relations": ["cn", "ct"], "size": 224256}, {"right_relations": ["k", "t", "mk", "lt", "ml", "mi", "cn"], "size": 19}, {"right_relations": ["k", "t", "mk", "lt", "ml", "mi", "ct"], "size": 37}, {"right_relations": ["k", "cn", "t", "mk", "ct"], "size": 1292}, {"right_relations": ["lt", "cn", "ml", "mi", "ct"], "size": 84}, {"right_relations": ["k", "t", "mk", "lt", "ml", "mi", "cn", "ct"], "size": 18}]},
+		{"relations": ["mi"], "size": 153897, "reductions": [{"right_relations": ["ml", "lt"], "size": 271}, {"right_relations": ["mc", "mk", "t", "cn", "ct", "k"], "size": 453}, {"right_relations": ["lt", "ml", "cn", "mc", "mk", "k", "ct", "t"], "size": 31}]},
+		{"relations": ["mk"], "size": 4523930, "reductions": [{"right_relations": ["t"], "size": 2011296}, {"right_relations": ["k"], "size": 10544}, {"right_relations": ["mc", "mi", "ml", "cn", "ct", "lt"], "size": 218}, {"right_relations": ["k", "t"], "size": 5541}, {"right_relations": ["k", "cn", "mc", "mi", "lt", "ct", "ml"], "size": 10}, {"right_relations": ["t", "cn", "mc", "mi", "lt", "ct", "ml"], "size": 114}, {"right_relations": ["k", "t", "cn", "mc", "mi", "lt", "ct", "ml"], "size": 8}]},
+		{"relations": ["ml"], "size": 29997, "reductions": [{"right_relations": ["lt"], "size": 2315}, {"right_relations": ["mi", "cn", "mk", "ct", "mc", "t", "k"], "size": 116}, {"right_relations": ["cn", "mc", "mi", "k", "ct", "mk", "t", "lt"], "size": 116}]},
+		{"relations": ["t"], "size": 910581, "reductions": [{"right_relations": ["mk", "ct", "cn", "k", "mc", "mi", "ml", "lt"], "size": 8}]},
+	]
+}

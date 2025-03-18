@@ -14,11 +14,24 @@
 
 using namespace m;
 
+template<typename PlanTable>
+void init_PT_base_case(const QueryGraph &G, PlanTable &PT)
+{
+    auto &CE = Catalog::Get().get_database_in_use().cardinality_estimator();
+    using Subproblem = SmallBitset;
+    for (auto &ds : G.sources()) {
+        Subproblem s = Subproblem::Singleton(ds->id());
+        auto bt = as<const BaseTable>(*ds);
+        PT[s].cost = 0;
+        PT[s].tuple_size = 10;
+        PT[s].model = CE.estimate_scan(G, s);
+    }
+}
+
 /*======================================================================================================================
  * Test Cost Function.
  *====================================================================================================================*/
-TEST_CASE("Optimizer/ResultDB", "[IR]")
-{
+TEST_CASE("Optimizer/ResultDB/Generic", "[IR]") {
     /* Get Catalog and create new database to use for unit testing. */
     Catalog::Clear();
     Catalog &Cat = Catalog::Get();
@@ -311,7 +324,7 @@ WHERE A.bid = B.aid AND A.eid = E.aid AND B.cid = C.bid AND B.did = D.bid AND E.
 
 
             auto tree_enumerator = TreeEnumerator(QG.num_sources());
-           // auto best_root = tree_enumerator.find_best_root(QG, QG.adjacency_matrix(), ICE, SJ, card_orders, base_models);
+            // auto best_root = tree_enumerator.find_best_root(QG, QG.adjacency_matrix(), ICE, SJ, card_orders, base_models);
 
             /*
             REQUIRE(tree_enumerator.parent_node_costs(1,3)->second == D_costs);
@@ -367,25 +380,25 @@ WHERE A.bid = B.aid AND A.eid = E.aid AND B.cid = C.bid AND B.did = D.bid AND E.
             base_models.emplace_back(std::move(F_model));
             base_models.emplace_back(std::move(G_model));
 
-/*            std::vector<Optimizer_ResultDB::semi_join_order_t> semi_join_reduction_order_actual =
-                    Optimizer_ResultDB_utils::enumerate_semi_join_reduction_order(QG, ICE, base_models);
+            /*            std::vector<Optimizer_ResultDB::semi_join_order_t> semi_join_reduction_order_actual =
+                                Optimizer_ResultDB_utils::enumerate_semi_join_reduction_order(QG, ICE, base_models);
 
-            auto it_correct = semi_join_reduction_order_correct.begin();
-            auto it_actual = semi_join_reduction_order_actual.begin();
+                        auto it_correct = semi_join_reduction_order_correct.begin();
+                        auto it_actual = semi_join_reduction_order_actual.begin();
 
-            while(it_correct != semi_join_reduction_order_correct.end() && it_actual != semi_join_reduction_order_actual.end())
-            {
-                REQUIRE(it_correct->lhs == it_correct->lhs);
-                REQUIRE(it_correct->rhs == it_correct->rhs);
-                if(it_correct != semi_join_reduction_order_correct.end())
-                {
-                    ++it_correct;
-                }
-                if(it_actual != semi_join_reduction_order_correct.end())
-                {
-                    ++it_actual;
-                }
-            }*/
+                        while(it_correct != semi_join_reduction_order_correct.end() && it_actual != semi_join_reduction_order_actual.end())
+                        {
+                            REQUIRE(it_correct->lhs == it_correct->lhs);
+                            REQUIRE(it_correct->rhs == it_correct->rhs);
+                            if(it_correct != semi_join_reduction_order_correct.end())
+                            {
+                                ++it_correct;
+                            }
+                            if(it_actual != semi_join_reduction_order_correct.end())
+                            {
+                                ++it_actual;
+                            }
+                        }*/
 
 
         }
@@ -396,11 +409,7 @@ WHERE A.bid = B.aid AND A.eid = E.aid AND B.cid = C.bid AND B.did = D.bid AND E.
             REQUIRE(ret_op.first != nullptr);
             REQUIRE(ret_op.second);
         }
-
-
-
-    }
-    SECTION("cyclic")
+        SECTION("cyclic")
     {
         /* Define query:
          *
@@ -461,111 +470,385 @@ WHERE A.bid = B.aid AND A.eid = E.aid AND B.cid = C.bid AND B.did = D.bid AND E.
         auto &ICE = db.cardinality_estimator();
         Cat.default_plan_enumerator(Cat.pool("DPccp"));
 
-        SECTION("Greedily apply two-vertex cuts")
-        {
-            auto already_used = Subproblem();
-            std::vector<Optimizer_ResultDB_utils::fold_t> folds;
-            Optimizer_ResultDB_utils::find_vertex_cuts(QG, Subproblem(31), already_used, folds);
-
-            REQUIRE(folds.size() == 1);
-            REQUIRE(already_used == Subproblem(6));
-
-            auto fold = folds.back();
-            REQUIRE(fold.contains(1));
-            REQUIRE(fold.contains(2));
-
-            Optimizer_ResultDB_utils::find_vertex_cuts(QG, Subproblem(112), already_used, folds);
-
-            REQUIRE(folds.size() == 1);
-            REQUIRE(already_used == Subproblem(6));
-
-            fold = folds.back();
-            REQUIRE(fold.contains(1));
-            REQUIRE(fold.contains(2));
-
-            std::vector<Subproblem> blocks = {Subproblem(112), Subproblem(31)};
-            Subproblem cut_vertices = Subproblem::Singleton(4);
-            Optimizer_ResultDB_utils::find_and_apply_vertex_cuts(QG, blocks, cut_vertices);
-
-            REQUIRE(QG.num_sources() == 6);
-            REQUIRE(blocks.size() == 2);
-            REQUIRE(cut_vertices == Subproblem(8));
-
-            auto new_model = ICE.estimate_scan(QG, Subproblem(1));
-            REQUIRE(ICE.predict_cardinality(*new_model) == 2000);
-        }
-
-        SECTION("Block Cut Forest")
-        {
-            std::vector<Subproblem> blocks = {Subproblem(112), Subproblem(31)};
-            Subproblem cut_vertices = Subproblem::Singleton(4);
-            Optimizer_ResultDB_utils::find_and_apply_vertex_cuts(QG, blocks, cut_vertices);
-
-            Optimizer_ResultDB_utils::bc_forest_t bc_forest;
-
-            Optimizer_ResultDB_utils::build_bc_forest(blocks, cut_vertices, bc_forest);
-
-            REQUIRE(bc_forest.size() == 3);
-            REQUIRE(bc_forest.contains(Subproblem(13)));
-            REQUIRE(bc_forest[Subproblem(13)].size() == 1);
-            REQUIRE(bc_forest[Subproblem(13)].front() == Subproblem(8));
-            REQUIRE(bc_forest.contains(Subproblem(56)));
-            REQUIRE(bc_forest[Subproblem(56)].size() == 1);
-            REQUIRE(bc_forest[Subproblem(56)].front() == Subproblem(8));
-            REQUIRE(bc_forest.contains(Subproblem(8)));
-            REQUIRE(bc_forest[Subproblem(8)].size() == 2);
-            std::unordered_set<Subproblem, SubproblemHash> neighbors = {Subproblem(56), Subproblem(13)};
-            for (auto neighbor: bc_forest[Subproblem(8)]) {
-                REQUIRE(neighbors.contains(neighbor));
-            }
-
-            auto visited = Subproblem();
-            std::vector<Subproblem> folding_problems;
-            std::vector<Optimizer_ResultDB_utils::fold_t> folds;
-
-            Optimizer_ResultDB_utils::visit_bc_forest(bc_forest, blocks, visited, folding_problems, folds);
-
-            REQUIRE(visited == Subproblem(61));
-            REQUIRE(folds.size() == 1);
-            REQUIRE(folding_problems.size() == 1);
-            REQUIRE(folding_problems[0]== Subproblem(56));
-            REQUIRE(folds[0].contains(0));
-            REQUIRE(folds[0].contains(2));
-
-        }
-
-        /*         SECTION("Cycle Solving Optimizer")
-               {
-                   std::vector<std::unique_ptr<DataModel>> base_models;
-
-                   auto producers = Optimizer_ResultDB_utils::compute_and_solve_biconnected_components(QG, base_models);
-
-                   REQUIRE(base_models.size() == 4);
-                   REQUIRE(ICE.predict_cardinality(*base_models[0]) == 100);
-                   REQUIRE(ICE.predict_cardinality(*base_models[1]) == 1500);
-                   REQUIRE(ICE.predict_cardinality(*base_models[2]) == 5000);
-                   REQUIRE(ICE.predict_cardinality(*base_models[3]) == 100);
-
-                 REQUIRE(QG.num_sources() == 4);
-                   REQUIRE(producers[0]->info().subproblem == Subproblem(5));
-                   REQUIRE(producers[0]->info().estimated_cardinality == 100);
-                   REQUIRE(producers[1]->info().subproblem == Subproblem(2));
-                   REQUIRE(producers[1]->info().estimated_cardinality == 1500);
-                   REQUIRE(producers[2]->info().subproblem == Subproblem(8));
-                   REQUIRE(producers[2]->info().estimated_cardinality == 5000);
-                   REQUIRE(producers[3]->info().subproblem == Subproblem(16));
-                   REQUIRE(producers[3]->info().estimated_cardinality == 100);
-
-                   std::vector<Optimizer_ResultDB::semi_join_order_t> semi_join_order = Optimizer_ResultDB_utils::enumerate_semi_join_reduction_order(QG, ICE, base_models);
-                   REQUIRE(semi_join_order.size() == 3);
-
-        } */
         SECTION("Complete Run Cyclic")
         {
             Optimizer_ResultDB opt;
-            auto ret_op = opt.operator()(QG);
-            REQUIRE(ret_op.first != nullptr);
-            REQUIRE(ret_op.second);
+            auto [fst, snd] = opt.operator()(QG);
+            REQUIRE(fst != nullptr);
+            REQUIRE(snd);
         }
+    }
+
+
+
+    }
+}
+TEST_CASE("Optimizer/ResultDB/Problems/1", "[IR]") {
+    Catalog::Clear();
+    Catalog &Cat = Catalog::Get();
+    auto &db = Cat.add_database(Cat.pool("db"));
+    Cat.set_database_in_use(db);
+    Diagnostic diag(false, std::cout, std::cerr);
+
+    /* Create pooled strings. */
+    ThreadSafePooledString str_A = Cat.pool("A");
+    ThreadSafePooledString str_B = Cat.pool("B");
+    ThreadSafePooledString str_C = Cat.pool("C");
+    ThreadSafePooledString str_D = Cat.pool("D");
+    ThreadSafePooledString str_E = Cat.pool("E");
+    ThreadSafePooledString str_F = Cat.pool("F");
+    ThreadSafePooledString str_G = Cat.pool("G");
+    ThreadSafePooledString str_H = Cat.pool("H");
+
+    ThreadSafePooledString col_id = Cat.pool("id");
+    ThreadSafePooledString col_aid = Cat.pool("aid");
+    ThreadSafePooledString col_bid = Cat.pool("bid");
+    ThreadSafePooledString col_cid = Cat.pool("cid");
+    ThreadSafePooledString col_did = Cat.pool("did");
+    ThreadSafePooledString col_eid = Cat.pool("eid");
+    ThreadSafePooledString col_fid = Cat.pool("fid");
+    ThreadSafePooledString col_gid = Cat.pool("gid");
+    ThreadSafePooledString col_hid = Cat.pool("hid");
+
+    /* Create tables. */
+    Table &tbl_A = db.add_table(str_A);
+    Table &tbl_B = db.add_table(str_B);
+    Table &tbl_C = db.add_table(str_C);
+    Table &tbl_D = db.add_table(str_D);
+    Table &tbl_E = db.add_table(str_E);
+    Table &tbl_F = db.add_table(str_F);
+    Table &tbl_G = db.add_table(str_G);
+    Table &tbl_H = db.add_table(str_H);
+
+    /* Add columns to tables. */
+    tbl_A.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_A.push_back(col_eid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_cid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_aid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_fid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_C.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_C.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_C.push_back(col_did, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_D.push_back(col_cid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_D.push_back(col_hid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_E.push_back(col_aid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_E.push_back(col_fid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_F.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_F.push_back(col_eid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_F.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_cid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_fid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_hid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_H.push_back(col_did, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_H.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+
+    /* Add data to tables. */
+    tbl_A.store(Cat.create_store(tbl_A));
+    tbl_B.store(Cat.create_store(tbl_B));
+    tbl_C.store(Cat.create_store(tbl_C));
+    tbl_D.store(Cat.create_store(tbl_D));
+    tbl_E.store(Cat.create_store(tbl_E));
+    tbl_F.store(Cat.create_store(tbl_F));
+    tbl_G.store(Cat.create_store(tbl_G));
+    tbl_H.store(Cat.create_store(tbl_H));
+    tbl_A.layout(Cat.data_layout());
+    tbl_B.layout(Cat.data_layout());
+    tbl_C.layout(Cat.data_layout());
+    tbl_D.layout(Cat.data_layout());
+    tbl_E.layout(Cat.data_layout());
+    tbl_F.layout(Cat.data_layout());
+    tbl_G.layout(Cat.data_layout());
+    tbl_H.layout(Cat.data_layout());
+
+    constexpr std::size_t num_rows_A = 100000; // Avoid all joins with A at all costs!
+    constexpr std::size_t num_rows_B = 100;
+    constexpr std::size_t num_rows_C = 80;
+    constexpr std::size_t num_rows_D = 120;
+    constexpr std::size_t num_rows_E = 120;
+    constexpr std::size_t num_rows_F = 240;
+    constexpr std::size_t num_rows_G = 150;
+    constexpr std::size_t num_rows_H = 360;
+    for (std::size_t i = 0; i < num_rows_A; ++i) { tbl_A.store().append(); }
+    for (std::size_t i = 0; i < num_rows_B; ++i) { tbl_B.store().append(); }
+    for (std::size_t i = 0; i < num_rows_C; ++i) { tbl_C.store().append(); }
+    for (std::size_t i = 0; i < num_rows_D; ++i) { tbl_D.store().append(); }
+    for (std::size_t i = 0; i < num_rows_E; ++i) { tbl_E.store().append(); }
+    for (std::size_t i = 0; i < num_rows_F; ++i) { tbl_F.store().append(); }
+    for (std::size_t i = 0; i < num_rows_G; ++i) { tbl_G.store().append(); }
+    for (std::size_t i = 0; i < num_rows_H; ++i) { tbl_H.store().append(); }
+
+
+    SECTION("cycle") {
+        /* Define query:
+     *
+     * A -- B -- C -- D
+     * |    | \  |    |
+     * E -- F -- G -- H
+     */
+        const std::string query = "\
+    SELECT * \
+    FROM A, B, C, D, E, F, G, H \
+    WHERE A.bid = B.aid AND B.cid = C.bid AND C.did = D.cid AND D.hid = H.did AND A.eid = E.aid AND F.eid = G.fid \
+                              AND B.fid = F.bid AND G.cid = C.gid AND H.gid = G.hid AND E.fid = F.eid AND B.gid=G.bid;";
+
+    auto stmt = statement_from_string(diag, query);
+    REQUIRE(not diag.num_errors());
+    auto query_graph = QueryGraph::Build(*stmt);
+    auto &QG = *query_graph;
+
+    /* We first want to check whether blocks work correctly */
+    std::vector<Subproblem> blocks;
+    Subproblem cut_vertices;
+    QG.adjacency_matrix().compute_blocks_and_cut_vertices(blocks, cut_vertices, Subproblem::All(QG.num_sources()), 3);
+
+    Subproblem all = Subproblem::All(QG.num_sources());
+    REQUIRE(blocks.size() == 1);
+    REQUIRE(blocks[0] == all);
+    REQUIRE(cut_vertices.empty());
+
+    Optimizer_ResultDB_utils::bc_forest_t bc_forest = Optimizer_ResultDB_utils::build_bc_forest(blocks, cut_vertices);
+    REQUIRE(bc_forest[all].empty());
+
+    std::vector<Optimizer_ResultDB_utils::tree_problem_t> tree_problems = Optimizer_ResultDB_utils::create_tree_sets(bc_forest, blocks, Subproblem(0));
+    REQUIRE(tree_problems.size() == 1);
+    REQUIRE(tree_problems[0][0][0].first == all);
+    REQUIRE(tree_problems[0][0][0].second == all);
+
+    using PlanTable = PlanTableSmallOrDense;
+    PlanTable plan_table(QG);
+    init_PT_base_case(QG, plan_table);
+
+    /* First, check whether TVCs can be determined greedily and exhaustive */
+    std::unordered_map<Subproblem, Subproblem, SubproblemHash> folded_mapping;
+    std::unordered_map<Subproblem, Optimizer_ResultDB_utils::folding_table_entry_t, SubproblemHash> folded_map;
+
+    /* Exhaustive */
+    std::vector<std::vector<Subproblem>> tvc_sets_exhaustive = Optimizer_ResultDB_utils::get_tvc_sets(QG.adjacency_matrix(), tree_problems[0][0][0]);
+    REQUIRE(tvc_sets_exhaustive.size() == 7);
+    REQUIRE(tvc_sets_exhaustive[0][0] == Subproblem(34));
+    REQUIRE(tvc_sets_exhaustive[1][0] == Subproblem(66));
+    REQUIRE(tvc_sets_exhaustive[2][0] == Subproblem(98));
+    REQUIRE(tvc_sets_exhaustive[3][0] == Subproblem(68));
+    REQUIRE(tvc_sets_exhaustive[4][0] == Subproblem(34));
+    REQUIRE(tvc_sets_exhaustive[4][1] == Subproblem(68));
+    REQUIRE(tvc_sets_exhaustive[5][0] == Subproblem(70));
+    REQUIRE(tvc_sets_exhaustive[6][0] == Subproblem(102));
+
+    /* Greedy */
+    std::vector<Subproblem> greedy_folds;
+    Optimizer_ResultDB_utils::find_greedy_vertex_cuts(QG.adjacency_matrix(), tree_problems[0][0][0], greedy_folds);
+    REQUIRE(greedy_folds.size() == 2);
+    REQUIRE(greedy_folds[0] == Subproblem(34));
+    REQUIRE(greedy_folds[1] == Subproblem(68));
+
+    /* Try folding some example graphs, and test whether this works well. Also utilize recursive models. */
+    AdjacencyMatrix new_matrix(QG.adjacency_matrix());
+    Optimizer_ResultDB_utils::create_folded_adjacency_matrix(greedy_folds, QG.adjacency_matrix(), new_matrix, folded_mapping);
+
+    auto check_greedy_folding = [&](AdjacencyMatrix& matrix) {
+        /* The smallest node from each fold is always chosen as the anchor node */
+        REQUIRE(matrix[0] == Subproblem(18));
+        REQUIRE(matrix[1] == Subproblem(21));
+        REQUIRE(matrix[2] == Subproblem(138));
+        REQUIRE(matrix[3] == Subproblem(132));
+        REQUIRE(matrix[4] == Subproblem(3));
+        REQUIRE(matrix[5] == Subproblem(0));
+        REQUIRE(matrix[6] == Subproblem(0));
+        REQUIRE(matrix[7] == Subproblem(12));
+
+        /* Check whether the folded mapping is correct */
+        REQUIRE(folded_mapping[Subproblem(1)] == Subproblem(1));
+        REQUIRE(folded_mapping[Subproblem(2)] == Subproblem(34));
+        REQUIRE(folded_mapping[Subproblem(4)] == Subproblem(68));
+        REQUIRE(folded_mapping[Subproblem(8)] == Subproblem(8));
+        REQUIRE(folded_mapping[Subproblem(16)] == Subproblem(16));
+        REQUIRE(folded_mapping[Subproblem(128)] == Subproblem(128));
+    };
+    check_greedy_folding(new_matrix);
+
+    /* Check whether the same result will happen when using the complete greedy approach */
+    AdjacencyMatrix greedy_new_matrix(QG.adjacency_matrix());
+    folded_mapping = {};
+
+    Optimizer_ResultDB_utils::get_greedy_folded_graph(QG.adjacency_matrix(), greedy_new_matrix, tree_problems[0][0][0], folded_mapping);
+    check_greedy_folding(greedy_new_matrix);
+
+    folded_mapping = {};
+    Optimizer_ResultDB_utils::folding_table_entry_t result = Optimizer_ResultDB_utils::enumerate_block_problem(QG, QG.adjacency_matrix(), folded_mapping, folded_map, tree_problems[0][0][0], plan_table, true);
+    REQUIRE(result->first.size() == 4);
+    REQUIRE(result->first[0] == Subproblem(1));
+    REQUIRE(result->first[1] == Subproblem(50));
+    REQUIRE(result->first[2] == Subproblem(68));
+    REQUIRE(result->first[3] == Subproblem(136));
+
+    /* Now perform a full check to verify the correctness of the entire stack, greedy */
+    Optimizer_ResultDB_utils::dp_resultdb_with_plantable<PlanTableSmallOrDense>(QG);
+    Options::Get().result_db_optimizer = Options::DP_ResultDB_Exhaustive;
+        stmt = statement_from_string(diag, query);
+        REQUIRE(not diag.num_errors());
+        query_graph = QueryGraph::Build(*stmt);
+        auto &QG2 = *query_graph;
+        /* Now perform a full check to verify the correctness of the entire stack, greedy */
+        Optimizer_ResultDB_utils::dp_resultdb_with_plantable<PlanTableSmallOrDense>(QG2);
+    }
+    SECTION("chain") {
+        /* Define query:
+*
+* A -- B -- C -- D
+* |
+* E -- F -- G -- H
+*/
+        const std::string query = "\
+    SELECT * \
+    FROM A, B, C, D, E, F, G, H \
+    WHERE A.bid = B.aid AND B.cid = C.bid AND C.did = D.cid AND A.eid = E.aid AND F.eid = G.fid \
+                                AND H.gid = G.hid AND E.fid=F.eid;";
+
+        auto stmt = statement_from_string(diag, query);
+        REQUIRE(not diag.num_errors());
+        auto query_graph = QueryGraph::Build(*stmt);
+        auto &QG = *query_graph;
+
+        /* Full Stack evaluation */
+        Optimizer_ResultDB_utils::dp_resultdb_with_plantable<PlanTableSmallOrDense>(QG);
+    }
+
+}
+
+TEST_CASE("Optimizer/ResultDB/Problems/2", "[IR]") {
+    Catalog::Clear();
+    Catalog &Cat = Catalog::Get();
+    auto &db = Cat.add_database(Cat.pool("db"));
+    Cat.set_database_in_use(db);
+    Diagnostic diag(false, std::cout, std::cerr);
+
+    /* Create pooled strings. */
+    ThreadSafePooledString str_A = Cat.pool("A");
+    ThreadSafePooledString str_B = Cat.pool("B");
+    ThreadSafePooledString str_C = Cat.pool("C");
+    ThreadSafePooledString str_D = Cat.pool("D");
+    ThreadSafePooledString str_E = Cat.pool("E");
+    ThreadSafePooledString str_F = Cat.pool("F");
+    ThreadSafePooledString str_G = Cat.pool("G");
+    ThreadSafePooledString str_H = Cat.pool("H");
+    ThreadSafePooledString str_I = Cat.pool("I");
+    ThreadSafePooledString str_J = Cat.pool("J");
+
+    ThreadSafePooledString col_id = Cat.pool("id");
+    ThreadSafePooledString col_aid = Cat.pool("aid");
+    ThreadSafePooledString col_bid = Cat.pool("bid");
+    ThreadSafePooledString col_cid = Cat.pool("cid");
+    ThreadSafePooledString col_did = Cat.pool("did");
+    ThreadSafePooledString col_eid = Cat.pool("eid");
+    ThreadSafePooledString col_fid = Cat.pool("fid");
+    ThreadSafePooledString col_gid = Cat.pool("gid");
+    ThreadSafePooledString col_hid = Cat.pool("hid");
+    ThreadSafePooledString col_iid = Cat.pool("iid");
+    ThreadSafePooledString col_jid = Cat.pool("jid");
+
+    /* Create tables. */
+    Table &tbl_A = db.add_table(str_A);
+    Table &tbl_B = db.add_table(str_B);
+    Table &tbl_C = db.add_table(str_C);
+    Table &tbl_D = db.add_table(str_D);
+    Table &tbl_E = db.add_table(str_E);
+    Table &tbl_F = db.add_table(str_F);
+    Table &tbl_G = db.add_table(str_G);
+    Table &tbl_H = db.add_table(str_H);
+    Table &tbl_I = db.add_table(str_I);
+    Table &tbl_J = db.add_table(str_J);
+
+    /* Add columns to tables. */
+    tbl_A.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_A.push_back(col_fid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_aid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_B.push_back(col_cid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_C.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_C.push_back(col_hid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_C.push_back(col_did, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_D.push_back(col_cid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_D.push_back(col_iid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_D.push_back(col_eid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_E.push_back(col_did, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_E.push_back(col_jid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_F.push_back(col_aid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_F.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_fid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_bid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_G.push_back(col_hid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_H.push_back(col_gid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_H.push_back(col_cid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_H.push_back(col_iid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_I.push_back(col_hid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_I.push_back(col_did, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_I.push_back(col_jid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_J.push_back(col_eid, Type::Get_Integer(Type::TY_Vector, 4));
+    tbl_J.push_back(col_iid, Type::Get_Integer(Type::TY_Vector, 4));
+
+    /* Add data to tables. */
+    tbl_A.store(Cat.create_store(tbl_A));
+    tbl_B.store(Cat.create_store(tbl_B));
+    tbl_C.store(Cat.create_store(tbl_C));
+    tbl_D.store(Cat.create_store(tbl_D));
+    tbl_E.store(Cat.create_store(tbl_E));
+    tbl_F.store(Cat.create_store(tbl_F));
+    tbl_G.store(Cat.create_store(tbl_G));
+    tbl_H.store(Cat.create_store(tbl_H));
+    tbl_I.store(Cat.create_store(tbl_I));
+    tbl_J.store(Cat.create_store(tbl_J));
+    tbl_A.layout(Cat.data_layout());
+    tbl_B.layout(Cat.data_layout());
+    tbl_C.layout(Cat.data_layout());
+    tbl_D.layout(Cat.data_layout());
+    tbl_E.layout(Cat.data_layout());
+    tbl_F.layout(Cat.data_layout());
+    tbl_G.layout(Cat.data_layout());
+    tbl_H.layout(Cat.data_layout());
+    tbl_I.layout(Cat.data_layout());
+    tbl_J.layout(Cat.data_layout());
+
+    constexpr std::size_t num_rows_A = 100000; // Avoid all joins with A at all costs!
+    constexpr std::size_t num_rows_B = 100;
+    constexpr std::size_t num_rows_C = 80;
+    constexpr std::size_t num_rows_D = 120;
+    constexpr std::size_t num_rows_E = 120;
+    constexpr std::size_t num_rows_F = 240;
+    constexpr std::size_t num_rows_G = 150;
+    constexpr std::size_t num_rows_H = 360;
+    constexpr std::size_t num_rows_I = 120;
+    constexpr std::size_t num_rows_J = 20;
+    for (std::size_t i = 0; i < num_rows_A; ++i) { tbl_A.store().append(); }
+    for (std::size_t i = 0; i < num_rows_B; ++i) { tbl_B.store().append(); }
+    for (std::size_t i = 0; i < num_rows_C; ++i) { tbl_C.store().append(); }
+    for (std::size_t i = 0; i < num_rows_D; ++i) { tbl_D.store().append(); }
+    for (std::size_t i = 0; i < num_rows_E; ++i) { tbl_E.store().append(); }
+    for (std::size_t i = 0; i < num_rows_F; ++i) { tbl_F.store().append(); }
+    for (std::size_t i = 0; i < num_rows_G; ++i) { tbl_G.store().append(); }
+    for (std::size_t i = 0; i < num_rows_H; ++i) { tbl_H.store().append(); }
+    for (std::size_t i = 0; i < num_rows_I; ++i) { tbl_I.store().append(); }
+    for (std::size_t i = 0; i < num_rows_J; ++i) { tbl_J.store().append(); }
+    SECTION("Check normal") {
+        /* Define query:
+*
+* A -- B -- C -- D -- E
+* |    |    |    |    |
+* F -- G -- H -- I -- J
+*/
+        const std::string query = "\
+    SELECT * \
+    FROM A, B, C, D, E, F, G, H, I, J \
+    WHERE A.bid = B.aid AND B.cid = C.bid AND C.did = D.cid AND D.eid = E.did AND A.fid = F.aid AND F.gid = G.fid AND G.hid = H.gid \
+                              AND H.iid = I.hid AND I.jid = J.iid AND B.gid = G.bid AND C.hid = H.cid AND D.iid=I.did AND E.jid = J.eid;";
+
+        auto stmt = statement_from_string(diag, query);
+        REQUIRE(not diag.num_errors());
+        auto query_graph = QueryGraph::Build(*stmt);
+        auto &QG = *query_graph;
+
+        /* Now perform a full check to verify the correctness of the entire stack, greedy */
+        Optimizer_ResultDB_utils::dp_resultdb_with_plantable<PlanTableSmallOrDense>(QG);
     }
 }

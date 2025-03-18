@@ -1,0 +1,12 @@
+{
+	"job": [
+		{"relations": ["an"], "size": 674692, "reductions": [{"right_relations": ["n", "t", "it", "pi", "ci", "ml", "lt"], "size": 7}]},
+		{"relations": ["ci"], "size": 36244344, "reductions": [{"right_relations": ["n", "it", "pi", "an"], "size": 2196}, {"right_relations": ["t", "lt", "ml"], "size": 53772}, {"right_relations": ["an", "pi", "n", "it", "lt", "t", "ml"], "size": 8}]},
+		{"relations": ["it"], "size": 1, "reductions": [{"right_relations": ["pi", "ci", "t", "an", "n", "ml", "lt"], "size": 1}]},
+		{"relations": ["lt"], "size": 1, "reductions": [{"right_relations": ["ml", "n", "an", "ci", "t", "pi", "it"], "size": 1}]},
+		{"relations": ["ml"], "size": 29997, "reductions": [{"right_relations": ["t", "an", "pi", "n", "ci", "it"], "size": 44}, {"right_relations": ["lt"], "size": 5186}, {"right_relations": ["lt", "an", "n", "pi", "it", "ci", "t"], "size": 13}]},
+		{"relations": ["n"], "size": 543291, "reductions": [{"right_relations": ["an"], "size": 59692}, {"right_relations": ["pi", "it"], "size": 17}, {"right_relations": ["ci", "lt", "ml", "t"], "size": 6104}, {"right_relations": ["it", "pi", "ci", "t", "ml", "lt"], "size": 3}, {"right_relations": ["it", "an", "pi"], "size": 13}, {"right_relations": ["ci", "t", "ml", "lt", "an"], "size": 2629}, {"right_relations": ["it", "pi", "ci", "t", "ml", "lt", "an"], "size": 3}]},
+		{"relations": ["pi"], "size": 64, "reductions": [{"right_relations": ["n", "t", "ml", "ci", "an", "lt"], "size": 3}, {"right_relations": ["it"], "size": 64}, {"right_relations": ["it", "an", "ml", "n", "lt", "ci", "t"], "size": 3}]},
+		{"relations": ["t"], "size": 340186, "reductions": [{"right_relations": ["ci", "pi", "it", "an", "n"], "size": 264}, {"right_relations": ["ml", "lt"], "size": 820}, {"right_relations": ["lt", "ml", "an", "n", "pi", "it", "ci"], "size": 7}]},
+	]
+}

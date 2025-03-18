@@ -8,7 +8,7 @@ from functools import reduce
 from pathlib import Path
 from typing import Any
 from query_utility import Relation, JoinGraph
-import query_definitions as q_def
+import job_query_definitions as q_def
 import shutil
 
 OUTPUT_DIR = "benchmark/result-db-eval"
@@ -20,7 +20,7 @@ def write_to_file(output_file: str, text: str):
 
 
 def create_injected_cardinalities(
-    join_graph: JoinGraph, query_name: str, config, cardinality_file_name: str,
+    join_graph: JoinGraph, query_name: str, config, cardinality_file_name: str, acyclic: bool = False
 ) -> None:
     # enumerate each subproblem (of sizes 1, 2, 3, ...)
     # for each subproblem, check if connected
@@ -49,7 +49,8 @@ def create_injected_cardinalities(
                 for f in r.filters:  # add filters
                     if num_filter != 0:
                         where_clause += " AND"
-                    where_clause += f"\n\t{f}"
+                    new_f = f.replace('"', "'")
+                    where_clause += f"\n\t{new_f}"
                     num_filter += 1
 
             # compute join predicates
@@ -66,14 +67,14 @@ def create_injected_cardinalities(
         return from_clause, where_clause
 
     def create_select_for_view(relation_set: set[Relation]) -> str:
-        # Make each returned attribute unique by prefixing it with its relation name
+        # Make each returned attribute unique by prefixing it with its relation alias
         adapted_select_clause = f"SELECT "
         for idx_S, r in enumerate(relation_set):
             for idx_attr, attr in enumerate(r.attributes):
                 if idx_S == len(relation_set) - 1 and idx_attr == len(r.attributes) - 1:
-                    adapted_select_clause += f"{r.alias}.{attr} AS {r.name}_{attr}"
+                    adapted_select_clause += f"{r.alias}.{attr} AS {r.alias}_{attr}"
                 else:
-                    adapted_select_clause += f"{r.alias}.{attr} AS {r.name}_{attr}, "
+                    adapted_select_clause += f"{r.alias}.{attr} AS {r.alias}_{attr}, "
         return adapted_select_clause
 
     def create_reduction(
@@ -197,7 +198,9 @@ def create_injected_cardinalities(
 
             view_query = f"DROP VIEW IF EXISTS to_be_reduced;\nCREATE VIEW to_be_reduced AS\n{adapted_select_clause}\n{from_clause}\n{where_clause};"
 
-            # Compute (relevant) semi-join reductions for Yannakakis optimizations
+            # Compute (relevant) semi-join reductions for Yannakakis optimizations, for |S| > 1 only when cyclic
+            if acyclic and len(S) > 1:
+                continue
             reductions = f"["
             S_neighbors = join_graph.neighbors_of_set(S)
             checked = set()
@@ -259,45 +262,53 @@ if __name__ == "__main__":
     config["database"] = "imdb"
     config["card_entry"] = "job"
 
-    q1a = q_def.create_q1a()
-    create_injected_cardinalities(q1a, "q1a", config, f"{OUTPUT_DIR}/job/q1a_injected_cardinalities.json")
+    job_queries = [
+        "1b",
+        "2a",
+        "3c",
+        "4a",
+        "5c",
+        "7a",
+        "8a",
+        "9c",
+        "10c",
+        "11c",
+        "12a",
+        "14a",
+        "15d",
+        "18c",
+        "19a",
+        "21a",
+        "22c",
+        "23a",
+        "24a",
+        "25b",
+        "26a",
+        "27a",
+        "28c",
+        "30c",
+        "31a",
+        "33c",
+    ]
+    for query in job_queries:
+       print(f"Query: {query}")
+       create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/job/{query}_acyclic_injected_cardinalities.json", True)
 
-    q2a = q_def.create_q2a()
-    create_injected_cardinalities(q2a, "q2a", config, f"{OUTPUT_DIR}/job/q2a_injected_cardinalities.json")
-
-    q3b = q_def.create_q3b()
-    create_injected_cardinalities(q3b, "q3b", config, f"{OUTPUT_DIR}/job/q3b_injected_cardinalities.json")
-
-    q4a = q_def.create_q4a()
-    create_injected_cardinalities(q4a, "q4a", config, f"{OUTPUT_DIR}/job/q4a_injected_cardinalities.json")
-
-    q5b = q_def.create_q5b()
-    create_injected_cardinalities(q5b, "q5b", config, f"{OUTPUT_DIR}/job/q5b_injected_cardinalities.json")
-
-    q7b = q_def.create_q7b()
-    create_injected_cardinalities(q7b, "q7b", config, f"{OUTPUT_DIR}/job/q7b_injected_cardinalities.json")
-
-    q9b = q_def.create_q9b()
-    create_injected_cardinalities(q9b, "q9b", config, f"{OUTPUT_DIR}/job/q9b_injected_cardinalities.json")
-
-    q10a = q_def.create_q10a()
-    create_injected_cardinalities(q10a, "q10a", config, f"{OUTPUT_DIR}/job/q10a_injected_cardinalities.json")
-
-    config["database"] = "synthetic"
-    config["card_entry"] = "synthetic"
-
-    selectivities = [1800, 1400, 1000, 600, 200]
-    for index, selectivity in enumerate(reversed(selectivities)):
-        redundant_graph = q_def.create_synthetic_chain_join(selectivity)
-        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_chain/{(2*index) + 1}_injected_cardinalities.json')
-
-    for index, selectivity in enumerate(reversed(selectivities)):
-        redundant_graph = q_def.create_synthetic_cycle_join(selectivity)
-        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_cycle/{(2*index) + 1}_injected_cardinalities.json')
-
-    for index, selectivity in enumerate(reversed(selectivities)):
-        redundant_graph = q_def.create_synthetic_tvc_join(selectivity)
-        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_tvc/{(2*index) + 1}_injected_cardinalities.json')
+    # config["database"] = "synthetic"
+    # config["card_entry"] = "synthetic"
+    #
+    # selectivities = [1800, 1400, 1000, 600, 200]
+    # for index, selectivity in enumerate(reversed(selectivities)):
+    #     redundant_graph = q_def.create_synthetic_chain_join(selectivity)
+    #     create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_chain/{(2*index) + 1}_injected_cardinalities.json')
+    #
+    # for index, selectivity in enumerate(reversed(selectivities)):
+    #     redundant_graph = q_def.create_synthetic_cycle_join(selectivity)
+    #     create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_cycle/{(2*index) + 1}_injected_cardinalities.json')
+    #
+    # for index, selectivity in enumerate(reversed(selectivities)):
+    #     redundant_graph = q_def.create_synthetic_tvc_join(selectivity)
+    #     create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_tvc/{(2*index) + 1}_injected_cardinalities.json')
 
 
 

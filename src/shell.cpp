@@ -311,7 +311,7 @@ int main(int argc, const char **argv)
         [&](bool) { Options::Get().dryrun = true; });       /* Callback         */
     ADD(bool, Options::Get().result_db, false,                      /* Type, Var, Init  */
         nullptr, "--result-db",                                     /* Short, Long      */
-        "compute multipe result sets using semi-join reduction",    /* Description      */
+        "compute multiple result sets using semi-join reduction",    /* Description      */
         [&](bool) { Options::Get().result_db = true; });            /* Callback         */
     ADD(bool, Options::Get().optimize_result_db, false,                      /* Type, Var, Init  */
         nullptr, "--optimize-result-db",                                     /* Short, Long      */
@@ -320,11 +320,7 @@ int main(int argc, const char **argv)
     ADD(bool, Options::Get().greedy_cuts, false,                      /* Type, Var, Init  */
         nullptr, "--greedy-cuts",                                     /* Short, Long      */
         "use greedy two-vertex cuts",    /* Description      */
-        [&](bool) { Options::Get().greedy_cuts = true; });            /* Callback         */
-    ADD(bool, Options::Get().top_down, false,                      /* Type, Var, Init  */
-        nullptr, "--top-down",                                     /* Short, Long      */
-        "use top down enum for resultdb optimization",    /* Description      */
-        [&](bool) { Options::Get().top_down = true; });            /* Callback         */
+        [&](bool) { Options::Get().greedy_cuts = true; });            /* Callback         *//* Callback         */
     ADD(bool, Options::Get().yannakakis_heuristic, Options::YH_WeakCardinality,                      /* Type, Var, Init  */
         nullptr, "--yh-d",                                     /* Short, Long      */
         "use the decompose based heuristic for result db",    /* Description      */
@@ -357,6 +353,10 @@ int main(int argc, const char **argv)
         nullptr, "--dp_resultdb",                                     /* Short, Long      */
         "Use DP_ResultDB for the ResultDB enumeration",    /* Description      */
         [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB_Exhaustive,                      /* Type, Var, Init  */
+        nullptr, "--dp_resultdb_exhaustive",                                     /* Short, Long      */
+        "Use DP_ResultDB in exhaustive mode for the ResultDB enumeration",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB_Exhaustive; });
     ADD(bool, Options::Get().decompose, false,                      /* Type, Var, Init  */
         nullptr, "--decompose",                                     /* Short, Long      */
         "decompose single-table result into multiple result sets",   /* Description      */

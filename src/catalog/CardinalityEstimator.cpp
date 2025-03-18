@@ -142,6 +142,14 @@ CartesianProductEstimator::estimate_full_reduction(const m::QueryGraph &G, const
     return reduced_model;
 }
 
+std::unique_ptr<DataModel>
+CartesianProductEstimator::estimate_reduction(const QueryGraph &G, const DataModel &_model, Subproblem reduced_by) const {
+    auto model = as<const CartesianProductDataModel>(_model);
+    auto reduced_model = std::make_unique<CartesianProductDataModel>();
+    reduced_model->size = model.size; // The left is not reduced as a cartesian product is assumed.
+    return reduced_model;
+}
+
 template<typename PlanTable>
 std::unique_ptr<DataModel>
 CartesianProductEstimator::operator()(estimate_join_all_tag, PlanTable &&PT, const QueryGraph&, Subproblem to_join,
@@ -469,6 +477,35 @@ InjectionCardinalityEstimator::estimate_full_reduction(const m::QueryGraph &G, c
     model_fallback->size = model.size_;
     auto fallback_model = fallback_.estimate_full_reduction(G, *model_fallback, except);
     return std::make_unique<InjectionCardinalityDataModel>(model.subproblem_, reduced_by_all,
+                                                           fallback_.predict_cardinality(*fallback_model));
+}
+
+std::unique_ptr<DataModel>
+InjectionCardinalityEstimator::estimate_reduction(const m::QueryGraph &G, const m::DataModel &_model, Subproblem reduced_by) const
+{
+    auto &model = as<const InjectionCardinalityDataModel>(_model);
+
+    ThreadSafePooledString left_id = make_identifier(G, model.subproblem_);
+    ThreadSafePooledString neighbor_id = make_identifier(G, reduced_by);
+
+    if (auto left_it = cardinality_table_.find(left_id); left_it != cardinality_table_.end()) {
+        if (auto right_it = left_it->second.semi_join_table.find(neighbor_id); right_it != left_it->second.semi_join_table.end()) {
+            /* Clamp injected cardinality to at most the size of the left input,
+             * since the relation can not become larger. */
+            return std::make_unique<InjectionCardinalityDataModel>(model.subproblem_, reduced_by,
+                                                                   std::min(right_it->second, model.size_));
+        }
+    }
+
+    /* Fallback to CartesianProductEstimator.
+    if (not Options::Get().quiet)
+        std::cerr << "warning: failed to estimate the full reduction of " << left_id
+                  << '\n';
+    */
+    auto model_fallback = std::make_unique<CartesianProductEstimator::CartesianProductDataModel>();
+    model_fallback->size = model.size_;
+    auto fallback_model = fallback_.estimate_full_reduction(G, *model_fallback, reduced_by);
+    return std::make_unique<InjectionCardinalityDataModel>(model.subproblem_, reduced_by,
                                                            fallback_.predict_cardinality(*fallback_model));
 }
 
@@ -1001,6 +1038,21 @@ SpnEstimator::operator()(estimate_join_all_tag, PlanTable &&PT, const QueryGraph
 
 std::unique_ptr<DataModel>
 SpnEstimator::estimate_full_reduction(const QueryGraph &G, const DataModel &_model, Subproblem except) const
+{
+    //TODO: Not supported yet, currently just Cartesian Product is assumed
+    auto &model = as<const SpnDataModel>(_model);
+    auto new_model = std::make_unique<SpnDataModel>(model);
+
+    if (model.spns_.size() == 1) { new_model->max_frequencies_.emplace_back(model.num_rows_); }
+
+    new_model->num_rows_ = model.num_rows_;
+
+    return new_model;
+
+}
+
+std::unique_ptr<DataModel>
+SpnEstimator::estimate_reduction(const QueryGraph &G, const DataModel &_model, Subproblem reduced_by) const
 {
     //TODO: Not supported yet, currently just Cartesian Product is assumed
     auto &model = as<const SpnDataModel>(_model);

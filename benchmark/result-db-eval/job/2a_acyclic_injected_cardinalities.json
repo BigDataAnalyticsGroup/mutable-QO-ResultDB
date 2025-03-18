@@ -1,0 +1,9 @@
+{
+	"job": [
+		{"relations": ["cn"], "size": 9775, "reductions": [{"right_relations": ["mc", "k", "mk", "t"], "size": 1513}]},
+		{"relations": ["k"], "size": 1, "reductions": [{"right_relations": ["mk", "cn", "mc", "t"], "size": 1}]},
+		{"relations": ["mc"], "size": 2609129, "reductions": [{"right_relations": ["cn"], "size": 148132}, {"right_relations": ["t", "k", "mk"], "size": 148487}, {"right_relations": ["k", "cn", "t", "mk"], "size": 7834}]},
+		{"relations": ["mk"], "size": 4523930, "reductions": [{"right_relations": ["t", "cn", "mc"], "size": 1163958}, {"right_relations": ["k"], "size": 41840}, {"right_relations": ["cn", "k", "t", "mc"], "size": 4377}]},
+		{"relations": ["t"], "size": 2528312, "reductions": [{"right_relations": ["mc", "cn"], "size": 89547}, {"right_relations": ["mk", "k"], "size": 41819}, {"right_relations": ["cn", "mk", "k", "mc"], "size": 4377}]},
+	]
+}

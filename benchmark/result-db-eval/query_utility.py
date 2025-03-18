@@ -18,10 +18,10 @@ class Relation:
         self.projections = [] if projections is None else projections
 
     def __str__(self):
-        return self.name
+        return self.alias
 
     def __repr__(self):
-        return self.name
+        return self.alias
 
     def __eq__(self, other):
         return (self.id == other.id)
@@ -145,9 +145,9 @@ class JoinGraph:
         """
         neighbors: set[Relation] = set()
         for j in self.joins:
-            if (r.name == j.left_relation.name):
+            if (r.alias == j.left_relation.alias):
                 neighbors.add(j.right_relation)
-            elif (r.name == j.right_relation.name):
+            elif (r.alias == j.right_relation.alias):
                 neighbors.add(j.left_relation)
         return neighbors
 

@@ -8,7 +8,6 @@
 #include <mutable/mutable-config.hpp>
 #include <mutable/catalog/CardinalityEstimator.hpp>
 #include <mutable/catalog/CostFunction.hpp>
-#include <mutable/catalog/YannakakisHeuristic.hpp>
 #include <mutable/IR/Operator.hpp>
 #include <mutable/IR/QueryGraph.hpp>
 #include <mutable/util/ADT.hpp>
@@ -40,11 +39,8 @@ struct M_EXPORT PlanTableEntry
 {
     Subproblem left; ///< the left subproblem
     Subproblem right; ///< the right subproblem
-    Subproblem left_fold; ///< the left fold problem
-    Subproblem right_fold; ///< the right fold problem
     std::unique_ptr<DataModel> model; ///< the model of this subplan's result
     std::size_t tuple_size = std::numeric_limits<std::size_t>::infinity(); ///< the byte size of one tuple of this subproblem
-    double folding_cost = std::numeric_limits<double>::infinity(); ///< the folding cost of the subproblem
     double cost = std::numeric_limits<double>::infinity(); ///< the join cost of the subproblem
     ///> additional data associated to this `PlanTableEntry`; used for holistic optimization
     std::unique_ptr<PlanTableEntryData> data;
@@ -161,33 +157,6 @@ struct M_EXPORT PlanTableBase : crtp<Actual, PlanTableBase>
         }
     }
 
-    /** Update the entry for `left` joined with `right` (`left|right`) by considering plan `left` join `right`.  The
-     * entry's plan and cost is changed *only* if the plan's cost is less than the cost of the currently best plan.
-     * Note, that contrary to the regular update, we are not necessarily always interested in the join between different
-     * subproblems, as, depending on the assignment of cut vertices, we might stop the enumeration when only two
-     * subproblems are left. Note, that we also need the consider the Yannakakis heuristic for these cases.*/
-    void update_for_cycle_folding(const QueryGraph &G, const CardinalityEstimator &CE, const CostFunction &CF, const YannakakisHeuristic &YH,
-                Subproblem left, Subproblem right, const cnf::CNF &condition)
-    {
-
-        M_insist(not left.empty(), "left side must not be empty");
-        M_insist(not right.empty(), "right side must not be empty");
-        /* Case 2: We are not necessarily interested in the join between both relations, therefore we need to consider
-        * the costs of joining both left and right in the first place, together with estimating the costs of splitting
-        * them up again
-        * TODO: Use condition*/
-        auto &entry = operator[](left | right);
-        auto cost = YH.estimate(G, CE, actual(), left, right) + operator[](left).cost + operator[](right).cost;
-        /*----- Update plan table entry. -----------------------------------------------------------------------------*/
-        if (not has_plan(left | right) or cost < entry.folding_cost) {
-            /* If there is no plan yet for this subproblem or the current plan is better than the best plan yet, update
-             * the plan and costs for this subproblem. */
-            entry.folding_cost = cost;
-            entry.left_fold = left;
-            entry.right_fold = right;
-        }
-    }
-
     /** Resets the costs for all entries in the table. */
     void reset_costs() { actual().reset_costs(); }
 
@@ -288,7 +257,7 @@ struct M_EXPORT PlanTableSmallOrDense : PlanTableBase<PlanTableSmallOrDense>
         if (s.size() == 1) return true;
         auto &e = operator[](s);
         M_insist(e.left.empty() == e.right.empty(), "either both sides are not set or both sides are set");
-        return not (e.left.empty() && e.left_fold.empty());
+        return not e.left.empty();
     }
 
     void reset_costs() {
@@ -374,7 +343,7 @@ struct M_EXPORT PlanTableLargeAndSparse : PlanTableBase<PlanTableLargeAndSparse>
         if (auto it = table_.find(s); it != table_.end()) {
             auto &e = it->second;
             M_insist(e.left.empty() == e.right.empty(), "either both sides are not set or both sides are set");
-            return not (e.left.empty() && e.left_fold.empty());
+            return not e.left.empty();
         } else {
             return false;
         }

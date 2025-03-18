@@ -144,7 +144,7 @@ TEST_CASE("AdjacencyMatrix/Standalone Matrix/Biconnected", "[core][util][unit]")
         std::vector<SmallBitset> blocks;
         SmallBitset cut_vertices;
 
-        adj_mat.compute_blocks_and_cut_vertices(blocks, cut_vertices, 3);
+        adj_mat.compute_blocks_and_cut_vertices(blocks, cut_vertices, SmallBitset(31) | SmallBitset(240), 3);
 
         REQUIRE(cut_vertices == correct_cut_vertices);
         REQUIRE(blocks.size() == correct_blocks.size());
@@ -168,7 +168,7 @@ TEST_CASE("AdjacencyMatrix/Standalone Matrix/Biconnected", "[core][util][unit]")
         std::vector<SmallBitset> blocks;
         SmallBitset cut_vertices;
 
-        adj_mat.compute_blocks_and_cut_vertices(blocks, cut_vertices);
+        adj_mat.compute_blocks_and_cut_vertices(blocks, cut_vertices, SmallBitset::All(10));
 
         REQUIRE(cut_vertices == correct_cut_vertices);
         REQUIRE(blocks.size() == correct_blocks.size());
@@ -183,7 +183,7 @@ TEST_CASE("AdjacencyMatrix/Standalone Matrix/Biconnected", "[core][util][unit]")
         const AdjacencyMatrix &adjMat_ConstRef = adj_mat;
 
         std::unordered_set<SmallBitset, SmallBitsetHash> correct_two_vertex_cuts = {
-                SmallBitset(9), SmallBitset(10), SmallBitset(96)
+                SmallBitset(9), SmallBitset(10)
         };
 
         std::vector<SmallBitset> two_vertex_cuts_0;
@@ -192,28 +192,28 @@ TEST_CASE("AdjacencyMatrix/Standalone Matrix/Biconnected", "[core][util][unit]")
 
         /* None already used */
         SmallBitset already_used;
-        adj_mat.find_two_vertex_cuts(two_vertex_cuts_0, SmallBitset(31), already_used);
+        two_vertex_cuts_0 = adj_mat.find_two_vertex_cuts(SmallBitset(31), SmallBitset(31));
         REQUIRE(two_vertex_cuts_0.size() == 2);
+        for (const auto tvc: two_vertex_cuts_0)
+            REQUIRE(correct_two_vertex_cuts.contains(tvc));
 
-        adj_mat.find_two_vertex_cuts(two_vertex_cuts_0, SmallBitset(240), already_used);
-        REQUIRE(two_vertex_cuts_0.size() == 3);
-        for (auto cut: two_vertex_cuts_0) {
-            REQUIRE(correct_two_vertex_cuts.contains(cut));
-        }
+        two_vertex_cuts_0 = adj_mat.find_two_vertex_cuts(SmallBitset(240), SmallBitset(240));
+        REQUIRE(two_vertex_cuts_0.size() == 1);
+        REQUIRE(two_vertex_cuts_0[0] == SmallBitset(96));
 
         already_used = SmallBitset::Singleton(3);
-        adj_mat.find_two_vertex_cuts(two_vertex_cuts_1, SmallBitset(31), already_used);
+        two_vertex_cuts_1 = adj_mat.find_two_vertex_cuts(SmallBitset(31), SmallBitset(31) - already_used);
         REQUIRE(two_vertex_cuts_1.empty());
 
-        adj_mat.find_two_vertex_cuts(two_vertex_cuts_1, SmallBitset(240), already_used);
+        two_vertex_cuts_1 = adj_mat.find_two_vertex_cuts(SmallBitset(240), SmallBitset(240) - already_used);
         REQUIRE(two_vertex_cuts_1.size() == 1);
         REQUIRE(two_vertex_cuts_1.front() == SmallBitset(96));
 
         already_used = SmallBitset(104);
-        adj_mat.find_two_vertex_cuts(two_vertex_cuts_2, SmallBitset(31), already_used);
+        two_vertex_cuts_2 = adj_mat.find_two_vertex_cuts(SmallBitset(31), SmallBitset(31) - already_used);
         REQUIRE(two_vertex_cuts_2.empty());
 
-        adj_mat.find_two_vertex_cuts(two_vertex_cuts_2, SmallBitset(240), already_used);
+        two_vertex_cuts_2 = adj_mat.find_two_vertex_cuts(SmallBitset(240), SmallBitset(240) - already_used);
         REQUIRE(two_vertex_cuts_2.empty());
 
     }
@@ -254,7 +254,7 @@ TEST_CASE("AdjacencyMatrix/Standalone Matrix/Two Vertex Cuts", "[core][util][uni
 
     SmallBitset already_used;
 
-    adj_mat.find_two_vertex_cuts(two_vertex_cuts_0, SmallBitset::All(10), already_used);
+    two_vertex_cuts_0 = adj_mat.find_two_vertex_cuts(SmallBitset::All(10), SmallBitset::All(10));
 
     REQUIRE(two_vertex_cuts_0.size() == 4);
     for (auto cut: two_vertex_cuts_0) {
@@ -262,7 +262,7 @@ TEST_CASE("AdjacencyMatrix/Standalone Matrix/Two Vertex Cuts", "[core][util][uni
     }
 
     already_used = Subproblem(20);
-    adj_mat.find_two_vertex_cuts(two_vertex_cuts_1, SmallBitset::All(10), already_used);
+    two_vertex_cuts_1 = adj_mat.find_two_vertex_cuts(SmallBitset::All(10), SmallBitset::All(10) - already_used);
 
     REQUIRE(two_vertex_cuts_1.size() == 2);
     for (auto cut: two_vertex_cuts_1) {

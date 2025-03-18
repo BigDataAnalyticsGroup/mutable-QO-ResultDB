@@ -1,0 +1,12 @@
+{
+	"job": [
+		{"relations": ["cn"], "size": 84843, "reductions": [{"right_relations": ["mc", "t", "it2", "mi_idx", "ct", "mi", "it1"], "size": 347}]},
+		{"relations": ["ct"], "size": 1, "reductions": [{"right_relations": ["mc", "t", "it2", "cn", "mi_idx", "mi", "it1"], "size": 1}]},
+		{"relations": ["it1"], "size": 1, "reductions": [{"right_relations": ["mi", "mc", "it2", "mi_idx", "t", "ct", "cn"], "size": 1}]},
+		{"relations": ["it2"], "size": 1, "reductions": [{"right_relations": ["mi_idx", "mi", "ct", "mc", "t", "cn", "it1"], "size": 1}]},
+		{"relations": ["mc"], "size": 2609129, "reductions": [{"right_relations": ["ct"], "size": 1334883}, {"right_relations": ["cn"], "size": 1153798}, {"right_relations": ["mi_idx", "mi", "it1", "it2", "t"], "size": 1859}, {"right_relations": ["cn", "ct"], "size": 552328}, {"right_relations": ["cn", "it1", "mi_idx", "t", "mi", "it2"], "size": 671}, {"right_relations": ["ct", "it1", "mi_idx", "t", "mi", "it2"], "size": 694}, {"right_relations": ["cn", "ct", "it1", "mi_idx", "t", "mi", "it2"], "size": 385}]},
+		{"relations": ["mi"], "size": 274644, "reductions": [{"right_relations": ["t", "it2", "ct", "mc", "mi_idx", "cn"], "size": 276}, {"right_relations": ["it1"], "size": 272720}, {"right_relations": ["it1", "cn", "mc", "mi_idx", "it2", "ct", "t"], "size": 276}]},
+		{"relations": ["mi_idx"], "size": 52629, "reductions": [{"right_relations": ["t", "it1", "mi"], "size": 2122}, {"right_relations": ["it2"], "size": 15849}, {"right_relations": ["mc", "cn", "ct"], "size": 22794}, {"right_relations": ["cn", "mc", "ct", "it1", "t", "mi"], "size": 861}, {"right_relations": ["cn", "it2", "mc", "ct"], "size": 9350}, {"right_relations": ["it1", "it2", "t", "mi"], "size": 544}, {"right_relations": ["cn", "mc", "ct", "it1", "t", "mi", "it2"], "size": 268}]},
+		{"relations": ["t"], "size": 445860, "reductions": [{"right_relations": ["mi", "it1"], "size": 36006}, {"right_relations": ["mi_idx", "ct", "cn", "it2", "mc"], "size": 2595}, {"right_relations": ["it1", "mi", "cn", "mc", "mi_idx", "it2", "ct"], "size": 268}]},
+	]
+}

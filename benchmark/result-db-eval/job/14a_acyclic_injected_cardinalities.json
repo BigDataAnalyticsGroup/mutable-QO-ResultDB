@@ -1,0 +1,12 @@
+{
+	"job": [
+		{"relations": ["it1"], "size": 1, "reductions": [{"right_relations": ["mi", "mk", "it2", "t", "mi_idx", "kt", "k"], "size": 1}]},
+		{"relations": ["it2"], "size": 1, "reductions": [{"right_relations": ["mi_idx", "mi", "kt", "mk", "t", "k", "it1"], "size": 1}]},
+		{"relations": ["k"], "size": 3, "reductions": [{"right_relations": ["mk", "mi", "it2", "t", "mi_idx", "kt", "it1"], "size": 3}]},
+		{"relations": ["kt"], "size": 1, "reductions": [{"right_relations": ["t", "mk", "mi", "it2", "mi_idx", "k", "it1"], "size": 1}]},
+		{"relations": ["mi"], "size": 706674, "reductions": [{"right_relations": ["mi_idx", "it2", "kt", "mk", "t", "k"], "size": 595}, {"right_relations": ["it1"], "size": 614251}, {"right_relations": ["it1", "it2", "mi_idx", "mk", "kt", "k", "t"], "size": 521}]},
+		{"relations": ["mi_idx"], "size": 1337634, "reductions": [{"right_relations": ["t", "kt"], "size": 50900}, {"right_relations": ["mk", "k"], "size": 68365}, {"right_relations": ["mi", "it1"], "size": 619387}, {"right_relations": ["it2"], "size": 454230}, {"right_relations": ["kt", "mk", "k", "t"], "size": 2373}, {"right_relations": ["kt", "it2", "t"], "size": 17272}, {"right_relations": ["kt", "mi", "it1", "t"], "size": 24977}, {"right_relations": ["k", "it2", "mk"], "size": 23199}, {"right_relations": ["k", "mi", "it1", "mk"], "size": 42977}, {"right_relations": ["it2", "mi", "it1"], "size": 209792}, {"right_relations": ["kt", "mk", "k", "t", "it2"], "size": 806}, {"right_relations": ["kt", "mk", "k", "t", "it1", "mi"], "size": 1420}, {"right_relations": ["kt", "it2", "t", "it1", "mi"], "size": 8447}, {"right_relations": ["k", "it2", "mk", "it1", "mi"], "size": 14568}, {"right_relations": ["kt", "mk", "k", "t", "it2", "it1", "mi"], "size": 483}]},
+		{"relations": ["mk"], "size": 4523930, "reductions": [{"right_relations": ["mi_idx", "it2", "kt", "mi", "t", "it1"], "size": 70379}, {"right_relations": ["k"], "size": 37091}, {"right_relations": ["k", "it1", "mi", "mi_idx", "kt", "it2", "t"], "size": 703}]},
+		{"relations": ["t"], "size": 391666, "reductions": [{"right_relations": ["kt"], "size": 98992}, {"right_relations": ["mi_idx", "mi", "k", "mk", "it2", "it1"], "size": 666}, {"right_relations": ["kt", "it1", "mi", "mi_idx", "k", "it2", "mk"], "size": 483}]},
+	]
+}

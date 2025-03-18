@@ -122,13 +122,6 @@ systems:
               --result-db
             pattern:
               Execution Time: '^Compute the logical query plan:.*'
-          'TD_Root':
-            args: >-
-              --result-db
-              --optimize-result-db
-              --td_root
-            pattern:
-              Execution Time: '^Compute the logical query plan:.*'
           'DP_ResultDB':
             args: >-
               --result-db
