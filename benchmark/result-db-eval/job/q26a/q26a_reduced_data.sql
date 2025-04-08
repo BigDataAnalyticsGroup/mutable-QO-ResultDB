@@ -1,0 +1,12 @@
+\copy (SELECT DISTINCT * FROM complete_cast AS cc ) TO 'benchmark/result-db-eval/job/q26a/data/26a_cc.csv' CSV;
+\copy (SELECT DISTINCT * FROM comp_cast_type AS cct1  WHERE cct1.kind = 'cast') TO 'benchmark/result-db-eval/job/q26a/data/26a_cct1.csv' CSV;
+\copy (SELECT DISTINCT * FROM comp_cast_type AS cct2  WHERE cct2.kind LIKE '%complete%') TO 'benchmark/result-db-eval/job/q26a/data/26a_cct2.csv' CSV;
+\copy (SELECT DISTINCT * FROM char_name AS chn  WHERE chn.name IS NULL AND (chn.name LIKE '%man%' OR chn.name LIKE '%Man%')) TO 'benchmark/result-db-eval/job/q26a/data/26a_chn.csv' CSV;
+\copy (SELECT DISTINCT * FROM cast_info AS ci ) TO 'benchmark/result-db-eval/job/q26a/data/26a_ci.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it2  WHERE it2.info = 'rating') TO 'benchmark/result-db-eval/job/q26a/data/26a_it2.csv' CSV;
+\copy (SELECT DISTINCT * FROM keyword AS k  WHERE (k.keyword = 'superhero' OR k.keyword = 'marvel-comics' OR k.keyword = 'based-on-comic' OR k.keyword = 'tv-special' OR k.keyword = 'fight' OR k.keyword = 'violence' OR k.keyword = 'magnet' OR k.keyword = 'web' OR k.keyword = 'claw' OR k.keyword = 'laser')) TO 'benchmark/result-db-eval/job/q26a/data/26a_k.csv' CSV;
+\copy (SELECT DISTINCT * FROM kind_type AS kt  WHERE kt.kind = 'movie') TO 'benchmark/result-db-eval/job/q26a/data/26a_kt.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info_idx AS mi_idx  WHERE mi_idx.info > '7.0') TO 'benchmark/result-db-eval/job/q26a/data/26a_mi_idx.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_keyword AS mk ) TO 'benchmark/result-db-eval/job/q26a/data/26a_mk.csv' CSV;
+\copy (SELECT DISTINCT * FROM name AS n ) TO 'benchmark/result-db-eval/job/q26a/data/26a_n.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t  WHERE t.production_year > 2000) TO 'benchmark/result-db-eval/job/q26a/data/26a_t.csv' CSV;

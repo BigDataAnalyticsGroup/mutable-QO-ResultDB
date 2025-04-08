@@ -1,0 +1,12 @@
+\copy (SELECT DISTINCT * FROM aka_name AS an ) TO 'benchmark/result-db-eval/job/q24a/data/24a_an.csv' CSV;
+\copy (SELECT DISTINCT * FROM char_name AS chn ) TO 'benchmark/result-db-eval/job/q24a/data/24a_chn.csv' CSV;
+\copy (SELECT DISTINCT * FROM cast_info AS ci  WHERE (ci.note = '(voice)' OR ci.note = '(voice: Japanese version)' OR ci.note = '(voice) (uncredited)' OR ci.note = '(voice: English version)')) TO 'benchmark/result-db-eval/job/q24a/data/24a_ci.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_name AS cn  WHERE cn.country_code ='[us]') TO 'benchmark/result-db-eval/job/q24a/data/24a_cn.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it  WHERE it.info = 'release dates') TO 'benchmark/result-db-eval/job/q24a/data/24a_it.csv' CSV;
+\copy (SELECT DISTINCT * FROM keyword AS k  WHERE (k.keyword = 'hero' OR k.keyword = 'martial-arts' OR k.keyword = 'hand-to-hand-combat')) TO 'benchmark/result-db-eval/job/q24a/data/24a_k.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc ) TO 'benchmark/result-db-eval/job/q24a/data/24a_mc.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info AS mi  WHERE mi.info IS NULL AND (mi.info LIKE 'Japan:%201%' OR mi.info LIKE 'USA:%201%')) TO 'benchmark/result-db-eval/job/q24a/data/24a_mi.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_keyword AS mk ) TO 'benchmark/result-db-eval/job/q24a/data/24a_mk.csv' CSV;
+\copy (SELECT DISTINCT * FROM name AS n  WHERE n.gender ='f' AND n.name LIKE '%An%') TO 'benchmark/result-db-eval/job/q24a/data/24a_n.csv' CSV;
+\copy (SELECT DISTINCT * FROM role_type AS rt  WHERE rt.role ='actress') TO 'benchmark/result-db-eval/job/q24a/data/24a_rt.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t  WHERE t.production_year > 2010) TO 'benchmark/result-db-eval/job/q24a/data/24a_t.csv' CSV;

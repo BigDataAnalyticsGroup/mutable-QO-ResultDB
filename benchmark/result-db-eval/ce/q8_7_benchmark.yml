@@ -1,0 +1,77 @@
+description: CE q8_7.
+suite: ce
+benchmark: ce
+name: q8_7
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'dblp2':
+        file: 'benchmark/result-db-eval/ce/data/dblp2.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp8':
+        file: 'benchmark/result-db-eval/ce/data/dblp8.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp17':
+        file: 'benchmark/result-db-eval/ce/data/dblp17.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp20':
+        file: 'benchmark/result-db-eval/ce/data/dblp20.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/ce/q8_7_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'WasmV8, ResultDB_SemiJoin':
+                args: --result-db
+                pattern: '^Process the query:.*'
+            'WasmV8, ResultDB_Decompose':
+                args: --decompose
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Fold':
+                args: --result-db --optimize-result-db --td_root
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Fold_NoTVC':
+                args: --result-db --optimize-result-db --td_root --ignore_tvcs
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_RESULTDB':
+                args: --result-db --optimize-result-db --td_resultdb
+                pattern: '^Process the query:.*'
+        cases:
+            0: 'SELECT * FROM dblp2, dblp8 AS dblp8_1, dblp8 AS dblp8_2, dblp17, dblp20 AS dblp20_4, dblp20 AS dblp20_5 WHERE dblp2.s = dblp8_1.s AND dblp2.d = dblp8_2.s AND dblp8_1.d = dblp8_2.d AND dblp8_2.d = dblp17.s AND dblp17.s = dblp20_4.s AND dblp17.d = dblp20_5.s AND dblp20_4.d = dblp20_5.d;
+'

@@ -1,0 +1,157 @@
+description: Join-Order Benchmark q21a.
+suite: job
+benchmark: job
+name: q21a
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'cn':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_cn.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'country_code': 'CHAR 6'
+            'imdb_id': 'INT'
+            'name_pcode_nf': 'CHAR 5'
+            'name_pcode_sf': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'ct':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_ct.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'kind': 'CHAR 32 NOT NULL'
+    'k':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_k.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'keyword': 'CHAR 74 NOT NULL'
+            'phonetic_code': 'CHAR 5'
+    'lt':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_lt.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'link': 'CHAR 32 NOT NULL'
+    'mc':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_mc.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'company_id': 'INT NOT NULL'
+            'company_type_id': 'INT NOT NULL'
+            'note': 'CHAR 100'
+    'mi':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_mi.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'info_type_id': 'INT NOT NULL'
+            'info': 'CHAR 43 NOT NULL'
+            'note': 'CHAR 19'
+    'mk':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_mk.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'keyword_id': 'INT NOT NULL'
+    'ml':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_ml.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'linked_movie_id': 'INT NOT NULL'
+            'link_type_id': 'INT NOT NULL'
+    't':
+        file: 'benchmark/result-db-eval/job/q21a/data/21a_t.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'title': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 5'
+            'kind_id': 'INT NOT NULL'
+            'production_year': 'INT'
+            'imdb_id': 'INT'
+            'phonetic_code': 'CHAR 5'
+            'episode_of_id': 'INT'
+            'season_nr': 'INT'
+            'episode_nr': 'INT'
+            'series_years': 'CHAR 9'
+            'md5sum': 'CHAR 32'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/job/q21a/q21a_cyclic_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'ResultDB-Heuristic':
+                args: >-
+                    --result-db
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'TD_ResultDB':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'TD_Fold':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                    --td_root
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'TD_Fold_NoTVC':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                    --td_root
+                    --ignore_tvcs
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'Decompose':
+                args: >-
+                    --decompose
+                pattern:
+                    Execution Time: '^Process the query:.*'
+        cases:
+            0: 'SELECT cn.name, lt.link, t.title FROM cn AS cn, ct AS ct, k AS k, lt AS lt, mc AS mc, mi AS mi, mk AS mk, ml AS ml, t AS t WHERE lt.id = ml.link_type_id AND ml.movie_id = t.id AND t.id = mk.movie_id AND mk.keyword_id = k.id AND mc.company_type_id = ct.id AND mc.company_id = cn.id AND ml.movie_id = mc.movie_id AND mk.movie_id = mi.movie_id;'

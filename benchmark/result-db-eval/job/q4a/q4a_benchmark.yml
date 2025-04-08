@@ -1,0 +1,96 @@
+description: Join-Order Benchmark q4a.
+suite: job
+benchmark: job
+name: q4a
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'it':
+        file: 'benchmark/result-db-eval/job/q4a/data/4a_it.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'info': 'CHAR 32 NOT NULL'
+    'k':
+        file: 'benchmark/result-db-eval/job/q4a/data/4a_k.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'keyword': 'CHAR 74 NOT NULL'
+            'phonetic_code': 'CHAR 5'
+    'mi_idx':
+        file: 'benchmark/result-db-eval/job/q4a/data/4a_mi_idx.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'info_type_id': 'INT NOT NULL'
+            'info': 'CHAR 3 NOT NULL'
+            'note': 'CHAR 1'
+    'mk':
+        file: 'benchmark/result-db-eval/job/q4a/data/4a_mk.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'keyword_id': 'INT NOT NULL'
+    't':
+        file: 'benchmark/result-db-eval/job/q4a/data/4a_t.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'title': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 5'
+            'kind_id': 'INT NOT NULL'
+            'production_year': 'INT'
+            'imdb_id': 'INT'
+            'phonetic_code': 'CHAR 5'
+            'episode_of_id': 'INT'
+            'season_nr': 'INT'
+            'episode_nr': 'INT'
+            'series_years': 'CHAR 9'
+            'md5sum': 'CHAR 32'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/job/q4a/q4a_acyclic_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'WasmV8, ResultDB_SemiJoin':
+                args: --result-db
+                pattern: '^Process the query:.*'
+            'WasmV8, ResultDB_Decompose':
+                args: --decompose
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Root':
+                args: --result-db --optimize-result-db --td_root
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_RESULTDB':
+                args: --result-db --optimize-result-db --td_resultdb
+                pattern: '^Process the query:.*'
+        cases:
+            0: 'SELECT mi_idx.info, t.title FROM it AS it, k AS k, mi_idx AS mi_idx, mk AS mk, t AS t WHERE t.id = mi_idx.movie_id AND t.id = mk.movie_id AND k.id = mk.keyword_id AND it.id = mi_idx.info_type_id;'

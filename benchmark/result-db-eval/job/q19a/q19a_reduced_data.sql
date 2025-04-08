@@ -1,0 +1,10 @@
+\copy (SELECT DISTINCT * FROM aka_name AS an ) TO 'benchmark/result-db-eval/job/q19a/data/19a_an.csv' CSV;
+\copy (SELECT DISTINCT * FROM char_name AS chn ) TO 'benchmark/result-db-eval/job/q19a/data/19a_chn.csv' CSV;
+\copy (SELECT DISTINCT * FROM cast_info AS ci  WHERE (ci.note = '(voice)' OR ci.note = '(voice: Japanese version)' OR ci.note = '(voice) (uncredited)' OR ci.note = '(voice: English version)')) TO 'benchmark/result-db-eval/job/q19a/data/19a_ci.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_name AS cn  WHERE cn.country_code ='[us]') TO 'benchmark/result-db-eval/job/q19a/data/19a_cn.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it  WHERE it.info = 'release dates') TO 'benchmark/result-db-eval/job/q19a/data/19a_it.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc  WHERE mc.note IS NOT NULL AND (mc.note LIKE '%(USA)%' OR mc.note LIKE '%(worldwide)%')) TO 'benchmark/result-db-eval/job/q19a/data/19a_mc.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info AS mi  WHERE mi.info IS NOT NULL AND (mi.info LIKE 'Japan:%200%' OR mi.info LIKE 'USA:%200%')) TO 'benchmark/result-db-eval/job/q19a/data/19a_mi.csv' CSV;
+\copy (SELECT DISTINCT * FROM name AS n  WHERE n.gender ='f' AND n.name LIKE '%Ang%') TO 'benchmark/result-db-eval/job/q19a/data/19a_n.csv' CSV;
+\copy (SELECT DISTINCT * FROM role_type AS rt  WHERE rt.role ='actress') TO 'benchmark/result-db-eval/job/q19a/data/19a_rt.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t  WHERE t.production_year >= 2005 AND t.production_year <= 2009) TO 'benchmark/result-db-eval/job/q19a/data/19a_t.csv' CSV;

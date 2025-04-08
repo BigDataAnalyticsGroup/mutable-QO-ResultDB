@@ -1,0 +1,125 @@
+description: Join-Order Benchmark q18c.
+suite: job
+benchmark: job
+name: q18c
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'ci':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_ci.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'person_id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'person_role_id': 'INT'
+            'note': 'CHAR 18'
+            'nr_order': 'INT'
+            'role_id': 'INT NOT NULL'
+    'it1':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_it1.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'info': 'CHAR 32 NOT NULL'
+    'it2':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_it2.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'info': 'CHAR 32 NOT NULL'
+    'mi':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_mi.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'info_type_id': 'INT NOT NULL'
+            'info': 'CHAR 43 NOT NULL'
+            'note': 'CHAR 19'
+    'mi_idx':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_mi_idx.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'info_type_id': 'INT NOT NULL'
+            'info': 'CHAR 3 NOT NULL'
+            'note': 'CHAR 1'
+    'n':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_n.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 9'
+            'imdb_id': 'INT'
+            'gender': 'CHAR 1'
+            'name_pcode_cf': 'CHAR 5'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    't':
+        file: 'benchmark/result-db-eval/job/q18c/data/18c_t.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'title': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 5'
+            'kind_id': 'INT NOT NULL'
+            'production_year': 'INT'
+            'imdb_id': 'INT'
+            'phonetic_code': 'CHAR 5'
+            'episode_of_id': 'INT'
+            'season_nr': 'INT'
+            'episode_nr': 'INT'
+            'series_years': 'CHAR 9'
+            'md5sum': 'CHAR 32'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/job/q18c/q18c_acyclic_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'WasmV8, ResultDB_SemiJoin':
+                args: --result-db
+                pattern: '^Process the query:.*'
+            'WasmV8, ResultDB_Decompose':
+                args: --decompose
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Root':
+                args: --result-db --optimize-result-db --td_root
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_RESULTDB':
+                args: --result-db --optimize-result-db --td_resultdb
+                pattern: '^Process the query:.*'
+        cases:
+            0: 'SELECT mi.info, mi_idx.info, t.title FROM ci AS ci, it1 AS it1, it1 AS it2, mi AS mi, mi_idx AS mi_idx, n AS n, t AS t WHERE t.id = mi_idx.movie_id AND ci.movie_id = mi.movie_id AND ci.movie_id = mi_idx.movie_id AND n.id = ci.person_id AND it1.id = mi.info_type_id AND it2.id = mi_idx.info_type_id;'

@@ -1,0 +1,125 @@
+description: Join-Order Benchmark q10c.
+suite: job
+benchmark: job
+name: q10c
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'chn':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_chn.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 2'
+            'imdb_id': 'INT'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'ci':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_ci.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'person_id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'person_role_id': 'INT'
+            'note': 'CHAR 18'
+            'nr_order': 'INT'
+            'role_id': 'INT NOT NULL'
+    'cn':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_cn.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'country_code': 'CHAR 6'
+            'imdb_id': 'INT'
+            'name_pcode_nf': 'CHAR 5'
+            'name_pcode_sf': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'ct':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_ct.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'kind': 'CHAR 32 NOT NULL'
+    'mc':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_mc.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'company_id': 'INT NOT NULL'
+            'company_type_id': 'INT NOT NULL'
+            'note': 'CHAR 100'
+    'rt':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_rt.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'role': 'CHAR 32 NOT NULL'
+    't':
+        file: 'benchmark/result-db-eval/job/q10c/data/10c_t.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'title': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 5'
+            'kind_id': 'INT NOT NULL'
+            'production_year': 'INT'
+            'imdb_id': 'INT'
+            'phonetic_code': 'CHAR 5'
+            'episode_of_id': 'INT'
+            'season_nr': 'INT'
+            'episode_nr': 'INT'
+            'series_years': 'CHAR 9'
+            'md5sum': 'CHAR 32'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/job/q10c/q10c_acyclic_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'WasmV8, ResultDB_SemiJoin':
+                args: --result-db
+                pattern: '^Process the query:.*'
+            'WasmV8, ResultDB_Decompose':
+                args: --decompose
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Root':
+                args: --result-db --optimize-result-db --td_root
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_RESULTDB':
+                args: --result-db --optimize-result-db --td_resultdb
+                pattern: '^Process the query:.*'
+        cases:
+            0: 'SELECT chn.name, t.title FROM chn AS chn, ci AS ci, cn AS cn, ct AS ct, mc AS mc, rt AS rt, t AS t WHERE t.id = ci.movie_id AND ci.movie_id = mc.movie_id AND chn.id = ci.person_role_id AND rt.id = ci.role_id AND cn.id = mc.company_id AND ct.id = mc.company_type_id;'

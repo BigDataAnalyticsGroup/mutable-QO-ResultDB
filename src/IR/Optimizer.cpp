@@ -653,7 +653,7 @@ Optimizer_ResultDB_utils::bc_forest_t Optimizer_ResultDB_utils::build_bc_forest(
 }
 
 template <typename PlanTable>
-Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::create_and_enumerate_problems(QueryGraph& G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, const folding_problem_t &folding_problem, PlanTable& PT_order, bool use_tvc) {
+Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::create_and_enumerate_problems(QueryGraph& G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash> folded_mapping, folding_table_t& folding_table, const folding_problem_t &folding_problem, std::unordered_map<Subproblem, double, SubproblemHash>& fold_costs, PlanTable& PT_order, bool use_tvc) {
 
     /* First, we need to identify all blocks in the problem */
     std::vector<Subproblem> blocks;
@@ -667,7 +667,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::create
     auto tree_sets = create_tree_sets(bc_forest, blocks, folding_problem.second - folding_problem.first);
 
     /* Afterward, enumerate each tree set and find the best solution and corresponding costs, which we then just return */
-    return enumerate_problems(G, adj_matrix, folded_mapping, folding_table, tree_sets, PT_order, use_tvc);
+    return enumerate_problems(G, adj_matrix, folded_mapping, folding_table, tree_sets, fold_costs, PT_order, use_tvc);
 
 }
 
@@ -759,10 +759,10 @@ std::vector<Optimizer_ResultDB_utils::tree_problem_t> Optimizer_ResultDB_utils::
 }
 
 template <typename PlanTable>
-Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumerate_problems(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, std::vector<tree_problem_t> &tree_problems, PlanTable &PT_order, bool use_tvc)
+Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumerate_problems(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, std::vector<tree_problem_t> &tree_problems, std::unordered_map<Subproblem, double, SubproblemHash>& fold_costs,PlanTable &PT_order, bool use_tvc)
 {
     /* Find the best assignments for each tree */
-    const auto best_solution = std::make_shared<std::pair<std::vector<Subproblem>, double>>(std::vector<Subproblem>{}, 0);;
+    const auto best_solution = std::make_shared<std::pair<std::vector<Subproblem>, double>>(std::vector<Subproblem>{}, 0);
 
     for (const auto& tree_problem : tree_problems)
     {
@@ -776,7 +776,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
             /* Find the best solution for each block problem */
             for (const auto& folding_problem : problem_set)
             {
-                auto solution = enumerate_block_problem(G, adj_matrix, folded_mapping, folding_table, folding_problem, PT_order, use_tvc);
+                auto solution = enumerate_block_problem(G, adj_matrix, folded_mapping, folding_table, folding_problem, fold_costs, PT_order, use_tvc);
                 for (auto &block : solution->first) curr_solution->first.emplace_back(block);
                 curr_solution->second += solution->second;
             }
@@ -794,7 +794,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
 }
 
 template <typename PlanTable>
-Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumerate_block_problem(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, folding_problem_t folding_problem, PlanTable &PT_order, const bool use_tvc)
+Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumerate_block_problem(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, folding_problem_t folding_problem, std::unordered_map<Subproblem, double, SubproblemHash>& fold_costs, PlanTable &PT_order, const bool use_tvc)
 {
     const auto &C = Catalog::Get();
     const auto &CE = C.get_database_in_use().cardinality_estimator();
@@ -867,7 +867,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
     if (not PT_order.has_plan(original_problem))
     {
         /* Use DP_CCP */
-        adj_matrix.for_each_CSG_pair_undirected(problem, join_order_callback);
+        adj_matrix.for_each_CSG_pair_undirected(original_block, join_order_callback);
     }
 
     /* Now we know that the best join order is known for each subproblem. Therefore, we only need to access the folding costs, as well as the Yannakakis heuristic
@@ -880,8 +880,13 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
     folding_table[original_problem] = std::make_shared<std::pair<std::vector<Subproblem>, double>>(std::make_pair(std::vector<Subproblem>{}, std::numeric_limits<double>::infinity()));
 
     /* Solution Class 1: Join all relations in the block */
-
-    folding_table[original_problem]->second = PT_order[original_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, original_problem, PT_order[original_problem], CE) + heuristic->estimate(G, adj_matrix, CE, PT_order,  folded_mapping, problem, Subproblem());
+    double single_costs = 0;
+    if (fold_costs.contains(original_problem)) {
+        single_costs = fold_costs.at(original_problem);
+    } else {
+        single_costs = fold_costs[original_problem] = PT_order[original_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, original_problem, PT_order[original_problem], CE) + heuristic->estimate(G, adj_matrix, CE, PT_order,  folded_mapping, problem, Subproblem());
+    }
+    folding_table[original_problem]->second = single_costs;
     folding_table[original_problem]->first = {original_problem};
 
     /* Solution Class 2: Join until all folds are left, which is only always possible if B(P) != P, signaled by the boolean flag in the problem P */
@@ -891,7 +896,13 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
     auto update_two_fold = [&](const Subproblem left, const Subproblem right) {
         auto original_left = get_original_problem(left);
         auto original_right = get_original_problem(right);
-        const double two_fold_costs = PT_order[original_left].cost + PT_order[original_right].cost + YannakakisHeuristic::estimate_decompose_costs(G, left, PT_order[original_left], CE) + YannakakisHeuristic::estimate_decompose_costs(G, right, PT_order[original_right], CE) + heuristic->estimate(G, adj_matrix, CE, PT_order, folded_mapping, left, right) + heuristic->estimate(G, adj_matrix, CE, PT_order, folded_mapping, right, left);
+        auto c_fold_double = [&](const Subproblem main, const Subproblem main_original, const Subproblem other) {
+            if (fold_costs.contains(main_original)) {
+                return fold_costs.at(main_original);
+            }
+            return fold_costs[main_original] = PT_order[main_original].cost + YannakakisHeuristic::estimate_decompose_costs(G, main_original, PT_order[main_original], CE) +  heuristic->estimate(G, adj_matrix, CE, PT_order, folded_mapping, main, other);
+        };
+        const double two_fold_costs = c_fold_double(left, original_left, right) + c_fold_double(right, original_right, left);
         if (two_fold_costs < folding_table[original_problem]->second)
         {
             folding_table[original_problem]->second = two_fold_costs;
@@ -918,9 +929,6 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
         MinCutAGaT{}.partition(adj_matrix, folding_callback, problem);
     }
 
-    /* We are done now in the recursive case */
-    if (not use_tvc) return folding_table[original_problem];
-
     /* Solution Class 3: Use TVCs to generate smaller problems that can solve the underlying cycles *
      * Here, we offer two strategies: Greedily apply TVCs, to find smaller solutions, or a more exhaustive approach
      */
@@ -928,7 +936,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
     /* Helper function for recursive evaluation of the best solution */
     auto evaluate_folded_graph = [&](AdjacencyMatrix& matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& rec_folded_mapping) {
         /* Find the best TVC solution */
-        folding_table_entry_t solution = create_and_enumerate_problems(G, matrix, rec_folded_mapping, folding_table, folding_problem, PT_order, false);
+        folding_table_entry_t solution = create_and_enumerate_problems(G, matrix, rec_folded_mapping, folding_table, folding_problem, fold_costs, PT_order, false);
 
         /* There might be greedily folded nodes which are not part of any block, which we now need to check against. */
         auto folded_nodes_in_solution = Subproblem(0);
@@ -938,8 +946,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
 
         /* Get unfolded nodes */
         for (const auto node_id: Subproblem::All(G.num_sources())) {
-            const auto singleton = Subproblem::Singleton(node_id);
-            if (rec_folded_mapping.contains(singleton)) {
+            if (const auto singleton = Subproblem::Singleton(node_id); rec_folded_mapping.contains(singleton)) {
                 /* This node is folded, and might contain a relevant value */
                 auto original_singleton = rec_folded_mapping[singleton];
                 if (original_singleton != singleton and (original_singleton & folded_nodes_in_solution).empty()) {
@@ -957,7 +964,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
     };
 
     /* Greedy approach */
-    if (Options::Get().result_db_optimizer != Options::DP_ResultDB_Exhaustive)
+    if (!Options::Get().ignore_tvcs)
     {
         AdjacencyMatrix folded_matrix(adj_matrix);
 
@@ -968,69 +975,17 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
         return folding_table[original_problem];
     }
 
-    /* For each of the tvc folds, fold the adjacency matrix and solve the smaller block problems */
-    for (const std::vector<std::vector<Subproblem>> tvc_sets = get_tvc_sets(G.adjacency_matrix(), folding_problem);
-        const auto& tvc_set : tvc_sets)
-    {
-        /* Fold the adjacency matrix */
-        AdjacencyMatrix folded_matrix(adj_matrix);
-        std::unordered_map<Subproblem, Subproblem, SubproblemHash> rec_folded_mapping;
-        create_folded_adjacency_matrix(tvc_set, adj_matrix, folded_matrix, rec_folded_mapping);
-
-        /* Create and enumerate the new, small fold problems */
-        evaluate_folded_graph(folded_matrix, rec_folded_mapping);
-    }
-
     /* Just return the best solution found */
     return folding_table[original_problem];
 }
 
-bool Optimizer_ResultDB_utils::get_greedy_folded_graph(const AdjacencyMatrix& current_matrix, AdjacencyMatrix& new_matrix, const folding_problem_t& folding_problem, std::unordered_map<Subproblem, Subproblem, SubproblemHash> &folded_mapping)
+bool Optimizer_ResultDB_utils::get_greedy_folded_graph(AdjacencyMatrix& current_matrix, AdjacencyMatrix& new_matrix, const folding_problem_t& folding_problem, std::unordered_map<Subproblem, Subproblem, SubproblemHash> &folded_mapping)
 {
-    bool folded_at_least_once = false;
     std::vector<Subproblem> tvc_nodes;
     find_greedy_vertex_cuts(current_matrix, folding_problem, tvc_nodes);
-    bool another_found = true;
     std::unordered_set<Subproblem, SubproblemHash> blocks_evaluated;
-    AdjacencyMatrix old_matrix(current_matrix);
-    while (another_found)
-    {
-        folded_at_least_once = true;
-        another_found = false;
-
-        /* Fold the adjacency matrix */
-        new_matrix = old_matrix;
-        create_folded_adjacency_matrix(tvc_nodes, old_matrix, new_matrix, folded_mapping);
-        old_matrix = new_matrix;
-
-        /* Update Blocks and cut vertices within the problem */
-        std::vector<Subproblem> blocks;
-        Subproblem cut_vertices;
-        new_matrix.compute_blocks_and_cut_vertices(blocks, cut_vertices, folding_problem.second, 3);
-
-        /* Reset TVC nodes */
-        tvc_nodes = {};
-
-        /* For each block, re-evaluate the TVCs */
-        for (const auto& block: blocks) {
-            /* Already evaluated, do not do again */
-            if (blocks_evaluated.contains(block)) continue;
-            blocks_evaluated.emplace(block);
-
-            /* Extract TVCs from this block */
-            std::vector<Subproblem> block_tvcs;
-            auto new_folding_problem = std::make_pair(block, block & folding_problem.first);
-            find_greedy_vertex_cuts(new_matrix, new_folding_problem, block_tvcs);
-
-            /* If found add to existing list */
-            if (not block_tvcs.empty()) {
-                tvc_nodes.insert(tvc_nodes.end(), block_tvcs.begin(), block_tvcs.end());
-                another_found = true;
-            }
-        }
-
-    }
-    return folded_at_least_once;
+    create_folded_adjacency_matrix(tvc_nodes, current_matrix, new_matrix, folded_mapping);
+    return !tvc_nodes.empty();
 }
 
 
@@ -1051,6 +1006,9 @@ void Optimizer_ResultDB_utils::create_folded_adjacency_matrix(const std::vector<
         }
     } else {
         old_folded_mapping = folded_mapping;
+
+        /* Reset mapping */
+        folded_mapping = {};
     }
     auto deleted_nodes = Subproblem(0);
 
@@ -1245,7 +1203,7 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
     auto current_source_plans = optimize_source_plans(G, PT_order);
     auto complete_problem = Subproblem::All(G.num_sources());
     /* Best ResultDB_Decompose Plan */
-    if (not PT_order.has_plan(complete_problem))
+    if (not PT_order.has_plan(complete_problem) and Options::Get().result_db_optimizer != Options::TD_Root)
     {
         auto join_order_callback = [&](const Subproblem left, const Subproblem right) -> void
         {
@@ -1260,21 +1218,20 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
     /* Enumerate all possible fold problems and get the best ones */
     std::unordered_map<Subproblem, Subproblem, SubproblemHash> folded_mapping{};
     std::unordered_map<Subproblem, folding_table_entry_t, SubproblemHash> folding_table{};
+    std::unordered_map<Subproblem, double, SubproblemHash> fold_costs{};
     const folding_problem_t folding_problem = std::make_pair(complete_problem, complete_problem);
-    auto solution = create_and_enumerate_problems(G, G.adjacency_matrix(), folded_mapping, folding_table, folding_problem, PT_order, true);
+    auto solution = std::make_shared<std::pair<std::vector<Subproblem>, double>>(std::vector<Subproblem>{}, 0);
+    if (G.is_cyclic()) solution = create_and_enumerate_problems(G, G.adjacency_matrix(), folded_mapping, folding_table, folding_problem, fold_costs, PT_order, true);
 
     /* Helper function to determine the best way to best semi-join order on the final folds chosen */
     auto compute_semi_join_reducer_costs = [&] {
         /* We do not want to consider semi-join heuristics in the final comparisons, so we just recompute the existing costs for each
          * problem we have computed */
-        auto folding_costs = 0;
-        auto get_final_problem_cost = [&](Subproblem problem) -> double
+        double folding_costs = 0;
+        for (auto problem : solution->first)
         {
-            return PT_order[problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[problem], CE);
-        };
-        for (auto &problem : solution->first)
-        {
-            folding_costs += get_final_problem_cost(problem);
+            // std::cerr << problem << " " << CE.predict_cardinality(*PT_order[problem].model) << " " << PT_order[problem].cost << " " << YannakakisHeuristic::estimate_decompose_costs(G, problem, PT_order[problem], CE) << "\n";
+            folding_costs += PT_order[problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, problem, PT_order[problem], CE);
         }
 
         /* Construct new, folded matrix */
@@ -1287,15 +1244,20 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
         std::unordered_set<std::size_t> required_reductions;
         for (auto node_id : complete_problem)
         {
-            /* Ignore unused relations */
-            if (folded_matrix[node_id].empty()) continue;
+            /* Add anything for unused relations */
+            if (folded_matrix[node_id].empty()) {
+                base_models.emplace_back(CE.copy(*PT_order[Subproblem(1)].model));
+                continue;
+            }
+
 
             Subproblem related_problem = new_folded_mapping[Subproblem::Singleton(node_id)];
             base_models.emplace_back(CE.copy(*PT_order[related_problem].model));
             if (PT_order[related_problem].tuple_size != 0)
                 required_reductions.emplace(node_id);
         }
-        return enumerate_semi_join_reduction_order(G, required_reductions, folded_matrix, CE, base_models);
+        auto [reducer_order, reducer_costs] = enumerate_semi_join_reduction_order(G, required_reductions, folded_matrix, CE, base_models);
+        return std::make_tuple(reducer_order, reducer_costs + folding_costs);
     };
 
     /* Helper function to create the best decompose plan */
@@ -1325,7 +1287,11 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
         for (size_t i = 0; i < solution->first.size(); i++)
         {
             base_models.emplace_back(CE.copy(*PT_order[solution->first[i]].model));
+            base_models[i]->assign_to(Subproblem::Singleton(i));
             source_plans[i] = construct_join_order(G, PT_order, solution->first[i], current_source_plans);
+        }
+        if (solution->first.size() == 1) {
+            return decompose_plan();
         }
 
         /* Fold the join graph, translate fold into fold_t */
@@ -1355,13 +1321,16 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
             semi_join_reduction_op->add_child(source_plans[i]);
         return {std::move(semi_join_reduction_op), true};
     };
-
+    if (Options::Get().result_db_optimizer == Options::TD_Root) {
+        return semi_join_reducer_plan();
+    }
     /* Best ResultDB_SemiJoin Plan */
     auto [reducer_order, reducer_costs] = compute_semi_join_reducer_costs();
-
+    //std::cerr << complete_problem << " " << CE.predict_cardinality(*PT_order[complete_problem].model) << " " << PT_order[complete_problem].cost << " " << YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE) << "\n";
     double decompose_costs = PT_order[complete_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE);
 
     /* Decide whether to use ResultDB_SemiJoin or ResultDB_Decompose */
+    //std::cerr << "Reducer: " << reducer_costs << ", Decompose: " << decompose_costs << "\n";
     if (reducer_costs < decompose_costs) return semi_join_reducer_plan();
     return decompose_plan();
 }

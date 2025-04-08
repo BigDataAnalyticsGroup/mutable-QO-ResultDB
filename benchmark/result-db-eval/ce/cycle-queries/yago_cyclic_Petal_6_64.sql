@@ -1,0 +1,1 @@
+select * from yago36 yago36_0, yago5, yago36 yago36_2, yago36 yago36_3, yago36 yago36_4, yago48 where yago36_0.s = yago5.s and yago36_0.d = yago36_3.d and yago5.d = yago48.d and yago36_2.s = yago36_3.s and yago36_2.d = yago36_4.d and yago36_4.s = yago48.s;

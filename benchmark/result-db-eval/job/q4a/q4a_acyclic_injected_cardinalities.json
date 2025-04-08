@@ -1,0 +1,19 @@
+{
+	"job": [
+		{"relations": ["it"], "size": 1, "reductions": [{"right_relations": ["mi_idx", "k", "mk", "t"], "size": 1}]},
+		{"relations": ["k"], "size": 30, "reductions": [{"right_relations": ["mk", "it", "mi_idx", "t"], "size": 23}]},
+		{"relations": ["mi_idx"], "size": 517682, "reductions": [{"right_relations": ["t", "k", "mk"], "size": 859}, {"right_relations": ["it"], "size": 352990}, {"right_relations": ["k", "it", "t", "mk"], "size": 564}]},
+		{"relations": ["mk"], "size": 4523930, "reductions": [{"right_relations": ["t", "it", "mi_idx"], "size": 697651}, {"right_relations": ["k"], "size": 12951}, {"right_relations": ["it", "k", "t", "mi_idx"], "size": 740}]},
+		{"relations": ["t"], "size": 1012920, "reductions": [{"right_relations": ["mi_idx", "it"], "size": 106021}, {"right_relations": ["mk", "k"], "size": 1523}, {"right_relations": ["it", "mk", "k", "mi_idx"], "size": 564}]},
+		{"relations": ["it", "mi_idx"], "size": 352990, "reductions": []},
+		{"relations": ["k", "mk"], "size": 12951, "reductions": []},
+		{"relations": ["mi_idx", "t"], "size": 159460, "reductions": []},
+		{"relations": ["mk", "t"], "size": 1253091, "reductions": []},
+		{"relations": ["it", "t", "mi_idx"], "size": 106021, "reductions": []},
+		{"relations": ["k", "t", "mk"], "size": 2235, "reductions": []},
+		{"relations": ["mi_idx", "t", "mk"], "size": 967981, "reductions": []},
+		{"relations": ["it", "t", "mk", "mi_idx"], "size": 697651, "reductions": []},
+		{"relations": ["k", "t", "mk", "mi_idx"], "size": 1143, "reductions": []},
+		{"relations": ["it", "mk", "t", "mi_idx", "k"], "size": 740, "reductions": []}
+	]
+}

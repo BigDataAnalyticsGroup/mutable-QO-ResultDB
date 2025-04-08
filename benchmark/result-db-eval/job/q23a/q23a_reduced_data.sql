@@ -1,0 +1,11 @@
+\copy (SELECT DISTINCT * FROM complete_cast AS cc ) TO 'benchmark/result-db-eval/job/q23a/data/23a_cc.csv' CSV;
+\copy (SELECT DISTINCT * FROM comp_cast_type AS cct1  WHERE cct1.kind = 'complete+verified') TO 'benchmark/result-db-eval/job/q23a/data/23a_cct1.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_name AS cn  WHERE cn.country_code = '[us]') TO 'benchmark/result-db-eval/job/q23a/data/23a_cn.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_type AS ct ) TO 'benchmark/result-db-eval/job/q23a/data/23a_ct.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it1  WHERE it1.info = 'release dates') TO 'benchmark/result-db-eval/job/q23a/data/23a_it1.csv' CSV;
+\copy (SELECT DISTINCT * FROM keyword AS k ) TO 'benchmark/result-db-eval/job/q23a/data/23a_k.csv' CSV;
+\copy (SELECT DISTINCT * FROM kind_type AS kt  WHERE (kt.kind = 'movie')) TO 'benchmark/result-db-eval/job/q23a/data/23a_kt.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc ) TO 'benchmark/result-db-eval/job/q23a/data/23a_mc.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info AS mi  WHERE mi.note LIKE '%internet%' AND mi.info IS NULL AND (mi.info LIKE 'USA:% 199%' OR mi.info LIKE 'USA:% 200%')) TO 'benchmark/result-db-eval/job/q23a/data/23a_mi.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_keyword AS mk ) TO 'benchmark/result-db-eval/job/q23a/data/23a_mk.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t  WHERE t.production_year > 2000) TO 'benchmark/result-db-eval/job/q23a/data/23a_t.csv' CSV;

@@ -1,0 +1,1 @@
+select * from watdiv1052646 watdiv1052646_0, watdiv1052646 watdiv1052646_1, watdiv1052572 watdiv1052572_2, watdiv1052572 watdiv1052572_3 where watdiv1052646_0.s = watdiv1052646_1.s and watdiv1052646_0.d = watdiv1052572_2.s and watdiv1052646_1.d = watdiv1052572_3.s and watdiv1052572_2.d = watdiv1052572_3.d;

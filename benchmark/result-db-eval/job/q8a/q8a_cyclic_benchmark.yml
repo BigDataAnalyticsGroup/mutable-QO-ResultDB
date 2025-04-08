@@ -1,0 +1,152 @@
+description: Join-Order Benchmark q8a.
+suite: job
+benchmark: job
+name: q8a
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'an1':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_an1.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'person_id': 'INT NOT NULL'
+            'name': 'CHAR 16 NOT NULL'
+            'imdb_index': 'CHAR 3'
+            'name_pcode_cf': 'CHAR 5'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'ci':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_ci.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'person_id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'person_role_id': 'INT'
+            'note': 'CHAR 18'
+            'nr_order': 'INT'
+            'role_id': 'INT NOT NULL'
+    'cn':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_cn.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'country_code': 'CHAR 6'
+            'imdb_id': 'INT'
+            'name_pcode_nf': 'CHAR 5'
+            'name_pcode_sf': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'mc':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_mc.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'company_id': 'INT NOT NULL'
+            'company_type_id': 'INT NOT NULL'
+            'note': 'CHAR 100'
+    'n1':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_n1.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 9'
+            'imdb_id': 'INT'
+            'gender': 'CHAR 1'
+            'name_pcode_cf': 'CHAR 5'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'rt':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_rt.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'role': 'CHAR 32 NOT NULL'
+    't':
+        file: 'benchmark/result-db-eval/job/q8a/data/8a_t.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'title': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 5'
+            'kind_id': 'INT NOT NULL'
+            'production_year': 'INT'
+            'imdb_id': 'INT'
+            'phonetic_code': 'CHAR 5'
+            'episode_of_id': 'INT'
+            'season_nr': 'INT'
+            'episode_nr': 'INT'
+            'series_years': 'CHAR 9'
+            'md5sum': 'CHAR 32'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/job/q8a/q8a_cyclic_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'ResultDB-Heuristic':
+                args: >-
+                    --result-db
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'TD_ResultDB':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'TD_Fold':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                    --td_root
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'TD_Fold_NoTVC':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                    --td_root
+                    --ignore_tvcs
+                pattern:
+                    Execution Time: '^Process the query:.*'
+            'Decompose':
+                args: >-
+                    --decompose
+                pattern:
+                    Execution Time: '^Process the query:.*'
+        cases:
+            0: 'SELECT an1.name, t.title FROM an1 AS an1, ci AS ci, cn AS cn, mc AS mc, n1 AS n1, rt AS rt, t AS t WHERE an1.person_id = n1.id AND n1.id = ci.person_id AND ci.movie_id = t.id AND t.id = mc.movie_id AND mc.company_id = cn.id AND ci.role_id = rt.id AND an1.person_id = ci.person_id AND ci.movie_id = mc.movie_id;'

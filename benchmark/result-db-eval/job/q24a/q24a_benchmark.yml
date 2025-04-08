@@ -1,0 +1,183 @@
+description: Join-Order Benchmark q24a.
+suite: job
+benchmark: job
+name: q24a
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'an':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_an.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'person_id': 'INT NOT NULL'
+            'name': 'CHAR 16 NOT NULL'
+            'imdb_index': 'CHAR 3'
+            'name_pcode_cf': 'CHAR 5'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'chn':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_chn.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 2'
+            'imdb_id': 'INT'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'ci':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_ci.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'person_id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'person_role_id': 'INT'
+            'note': 'CHAR 18'
+            'nr_order': 'INT'
+            'role_id': 'INT NOT NULL'
+    'cn':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_cn.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'country_code': 'CHAR 6'
+            'imdb_id': 'INT'
+            'name_pcode_nf': 'CHAR 5'
+            'name_pcode_sf': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'it':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_it.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'info': 'CHAR 32 NOT NULL'
+    'k':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_k.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'keyword': 'CHAR 74 NOT NULL'
+            'phonetic_code': 'CHAR 5'
+    'mc':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_mc.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'company_id': 'INT NOT NULL'
+            'company_type_id': 'INT NOT NULL'
+            'note': 'CHAR 100'
+    'mi':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_mi.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'info_type_id': 'INT NOT NULL'
+            'info': 'CHAR 43 NOT NULL'
+            'note': 'CHAR 19'
+    'mk':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_mk.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'movie_id': 'INT NOT NULL'
+            'keyword_id': 'INT NOT NULL'
+    'n':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_n.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'name': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 9'
+            'imdb_id': 'INT'
+            'gender': 'CHAR 1'
+            'name_pcode_cf': 'CHAR 5'
+            'name_pcode_nf': 'CHAR 5'
+            'surname_pcode': 'CHAR 5'
+            'md5sum': 'CHAR 32'
+    'rt':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_rt.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'role': 'CHAR 32 NOT NULL'
+    't':
+        file: 'benchmark/result-db-eval/job/q24a/data/24a_t.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            'id': 'INT NOT NULL'
+            'title': 'CHAR 100 NOT NULL'
+            'imdb_index': 'CHAR 5'
+            'kind_id': 'INT NOT NULL'
+            'production_year': 'INT'
+            'imdb_id': 'INT'
+            'phonetic_code': 'CHAR 5'
+            'episode_of_id': 'INT'
+            'season_nr': 'INT'
+            'episode_nr': 'INT'
+            'series_years': 'CHAR 9'
+            'md5sum': 'CHAR 32'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/job/q24a/q24a_acyclic_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'WasmV8, ResultDB_SemiJoin':
+                args: --result-db
+                pattern: '^Process the query:.*'
+            'WasmV8, ResultDB_Decompose':
+                args: --decompose
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Root':
+                args: --result-db --optimize-result-db --td_root
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_RESULTDB':
+                args: --result-db --optimize-result-db --td_resultdb
+                pattern: '^Process the query:.*'
+        cases:
+            0: 'SELECT chn.name, n.name, t.title FROM an AS an, chn AS chn, ci AS ci, cn AS cn, it AS it, k AS k, mc AS mc, mi AS mi, mk AS mk, n AS n, rt AS rt, t AS t WHERE t.id = mi.movie_id AND t.id = mc.movie_id AND t.id = ci.movie_id AND t.id = mk.movie_id AND cn.id = mc.company_id AND it.id = mi.info_type_id AND n.id = ci.person_id AND rt.id = ci.role_id AND ci.person_id = an.person_id AND chn.id = ci.person_role_id AND k.id = mk.keyword_id;'

@@ -1,0 +1,85 @@
+description: CE q8_1.
+suite: ce
+benchmark: ce
+name: q8_1
+readonly: true
+chart:
+    x:
+        scale: linear
+        type: O
+        label: JOB Queries
+    y:
+        scale: linear
+        type: Q
+        label: 'Execution time [ms]'
+    # Defaults: scale is "linear", type is "Q", label is "X" or "Y"
+data:
+    'dblp23':
+        file: 'benchmark/result-db-eval/ce/data/dblp23.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp21':
+        file: 'benchmark/result-db-eval/ce/data/dblp21.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp5':
+        file: 'benchmark/result-db-eval/ce/data/dblp5.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp9':
+        file: 'benchmark/result-db-eval/ce/data/dblp9.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+    'dblp20':
+        file: 'benchmark/result-db-eval/ce/data/dblp20.csv'
+        format: 'csv'
+        delimiter: ','
+        header: 0
+        attributes:
+            's': 'INT NOT NULL'
+            'd': 'INT NOT NULL'
+
+
+systems:
+    mutable:
+        args: >-
+          --backend WasmV8
+          --no-simd
+          --cardinality-estimator Injected
+          --use-cardinality-file benchmark/result-db-eval/ce/q8_1_injected_cardinalities.json
+          --plan-enumerator DPccp
+        configurations:                                   # Different experiment configurations.
+            'WasmV8, ResultDB_SemiJoin':
+                args: --result-db
+                pattern: '^Process the query:.*'
+            'WasmV8, ResultDB_Decompose':
+                args: --decompose
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Fold':
+                args: --result-db --optimize-result-db --td_root
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_Fold_NoTVC':
+                args: --result-db --optimize-result-db --td_root --ignore_tvcs
+                pattern: '^Process the query:.*'
+            'WasmV8, TD_RESULTDB':
+                args: --result-db --optimize-result-db --td_resultdb
+                pattern: '^Process the query:.*'
+        cases:
+            0: 'SELECT * FROM dblp23, dblp21, dblp5, dblp9, dblp20 AS dblp20_4, dblp20 AS dblp20_5 WHERE dblp23.s = dblp21.s AND dblp23.d = dblp5.s AND dblp21.d = dblp5.d AND dblp5.d = dblp9.s AND dblp9.s = dblp20_4.s AND dblp9.d = dblp20_5.s AND dblp20_4.d = dblp20_5.d;
+'

@@ -1,0 +1,1 @@
+select * from dblp9, dblp8, dblp2 dblp2_2, dblp17, dblp2 dblp2_4, dblp4 where dblp9.s = dblp4.d and dblp9.d = dblp8.s and dblp8.d = dblp2_2.s and dblp2_2.d = dblp17.s and dblp17.d = dblp2_4.s and dblp2_4.d = dblp4.s;

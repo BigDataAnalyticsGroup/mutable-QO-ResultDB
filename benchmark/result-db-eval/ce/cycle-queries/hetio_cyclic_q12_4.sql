@@ -1,0 +1,1 @@
+select * from hetio45177 hetio45177_0, hetio45177 hetio45177_1, hetio45160, hetio45173 hetio45173_3, hetio45173 hetio45173_4, hetio45177 hetio45177_5 where hetio45177_0.s = hetio45177_5.d and hetio45177_0.d = hetio45177_1.s and hetio45177_1.d = hetio45160.s and hetio45160.d = hetio45173_3.s and hetio45173_3.d = hetio45173_4.s and hetio45173_4.d = hetio45177_5.s;

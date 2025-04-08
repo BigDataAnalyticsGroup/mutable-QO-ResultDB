@@ -112,7 +112,6 @@ def generate_join_graph_components(input_file:str, mutable:bool = False) -> JGCo
             # regular filter
             pattern = r"(\w+)\.(\w+)"  # regular expression to capture the table/alias name and column name
             match = re.search(pattern, clause)
-            print(match)
             assert match, f"regular filter -- query: {query_name} | clause: {clause}"
             alias, attr = match.groups()
             if "NOT LIKE" in clause and mutable:
@@ -196,7 +195,7 @@ def parse_sql_to_join_graph(input_file: str):
         query_definition += f"\tjoins = [{', '.join(join_names)}]\n\n"
         query_definition += f"\treturn JoinGraph(relations, joins)\n\n"
 
-        with open('./benchmark/result-db-eval/job_query_definitions.py', 'a') as out:
+        with open('./benchmark/result-db-eval/job_mutable_cyclic_query_definitions.py', 'a') as out:
             out.write(query_definition)
 
 
@@ -247,7 +246,7 @@ if __name__ == '__main__':
         assert set(config['queries']).issubset(job_queries), print(config['queries'])
     print(os.getcwd())
     for query_name in config['queries']:
-        query_file = f"{os.getcwd()}/benchmark/job/mutable/{query_name}.sql"
+        query_file = f"{os.getcwd()}/benchmark/job/mutable-cyclic/{query_name}.sql"
         if config['mutable']:
             parse_sql_to_mutable_query(query_file)
         else:

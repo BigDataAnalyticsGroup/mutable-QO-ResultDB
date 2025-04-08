@@ -22,9 +22,7 @@ WHERE an.name LIKE "%a%"
   AND lt.link = "features"
   AND n.name_pcode_cf >= "A"
   AND n.name_pcode_cf <= "F"
-  AND (n.gender= "m"
-       OR (n.gender = "f"
-           AND n.name LIKE "B%"))
+  AND (n.gender= "m" OR (n.gender = "f" AND n.name LIKE "B%"))
   AND pi.note = "Volker Boehm"
   AND t.production_year >= 1980
   AND t.production_year <= 1995

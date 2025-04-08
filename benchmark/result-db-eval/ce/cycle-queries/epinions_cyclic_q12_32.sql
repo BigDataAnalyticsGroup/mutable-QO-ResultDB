@@ -1,0 +1,1 @@
+select * from epinions75896, epinions75892, epinions75929, epinions75905, epinions75913, epinions75908 where epinions75896.s = epinions75908.d and epinions75896.d = epinions75892.s and epinions75892.d = epinions75929.s and epinions75929.d = epinions75905.s and epinions75905.d = epinions75913.s and epinions75913.d = epinions75908.s;

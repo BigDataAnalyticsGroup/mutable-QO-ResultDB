@@ -16,7 +16,7 @@ WORKDIR ./
 RUN curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 RUN python3.10 get-pip.py
 RUN pipenv run python3.10 -m pip install --upgrade setuptools
-RUN pipenv sync --python 3.10
+RUN pipenv install --python 3.10
 
 # Build mutable
 RUN cmake -S . -B build/release \

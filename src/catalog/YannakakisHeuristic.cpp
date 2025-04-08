@@ -12,7 +12,7 @@ double YannakakisHeuristic::estimate_decompose_costs(const QueryGraph &G, const 
     // Single Problems do not have to be decomposed
     if (complete_problem.size() == 1) return 0;
     const auto model = CE.estimate_full_reduction(G, *entry.model);
-    return 2 * static_cast<double>(CE.predict_cardinality(*model)) * static_cast<double>(entry.tuple_size);
+    return 40 * static_cast<double>(CE.predict_cardinality(*model)) * static_cast<double>(entry.tuple_size);
 }
 
 /*======================================================================================================================
@@ -72,6 +72,8 @@ WeakCardinalityHeuristic::operator()(estimate_tag, const PlanTable &PT, const Su
             reduction_costs += CE.predict_cardinality(*main_model);
             main_model = CE.estimate_semi_join(G, *main_model, *models.find(neighbor)->second, {});
         }
+
+        /* Final hash function */
         return reduction_costs;
     }
     const auto main_neighbors = M.neighbors(left) - right;

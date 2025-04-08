@@ -316,11 +316,7 @@ int main(int argc, const char **argv)
     ADD(bool, Options::Get().optimize_result_db, false,                      /* Type, Var, Init  */
         nullptr, "--optimize-result-db",                                     /* Short, Long      */
         "enumerate best way to apply semi-join reductions",    /* Description      */
-        [&](bool) { Options::Get().optimize_result_db = true; });            /* Callback         */
-    ADD(bool, Options::Get().greedy_cuts, false,                      /* Type, Var, Init  */
-        nullptr, "--greedy-cuts",                                     /* Short, Long      */
-        "use greedy two-vertex cuts",    /* Description      */
-        [&](bool) { Options::Get().greedy_cuts = true; });            /* Callback         *//* Callback         */
+        [&](bool) { Options::Get().optimize_result_db = true; });            /* Callback         *//* Callback         *//* Callback         */
     ADD(bool, Options::Get().yannakakis_heuristic, Options::YH_WeakCardinality,                      /* Type, Var, Init  */
         nullptr, "--yh-d",                                     /* Short, Long      */
         "use the decompose based heuristic for result db",    /* Description      */
@@ -350,13 +346,17 @@ int main(int argc, const char **argv)
         "Use DP_Fold-Greedy for the ResultDB enumeration",    /* Description      */
         [&](bool) { Options::Get().result_db_optimizer = Options::DP_Fold_Greedy; });
     ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
-        nullptr, "--dp_resultdb",                                     /* Short, Long      */
+        nullptr, "--td_resultdb",                                     /* Short, Long      */
         "Use DP_ResultDB for the ResultDB enumeration",    /* Description      */
         [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB; });
     ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB_Exhaustive,                      /* Type, Var, Init  */
         nullptr, "--dp_resultdb_exhaustive",                                     /* Short, Long      */
         "Use DP_ResultDB in exhaustive mode for the ResultDB enumeration",    /* Description      */
         [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB_Exhaustive; });
+    ADD(bool, Options::Get().ignore_tvcs, false,                   /* Type, Var, Init  */
+        nullptr, "--ignore_tvcs",                                     /* Short, Long      */
+        "Ignore TVCs for TD_ResultDB",    /* Description      */
+        [&](bool) { Options::Get().ignore_tvcs = true; });
     ADD(bool, Options::Get().decompose, false,                      /* Type, Var, Init  */
         nullptr, "--decompose",                                     /* Short, Long      */
         "decompose single-table result into multiple result sets",   /* Description      */

@@ -8,7 +8,7 @@ from functools import reduce
 from pathlib import Path
 from typing import Any
 from query_utility import Relation, JoinGraph
-import job_query_definitions as q_def
+import query_definitions as q_def
 import shutil
 
 OUTPUT_DIR = "benchmark/result-db-eval"
@@ -198,37 +198,36 @@ def create_injected_cardinalities(
 
             view_query = f"DROP VIEW IF EXISTS to_be_reduced;\nCREATE VIEW to_be_reduced AS\n{adapted_select_clause}\n{from_clause}\n{where_clause};"
 
-            # Compute (relevant) semi-join reductions for Yannakakis optimizations, for |S| > 1 only when cyclic
-            if acyclic and len(S) > 1:
-                continue
             reductions = f"["
-            S_neighbors = join_graph.neighbors_of_set(S)
-            checked = set()
-            for idx, r in enumerate(S_neighbors):
-                reducer_relations = join_graph.reachable(r, S)
-                red_tuple = tuple(sorted(reducer_relations))
-                if red_tuple in checked:
-                    continue
-                checked.add(red_tuple)
-                if idx == 0:
-                    reductions += "{"
-                else:
-                    reductions += ", {"
-                reductions += create_reduction(S, [reducer_relations])
-            checked_combs = set()
-            for j in range(2, len(checked) + 1):
-                for red_combination in combinations(checked, j):
-                    reducer_relations = set()
-                    for s in red_combination:
-                        reducer_relations |= set(s)
-                    red_comb_tuple = tuple(sorted(reducer_relations))
-                    if red_comb_tuple in checked_combs | checked:
+            # Compute (relevant) semi-join reductions for Yannakakis optimizations, for |S| > 1 only when cyclic
+            if (acyclic and len(S) == 1) or not acyclic:
+                S_neighbors = join_graph.neighbors_of_set(S)
+                checked = set()
+                for idx, r in enumerate(S_neighbors):
+                    reducer_relations = join_graph.reachable(r, S)
+                    red_tuple = tuple(sorted(reducer_relations))
+                    if red_tuple in checked:
                         continue
-                    checked_combs.add(red_comb_tuple)
-                    reductions += ", {"
-                    reductions += create_reduction(
-                        S, [set(tup) for tup in red_combination]
-                    )
+                    checked.add(red_tuple)
+                    if idx == 0:
+                        reductions += "{"
+                    else:
+                        reductions += ", {"
+                    reductions += create_reduction(S, [reducer_relations])
+                checked_combs = set()
+                for j in range(2, len(checked) + 1):
+                    for red_combination in combinations(checked, j):
+                        reducer_relations = set()
+                        for s in red_combination:
+                            reducer_relations |= set(s)
+                        red_comb_tuple = tuple(sorted(reducer_relations))
+                        if red_comb_tuple in checked_combs | checked:
+                            continue
+                        checked_combs.add(red_comb_tuple)
+                        reductions += ", {"
+                        reductions += create_reduction(
+                            S, [set(tup) for tup in red_combination]
+                        )
 
             reductions += "]"
 
@@ -263,40 +262,41 @@ if __name__ == "__main__":
     config["card_entry"] = "job"
 
     job_queries = [
-        "1b",
-        "2a",
-        "3c",
-        "4a",
-        "5c",
+        # "1b",
+        # "2a",
+        # "3c",
+        # "4a",
+        # "5c",
         "7a",
-        "8a",
-        "9c",
-        "10c",
-        "11c",
-        "12a",
-        "14a",
-        "15d",
-        "18c",
-        "19a",
-        "21a",
-        "22c",
-        "23a",
-        "24a",
-        "25b",
-        "26a",
-        "27a",
-        "28c",
-        "30c",
-        "31a",
-        "33c",
+        # "8a",
+        # "9c",
+        # "10c",
+        # "11c",
+        # "12a",
+        # "14a",
+        # "15d",
+        # "18c",
+        # "19a",
+        # "21a",
+        # "22c",
+        # "23a",
+        # "24a",
+        # "25b",
+        # "26a",
+        # "27a",
+        # "28c",
+        # "30c",
+        # "31a",
+        # "33c",
     ]
     for query in job_queries:
        print(f"Query: {query}")
-       create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/job/{query}_acyclic_injected_cardinalities.json", True)
+       create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/job/q{query}/q{query}_cyclic_injected_cardinalities.json", False)
 
     # config["database"] = "synthetic"
     # config["card_entry"] = "synthetic"
     #
+
     # selectivities = [1800, 1400, 1000, 600, 200]
     # for index, selectivity in enumerate(reversed(selectivities)):
     #     redundant_graph = q_def.create_synthetic_chain_join(selectivity)

@@ -1,0 +1,12 @@
+\copy (SELECT DISTINCT * FROM complete_cast AS cc ) TO 'benchmark/result-db-eval/job/q27a/data/27a_cc.csv' CSV;
+\copy (SELECT DISTINCT * FROM comp_cast_type AS cct1  WHERE (cct1.kind = 'cast' OR cct1.kind = 'crew')) TO 'benchmark/result-db-eval/job/q27a/data/27a_cct1.csv' CSV;
+\copy (SELECT DISTINCT * FROM comp_cast_type AS cct2  WHERE cct2.kind = 'complete') TO 'benchmark/result-db-eval/job/q27a/data/27a_cct2.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_name AS cn  WHERE cn.country_code !='[pl]' AND (cn.name LIKE '%Film%' OR cn.name LIKE '%Warner%')) TO 'benchmark/result-db-eval/job/q27a/data/27a_cn.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_type AS ct  WHERE ct.kind ='production companies') TO 'benchmark/result-db-eval/job/q27a/data/27a_ct.csv' CSV;
+\copy (SELECT DISTINCT * FROM keyword AS k  WHERE k.keyword ='sequel') TO 'benchmark/result-db-eval/job/q27a/data/27a_k.csv' CSV;
+\copy (SELECT DISTINCT * FROM link_type AS lt  WHERE lt.link LIKE '%follow%') TO 'benchmark/result-db-eval/job/q27a/data/27a_lt.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc  WHERE mc.note IS NULL) TO 'benchmark/result-db-eval/job/q27a/data/27a_mc.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info AS mi  WHERE (mi.info = 'Sweden' OR mi.info = 'Germany' OR mi.info = 'Swedish' OR mi.info = 'German')) TO 'benchmark/result-db-eval/job/q27a/data/27a_mi.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_keyword AS mk ) TO 'benchmark/result-db-eval/job/q27a/data/27a_mk.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_link AS ml ) TO 'benchmark/result-db-eval/job/q27a/data/27a_ml.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t  WHERE t.production_year >= 1950 AND t.production_year <= 2000) TO 'benchmark/result-db-eval/job/q27a/data/27a_t.csv' CSV;

@@ -1,0 +1,11 @@
+\copy (SELECT DISTINCT * FROM company_name AS cn  WHERE cn.country_code != '[us]') TO 'benchmark/result-db-eval/job/q22c/data/22c_cn.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_type AS ct ) TO 'benchmark/result-db-eval/job/q22c/data/22c_ct.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it1  WHERE it1.info = 'countries') TO 'benchmark/result-db-eval/job/q22c/data/22c_it1.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it2  WHERE it2.info = 'rating') TO 'benchmark/result-db-eval/job/q22c/data/22c_it2.csv' CSV;
+\copy (SELECT DISTINCT * FROM keyword AS k  WHERE (k.keyword = 'murder' OR k.keyword = 'murder-in-title' OR k.keyword = 'blood' OR k.keyword = 'violence')) TO 'benchmark/result-db-eval/job/q22c/data/22c_k.csv' CSV;
+\copy (SELECT DISTINCT * FROM kind_type AS kt  WHERE (kt.kind = 'movie' OR kt.kind = 'episode')) TO 'benchmark/result-db-eval/job/q22c/data/22c_kt.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc  WHERE NOT mc.note LIKE '%(USA)%' AND mc.note LIKE '%(200%)%') TO 'benchmark/result-db-eval/job/q22c/data/22c_mc.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info AS mi  WHERE (mi.info = 'Sweden' OR mi.info = 'Norway' OR mi.info = 'Germany' OR mi.info = 'Denmark' OR mi.info = 'Swedish' OR mi.info = 'Danish' OR mi.info = 'Norwegian' OR mi.info = 'German' OR mi.info = 'USA' OR mi.info = 'American')) TO 'benchmark/result-db-eval/job/q22c/data/22c_mi.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info_idx AS mi_idx  WHERE mi_idx.info < '8.5') TO 'benchmark/result-db-eval/job/q22c/data/22c_mi_idx.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_keyword AS mk ) TO 'benchmark/result-db-eval/job/q22c/data/22c_mk.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t  WHERE t.production_year > 2005) TO 'benchmark/result-db-eval/job/q22c/data/22c_t.csv' CSV;

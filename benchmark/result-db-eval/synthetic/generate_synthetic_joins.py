@@ -29,7 +29,7 @@ def generate_fact_table(output_file: str) -> None:
         for tup in itertools.product(
                 *[[i for i in range(FOREIGN_KEYS_PER_RELATION)] for _ in range(NUMBER_OF_DIMENSION_TABLES)],
         ):
-            full_tuple: tuple = tup + (generate_random_str(),)
+            full_tuple: tuple = tup + (tup[1], generate_random_str(),)
             csv_file.write(f'{",".join([str(i) for i in full_tuple])}\n')
 
 
@@ -44,13 +44,16 @@ def generate_dimension_table(output_file: str) -> None:
 def generate_additional_info_table(output_file: str) -> None:
     tuples: List[Tuple] = []
     for i in range(NUMBER_OF_ADDITIONAL_INFO):
-        tuples.append((i, generate_random_str()))
+        tuples.append((i, i, i, generate_random_str()))
     write_to_csv(output_file, tuples)
 
 
 def generate_all_relations() -> None:
+    print("Generating Dimension Tables")
     generate_dimension_table(f"{BASE_PATH}/dim.csv")
+    print("Generating Fact Table")
     generate_fact_table(f"{BASE_PATH}/fact.csv")
+    print("Generating Additional Table")
     generate_additional_info_table(f"{BASE_PATH}/add.csv")
 
 if __name__ == "__main__":

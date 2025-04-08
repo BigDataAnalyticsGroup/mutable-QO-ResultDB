@@ -158,9 +158,9 @@ namespace m
         void find_greedy_vertex_cuts(const AdjacencyMatrix &M, const folding_problem_t &folding_problem, std::vector<Subproblem> &folds);
 
         template <typename PlanTable>
-        folding_table_entry_t create_and_enumerate_problems(QueryGraph& G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, const folding_problem_t &folding_problem, PlanTable& PT_order, bool use_tvc);
+        folding_table_entry_t create_and_enumerate_problems(QueryGraph& G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash> folded_mapping, folding_table_t& folding_table, const folding_problem_t &folding_problem, std::unordered_map<Subproblem, double, SubproblemHash>& fold_costs, PlanTable& PT_order, bool use_tvc);
 
-        bool get_greedy_folded_graph(const AdjacencyMatrix& current_matrix, AdjacencyMatrix& new_matrix, const folding_problem_t& folding_problem, std::unordered_map<Subproblem, Subproblem, SubproblemHash> &folded_mapping);
+        bool get_greedy_folded_graph(AdjacencyMatrix& current_matrix, AdjacencyMatrix& new_matrix, const folding_problem_t& folding_problem, std::unordered_map<Subproblem, Subproblem, SubproblemHash> &folded_mapping);
 
         bc_forest_t build_bc_forest(const std::vector<Subproblem> &blocks, const Subproblem &cut_vertices);
 
@@ -169,10 +169,10 @@ namespace m
         std::vector<std::vector<Subproblem>> get_tvc_sets(const AdjacencyMatrix &M, const folding_problem_t &folding_problem);
 
         template <typename PlanTable>
-        folding_table_entry_t enumerate_block_problem(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, folding_problem_t folding_problem, PlanTable &PT_order, bool use_tvc);
+        folding_table_entry_t enumerate_block_problem(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, folding_problem_t folding_problem, std::unordered_map<Subproblem, double, SubproblemHash>& fold_costs, PlanTable &PT_order, bool use_tvc);
 ;
         template <typename PlanTable>
-        folding_table_entry_t enumerate_problems(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, std::vector<tree_problem_t> &tree_problems, PlanTable &PT_order, bool use_tvc);
+        folding_table_entry_t enumerate_problems(QueryGraph &G, AdjacencyMatrix& adj_matrix, std::unordered_map<Subproblem, Subproblem, SubproblemHash>& folded_mapping, folding_table_t& folding_table, std::vector<tree_problem_t> &tree_problems, std::unordered_map<Subproblem, double, SubproblemHash>& fold_costs, PlanTable &PT_order, bool use_tvc);
 
         void visit_bc_forest(bc_forest_t &bc_forest, std::vector<Subproblem> &blocks, Subproblem &visited, std::vector<Subproblem> &folding_problems, std::vector<fold_t> &folds);
 

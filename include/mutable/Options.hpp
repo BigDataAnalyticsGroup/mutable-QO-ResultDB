@@ -73,12 +73,11 @@ struct M_EXPORT Options
     /** If `true`, the both Yannakakis and Decomposing options will be evaluated for RESULTDB. */
     ResultDBOptimizerType result_db_optimizer = DP_ResultDB;
 
-    /** If `true`, for RESULTDB, cycles will be reduced using greedy two-vertex cuts. */
-    bool greedy_cuts = false;
-
     /** If `true`, decompose the single-table query result in multiple result sets, i.e. compute the same result as
      * using the `result_db` optimizer. */
     bool decompose;
+
+    bool ignore_tvcs = false;
 
     /** If `true`, do not pass the query to the backend for execution. */
     bool dryrun;

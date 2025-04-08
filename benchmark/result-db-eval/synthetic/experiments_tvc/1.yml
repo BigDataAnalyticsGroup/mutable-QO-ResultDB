@@ -19,8 +19,9 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id_0': 'INT NOT NULL'
-        'id_1': 'INT NOT NULL'
+        'id': 'INT NOT NULL'
+        'd1': 'INT NOT NULL'
+        'd2': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_1': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/dim.csv'       # Relative path to the file containing the table data
@@ -28,8 +29,8 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
-        'fk': 'INT NOT NULL'
+        'f': 'INT NOT NULL'
+        'a': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_7': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/dim.csv'       # Relative path to the file containing the table data
@@ -37,8 +38,8 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
-        'fk': 'INT NOT NULL'
+        'f': 'INT NOT NULL'
+        'a': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_2': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/add.csv'       # Relative path to the file containing the table data
@@ -46,7 +47,9 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
+        'a1': 'INT NOT NULL'
+        'a2': 'INT NOT NULL'
+        'a3': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_3': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/add.csv'       # Relative path to the file containing the table data
@@ -54,7 +57,9 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
+        'a1': 'INT NOT NULL'
+        'a2': 'INT NOT NULL'
+        'a3': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_4': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/add.csv'       # Relative path to the file containing the table data
@@ -62,7 +67,9 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
+        'a1': 'INT NOT NULL'
+        'a2': 'INT NOT NULL'
+        'a3': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_5': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/add.csv'       # Relative path to the file containing the table data
@@ -70,7 +77,9 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
+        'a1': 'INT NOT NULL'
+        'a2': 'INT NOT NULL'
+        'a3': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
     'rel_6': # Name of this table.
       file: 'benchmark/result-db-eval/synthetic/data/add.csv'       # Relative path to the file containing the table data
@@ -78,7 +87,9 @@ data:                                                     # Definition of the ta
       delimiter: ','                                    # Delimiter of the file. Optional, defaults to ','.
       header: 0                                         # Whether the file has a header line. 1=true, 0=false. Optional, defaults to 0.
       attributes: # Map from attribute name to its type.
-        'id': 'INT NOT NULL'
+        'a1': 'INT NOT NULL'
+        'a2': 'INT NOT NULL'
+        'a3': 'INT NOT NULL'
         'word': 'CHAR 100 NOT NULL'
 
 
@@ -98,25 +109,25 @@ systems:
               --result-db
             pattern:
               Execution Time: '^Execute machine code:.*'
-          'DP_Fold':
+          'TD_Fold':
             args: >-
               --result-db
               --optimize-result-db
-              --dp_fold
+              --td_root
             pattern:
               Execution Time: '^Execute machine code:.*'
-          'DP_Fold-Greedy':
+          'TD_Fold-NoTVC':
             args: >-
               --result-db
               --optimize-result-db
-              --dp_fold_greedy
+              --td_root
+              --ignore_tvcs
             pattern:
               Execution Time: '^Execute machine code:.*'
-          'DP_ResultDB':
+          'TD_ResultDB':
             args: >-
               --result-db
               --optimize-result-db
-              --dp_resultdb
             pattern:
               Execution Time: '^Execute machine code:.*'
           'Decompose':
@@ -127,6 +138,6 @@ systems:
         cases:
             1:  SELECT *
                 FROM rel_0 AS r_0, rel_1 AS r_1, rel_2 AS r_2, rel_3 AS r_3, rel_4 AS r_4, rel_5 AS r_5, rel_6 AS r_6, rel_7 AS r_7
-                WHERE r_0.id_0=r_1.id AND r_1.fk=r_2.id AND r_2.id=r_3.id AND r_3.id=r_4.id AND r_4.id=r_5.id AND r_5.id=r_6.id
-                      AND r_1.fk = r_6.id AND r_2.id = r_5.id
-                      AND r_6.id=r_7.fk AND r_7.id=r_0.id_0 AND r_0.id_0 < 1800;
+                WHERE r_0.d1=r_1.f AND r_1.a=r_2.a1 AND r_2.a2=r_3.a1 AND r_2.a3=r_5.a3 AND r_3.a2=r_4.a1 AND r_4.a2=r_5.a1
+                      AND r_5.a2 = r_6.a2 AND r_6.a1 = r_7.a
+                      AND r_6.a3=r_1.a AND r_7.f=r_0.d2 AND r_0.id < 1800;

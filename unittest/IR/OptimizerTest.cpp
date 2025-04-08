@@ -115,8 +115,6 @@ TEST_CASE("Optimizer/ResultDB/Generic", "[IR]") {
     const Subproblem F(32);
     const Subproblem G(64);
 
-    Options::Get().greedy_cuts = true;
-
     SECTION("acylic tree")
     {
         /* Define query:
@@ -562,7 +560,7 @@ TEST_CASE("Optimizer/ResultDB/Problems/1", "[IR]") {
     tbl_G.layout(Cat.data_layout());
     tbl_H.layout(Cat.data_layout());
 
-    constexpr std::size_t num_rows_A = 100000; // Avoid all joins with A at all costs!
+    constexpr std::size_t num_rows_A = 10000000; // Avoid all joins with A at all costs!
     constexpr std::size_t num_rows_B = 100;
     constexpr std::size_t num_rows_C = 80;
     constexpr std::size_t num_rows_D = 120;
@@ -623,6 +621,7 @@ TEST_CASE("Optimizer/ResultDB/Problems/1", "[IR]") {
     /* First, check whether TVCs can be determined greedily and exhaustive */
     std::unordered_map<Subproblem, Subproblem, SubproblemHash> folded_mapping;
     std::unordered_map<Subproblem, Optimizer_ResultDB_utils::folding_table_entry_t, SubproblemHash> folded_map;
+        std::unordered_map<Subproblem, double, SubproblemHash> fold_costs;
 
     /* Exhaustive */
     std::vector<std::vector<Subproblem>> tvc_sets_exhaustive = Optimizer_ResultDB_utils::get_tvc_sets(QG.adjacency_matrix(), tree_problems[0][0][0]);
@@ -676,7 +675,7 @@ TEST_CASE("Optimizer/ResultDB/Problems/1", "[IR]") {
     check_greedy_folding(greedy_new_matrix);
 
     folded_mapping = {};
-    Optimizer_ResultDB_utils::folding_table_entry_t result = Optimizer_ResultDB_utils::enumerate_block_problem(QG, QG.adjacency_matrix(), folded_mapping, folded_map, tree_problems[0][0][0], plan_table, true);
+    Optimizer_ResultDB_utils::folding_table_entry_t result = Optimizer_ResultDB_utils::enumerate_block_problem(QG, QG.adjacency_matrix(), folded_mapping, folded_map, tree_problems[0][0][0], fold_costs, plan_table, true);
     REQUIRE(result->first.size() == 4);
     REQUIRE(result->first[0] == Subproblem(1));
     REQUIRE(result->first[1] == Subproblem(50));

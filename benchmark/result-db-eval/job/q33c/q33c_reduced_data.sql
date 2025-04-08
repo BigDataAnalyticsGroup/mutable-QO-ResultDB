@@ -1,0 +1,14 @@
+\copy (SELECT DISTINCT * FROM company_name AS cn1  WHERE cn1.country_code != '[us]') TO 'benchmark/result-db-eval/job/q33c/data/33c_cn1.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_name AS cn2 ) TO 'benchmark/result-db-eval/job/q33c/data/33c_cn2.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it1  WHERE it1.info = 'rating') TO 'benchmark/result-db-eval/job/q33c/data/33c_it1.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it2  WHERE it2.info = 'rating') TO 'benchmark/result-db-eval/job/q33c/data/33c_it2.csv' CSV;
+\copy (SELECT DISTINCT * FROM kind_type AS kt1  WHERE (kt1.kind = 'tv series' OR kt1.kind = 'episode')) TO 'benchmark/result-db-eval/job/q33c/data/33c_kt1.csv' CSV;
+\copy (SELECT DISTINCT * FROM kind_type AS kt2  WHERE (kt2.kind = 'tv series' OR kt2.kind = 'episode')) TO 'benchmark/result-db-eval/job/q33c/data/33c_kt2.csv' CSV;
+\copy (SELECT DISTINCT * FROM link_type AS lt  WHERE (lt.link = 'sequel' OR lt.link = 'follows' OR lt.link = 'followed by')) TO 'benchmark/result-db-eval/job/q33c/data/33c_lt.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc1 ) TO 'benchmark/result-db-eval/job/q33c/data/33c_mc1.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc2 ) TO 'benchmark/result-db-eval/job/q33c/data/33c_mc2.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info_idx AS mi_idx1 ) TO 'benchmark/result-db-eval/job/q33c/data/33c_mi_idx1.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info_idx AS mi_idx2  WHERE mi_idx2.info < '3.5') TO 'benchmark/result-db-eval/job/q33c/data/33c_mi_idx2.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_link AS ml ) TO 'benchmark/result-db-eval/job/q33c/data/33c_ml.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t1 ) TO 'benchmark/result-db-eval/job/q33c/data/33c_t1.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t2  WHERE t2.production_year >= 2000 AND t2.production_year <= 2010) TO 'benchmark/result-db-eval/job/q33c/data/33c_t2.csv' CSV;

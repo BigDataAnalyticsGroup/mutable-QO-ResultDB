@@ -1,0 +1,11 @@
+\copy (SELECT DISTINCT * FROM cast_info AS ci  WHERE (ci.note = '(writer)' OR ci.note = '(head writer)' OR ci.note = '(written by)' OR ci.note = '(story)' OR ci.note = '(story editor)')) TO 'benchmark/result-db-eval/job/q31a/data/31a_ci.csv' CSV;
+\copy (SELECT DISTINCT * FROM company_name AS cn  WHERE cn.name LIKE 'Lionsgate%') TO 'benchmark/result-db-eval/job/q31a/data/31a_cn.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it1  WHERE it1.info = 'genres') TO 'benchmark/result-db-eval/job/q31a/data/31a_it1.csv' CSV;
+\copy (SELECT DISTINCT * FROM info_type AS it2  WHERE it2.info = 'votes') TO 'benchmark/result-db-eval/job/q31a/data/31a_it2.csv' CSV;
+\copy (SELECT DISTINCT * FROM keyword AS k  WHERE (k.keyword = 'murder' OR k.keyword = 'violence' OR k.keyword = 'blood' OR k.keyword = 'gore' OR k.keyword = 'death' OR k.keyword = 'female-nudity' OR k.keyword = 'hospital')) TO 'benchmark/result-db-eval/job/q31a/data/31a_k.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_companies AS mc ) TO 'benchmark/result-db-eval/job/q31a/data/31a_mc.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info AS mi  WHERE (mi.info = 'Horror' OR mi.info = 'Thriller')) TO 'benchmark/result-db-eval/job/q31a/data/31a_mi.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_info_idx AS mi_idx ) TO 'benchmark/result-db-eval/job/q31a/data/31a_mi_idx.csv' CSV;
+\copy (SELECT DISTINCT * FROM movie_keyword AS mk ) TO 'benchmark/result-db-eval/job/q31a/data/31a_mk.csv' CSV;
+\copy (SELECT DISTINCT * FROM name AS n  WHERE n.gender = 'm') TO 'benchmark/result-db-eval/job/q31a/data/31a_n.csv' CSV;
+\copy (SELECT DISTINCT * FROM title AS t ) TO 'benchmark/result-db-eval/job/q31a/data/31a_t.csv' CSV;

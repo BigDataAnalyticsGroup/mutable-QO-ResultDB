@@ -8,6 +8,7 @@ catch.xml
 .idea/
 benchmark/job/data
 benchmark/result-db-eval/synthetic/data
+benchmark/result-db-eval/ce/data
 paper_benchmarks/
 postgres/
 *.DS_STORE
