@@ -12,6 +12,7 @@ ce_benchmarks=(
     "8_9"
     "8_10"
     "8_11"
+    "8_12"
 )
 
 for query in "${ce_benchmarks[@]}"; do

@@ -744,7 +744,7 @@ std::vector<Optimizer_ResultDB_utils::tree_problem_t> Optimizer_ResultDB_utils::
             if (not removed_cut_vertex.empty() and (root & removed_cut_vertex).empty())
                 /* This is a recursive call and the root is not the one that lost its cut vertex */
                 continue;
-            problem_set_t problem_set = {std::make_pair(root, root)};
+            problem_set_t problem_set = {std::make_pair(root - removed_cut_vertex, root)};
             auto callback = [&](const Subproblem vertex_node, const Subproblem block_node) -> void
             {
                 problem_set.emplace_back(std::make_pair(block_node - vertex_node, block_node));
@@ -1326,11 +1326,11 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
     }
     /* Best ResultDB_SemiJoin Plan */
     auto [reducer_order, reducer_costs] = compute_semi_join_reducer_costs();
-    //std::cerr << complete_problem << " " << CE.predict_cardinality(*PT_order[complete_problem].model) << " " << PT_order[complete_problem].cost << " " << YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE) << "\n";
+    // std::cerr << complete_problem << " " << CE.predict_cardinality(*PT_order[complete_problem].model) << " " << PT_order[complete_problem].cost << " " << YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE) << "\n";
     double decompose_costs = PT_order[complete_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE);
 
     /* Decide whether to use ResultDB_SemiJoin or ResultDB_Decompose */
-    //std::cerr << "Reducer: " << reducer_costs << ", Decompose: " << decompose_costs << "\n";
+    // std::cerr << "Reducer: " << reducer_costs << ", Decompose: " << decompose_costs << "\n";
     if (reducer_costs < decompose_costs) return semi_join_reducer_plan();
     return decompose_plan();
 }
@@ -1647,7 +1647,7 @@ Optimizer_ResultDB::operator()(QueryGraph &G) const
                         return not is<const ast::Designator>(p.first) or p.second.has_value(); // only designators without alias supported
                     }))
     {
-        std::cerr << "WARNING: No compatible query for ResultDB `Optimizer`. Fallback to standard `Optimizer`."
+        // std::cerr << "WARNING: No compatible query for ResultDB `Optimizer`. Fallback to standard `Optimizer`."
                   << std::endl;
 
         std::unique_ptr<Producer> producer;

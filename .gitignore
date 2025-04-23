@@ -13,6 +13,7 @@ paper_benchmarks/
 postgres/
 *.DS_STORE
 *__pycache__*
+*.zip
 
 # Git version information
 include/mutable/gitversion.tbl

@@ -60,14 +60,19 @@ We first need to generate/download the required data. For that you need to:
     ```
     python benchmark/result-db-eval/synthetic/generate_synthetic_joins.py
     ```
-3. (Optional) Load the IMDb/synthetic data into postgres. This is only required if you want to recreate the injected cardinalities.
+3. Download the DBLP data from [this link](https://figshare.com/s/7bf0512c9c8122d2d9ca) and unzip it into the folder `benchmark/result-db-eval/ce/`. 
+   The DBLP data is used for the JOB experiments.
+4. (Optional) Load the IMDb/synthetic/DBLP data into postgres. This is only required if you want to recreate the injected cardinalities.
     ```
     ./benchmark/result-db-eval/job/setup_postgres.sh <postgres_user>
     ```
     ```
     ./benchmark/result-db-eval/synthetic/setup_postgres.sh <postgres_user>
     ```
-4. (Optional) Recreate the injected cardinality files used in the experiments. This may take some time. On our machine, this took an hour. Note that this step is optional, as the cardinality files are already contained in the repository.
+    ```
+   ./benchmark/result-db-eval/ce/setup_postgres.sh <postgres_user>
+    ```
+5. (Optional) Recreate the injected cardinality files used in the experiments. This may take some time. On our machine, this took multiple hours. Note that this step is optional, as the cardinality files are already contained in the repository.
     ```
     python benchmark/result-db-eval/create_injected_cardinalities.py --user <postgres_user>
     ```
@@ -84,9 +89,12 @@ In order to execute all experiments, perform the following steps:
     ```
 3. Run the JOB experiments.
     ```
-    python benchmark/Benchmark.py --output benchmark/result-db-eval/job/recreated_results/job.csv benchmark/result-db-eval/job/
+    ./benchmark/result-db-eval/run_job_experiments.sh
     ```
-
+4. Run the CE experiments.
+    ```
+    ./benchmark/result-db-eval/run_ce_experiments.sh
+    ```
 ## Visualize results
 In order to visualize the results with jupyter, and generate PDFs with the results, you need to run the following commands:
 1. Go into the folder with the jupyter notebook.

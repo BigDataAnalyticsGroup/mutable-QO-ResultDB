@@ -8,7 +8,6 @@ from functools import reduce
 from pathlib import Path
 from typing import Any
 from query_utility import Relation, JoinGraph
-import query_definitions as q_def
 import shutil
 
 OUTPUT_DIR = "benchmark/result-db-eval"
@@ -28,6 +27,8 @@ def create_injected_cardinalities(
     #  SELECT COUNT(*)
     #  FROM relations
     #  WHERE  filter_predicates AND join_predicates;
+
+    base_relations = dict()
 
     def generate_from_and_where_clause(relation_set: set[Relation]) -> tuple[str, str]:
         from_clause = "FROM"
@@ -89,7 +90,7 @@ def create_injected_cardinalities(
                 reducer_where_clause,
             ) = generate_from_and_where_clause(reducer_set)
             reducer_query = f"{reducer_select_clause}\n{reducer_from_clause}\n{reducer_where_clause};"
-            reducer_view = f"DROP VIEW IF EXISTS reducer_{idx};\nCREATE VIEW reducer_{idx} AS\n{reducer_query}\n\n"
+            reducer_view = f"DROP VIEW IF EXISTS reducer_{idx};\nSET statement_timeout = '60s';CREATE VIEW reducer_{idx} AS\n{reducer_query}\n\n"
             reducer_views += reducer_view
 
         final_select = "SELECT COUNT(*)"
@@ -132,18 +133,24 @@ def create_injected_cardinalities(
         write_to_file(query_file, final_query)
 
         # use postgres to execute each file and compute count(*)
-        command = f"psql -U {config['user']} -d {config['database']} -f {query_file} | sed '{5 + 2*len(reducer_sets)}!d'"
+        # print(f"Computing {main_set}:{reduce(lambda x, y: x | y, reducer_sets)}")
+        command = f"psql -U {config['user']} -d {config['database']} -f {query_file} | sed '{5 + 3*len(reducer_sets)}!d'"
 
-        completed_proc = subprocess.run(
-            command, capture_output=True, text=True, shell=True
-        )
-        return_code = completed_proc.returncode
-        # TODO: the exit code of a pipeline is the exit code of the last command, i.e. not the psql command
-        if return_code:  # something went wrong during execution
-            print(
-                f"Failure during execution of `{command}` with return code {return_code}."
+        try:
+            completed_proc = subprocess.run(
+                command, capture_output=True, text=True, shell=True, timeout=60
             )
-        reduced_cardinality = completed_proc.stdout.strip()  # remove whitespaces
+            return_code = completed_proc.returncode
+            # TODO: the exit code of a pipeline is the exit code of the last command, i.e. not the psql command
+            if return_code:  # something went wrong during execution
+                print(
+                    f"Failure during execution of `{command}` with return code {return_code}."
+                )
+            reduced_cardinality = completed_proc.stdout.strip()
+        except:
+            print("RIP")
+            reduced_cardinality = base_relations[tuple(sorted(main_set))]# remove whitespaces
+            time.sleep(1)
         print(
             f"{main_set}:{reduce(lambda x, y: x | y, reducer_sets)}:{reduced_cardinality}"
         )
@@ -169,7 +176,7 @@ def create_injected_cardinalities(
             if not join_graph.connected(S):
                 continue
 
-            select_clause = "SELECT COUNT(*)"
+            select_clause = "SET statement_timeout = '60s'; SELECT COUNT(*)"
             from_clause, where_clause = generate_from_and_where_clause(S)
             query = f"{select_clause}\n{from_clause}\n{where_clause};"
 
@@ -180,20 +187,30 @@ def create_injected_cardinalities(
             write_to_file(query_file, query)
 
             # use postgres to execute each file and compute count(*)
-            command = f"psql -U {config['user']} -d {config['database']} -f {query_file} | sed '3!d'"
-
-            completed_proc = subprocess.run(
-                command, capture_output=True, text=True, shell=True
+            # print(f"Computing {S}")
+            command = f"psql -U {config['user']} -d {config['database']} -f {query_file} | sed '4!d'"
+            process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
             )
-            return_code = completed_proc.returncode
-            # TODO: the exit code of a pipeline is the exit code of the last command, i.e. not the psql command
-            if return_code:  # something went wrong during execution
-                print(
-                    f"Failure during execution of `{command}` with return code {return_code}."
-                )
-            cardinality = completed_proc.stdout.strip()  # remove whitespaces
-            print(S, cardinality)
+            try:
 
+                # Wait for the process to finish (with timeout)
+                completed_proc = process.communicate(timeout=60)
+                print(completed_proc)
+                return_code = process.returncode
+                # TODO: the exit code of a pipeline is the exit code of the last command, i.e. not the psql command
+                if return_code:  # something went wrong during execution
+                    print(
+                        f"Failure during execution of `{command}` with return code {return_code}."
+                    )
+                cardinality = completed_proc[0].decode().strip()  # remove whitespaces
+            except:
+                test = [base_relations[tuple(sorted((s,)))] for s in S]
+                print("RIP", test)
+                subprocess.run([f'kill -9 {process.pid}'], shell=True, timeout=2)
+                cardinality = math.prod(test)
+            print(S, cardinality)
+            base_relations[tuple(sorted(S))] = int(cardinality)
             adapted_select_clause = create_select_for_view(S)
 
             view_query = f"DROP VIEW IF EXISTS to_be_reduced;\nCREATE VIEW to_be_reduced AS\n{adapted_select_clause}\n{from_clause}\n{where_clause};"
@@ -261,54 +278,88 @@ if __name__ == "__main__":
     config["database"] = "imdb"
     config["card_entry"] = "job"
 
+    import job_acyclic_postgres_query_definitions as q_def
+
     job_queries = [
-        # "1b",
-        # "2a",
-        # "3c",
-        # "4a",
-        # "5c",
+        "1b",
+        "2a",
+        "3c",
+        "4a",
+        "5c",
         "7a",
-        # "8a",
-        # "9c",
-        # "10c",
-        # "11c",
-        # "12a",
-        # "14a",
-        # "15d",
-        # "18c",
-        # "19a",
-        # "21a",
-        # "22c",
-        # "23a",
-        # "24a",
-        # "25b",
-        # "26a",
-        # "27a",
-        # "28c",
-        # "30c",
-        # "31a",
-        # "33c",
+        "8a",
+        "9c",
+        "10c",
+        "11c",
+        "12a",
+        "14a",
+        "15d",
+        "18c",
+        "19a",
+        "21a",
+        "22c",
+        "23a",
+        "24a",
+        "25b",
+        "26a",
+        "27a",
+        "28c",
+        "30c",
+        "31a",
+        "33c",
     ]
     for query in job_queries:
-       print(f"Query: {query}")
+       print(f"Acyclic Job Query: {query}")
+       create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/job/q{query}/q{query}_acyclic_injected_cardinalities.json", True)
+    import query_definitions as q_def
+    for query in job_queries:
+       print(f"Cyclic Job Query: {query}")
        create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/job/q{query}/q{query}_cyclic_injected_cardinalities.json", False)
 
-    # config["database"] = "synthetic"
-    # config["card_entry"] = "synthetic"
-    #
+    config["database"] = "synthetic"
+    config["card_entry"] = "synthetic"
 
-    # selectivities = [1800, 1400, 1000, 600, 200]
-    # for index, selectivity in enumerate(reversed(selectivities)):
-    #     redundant_graph = q_def.create_synthetic_chain_join(selectivity)
-    #     create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_chain/{(2*index) + 1}_injected_cardinalities.json')
-    #
-    # for index, selectivity in enumerate(reversed(selectivities)):
-    #     redundant_graph = q_def.create_synthetic_cycle_join(selectivity)
-    #     create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_cycle/{(2*index) + 1}_injected_cardinalities.json')
-    #
-    # for index, selectivity in enumerate(reversed(selectivities)):
-    #     redundant_graph = q_def.create_synthetic_tvc_join(selectivity)
-    #     create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_tvc/{(2*index) + 1}_injected_cardinalities.json')
+    import synthetic_query_definitions as q_def
+
+
+    selectivities = [1800, 1400, 1000, 600, 200]
+    for index, selectivity in enumerate(reversed(selectivities)):
+        redundant_graph = q_def.create_synthetic_chain_join(selectivity)
+        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_chain/{(2*index) + 1}_injected_cardinalities.json', False)
+
+    for index, selectivity in enumerate(reversed(selectivities)):
+        redundant_graph = q_def.create_synthetic_cycle_join(selectivity)
+        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_cycle/{(2*index) + 1}_injected_cardinalities.json', False)
+
+    for index, selectivity in enumerate(reversed(selectivities)):
+        redundant_graph = q_def.create_synthetic_tvc_join(selectivity)
+        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_tvc/{(2*index) + 1}_injected_cardinalities.json', False)
+
+    config["database"] = "ce"
+    config["card_entry"] = "ce"
+
+    ce_queries = [
+       "8_1",
+       "8_2",
+       "8_3",
+       "8_4",
+       "8_5",
+       "8_6",
+       "8_7",
+       "8_8",
+       "8_9",
+       "8_10",
+       "8_11",
+       "8_12",
+    ]
+
+    import ce_query_definitions as q_def
+    for query in ce_queries:
+       print(f"Cylic CE Query: {query}")
+       create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/ce/q{query}_injected_cardinalities.json", False)
+
+
+
 
 
 
