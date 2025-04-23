@@ -1647,7 +1647,7 @@ Optimizer_ResultDB::operator()(QueryGraph &G) const
                         return not is<const ast::Designator>(p.first) or p.second.has_value(); // only designators without alias supported
                     }))
     {
-        // std::cerr << "WARNING: No compatible query for ResultDB `Optimizer`. Fallback to standard `Optimizer`."
+        std::cerr << "WARNING: No compatible query for ResultDB `Optimizer`. Fallback to standard `Optimizer`."
                   << std::endl;
 
         std::unique_ptr<Producer> producer;

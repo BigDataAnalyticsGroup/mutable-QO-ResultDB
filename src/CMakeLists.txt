@@ -78,9 +78,8 @@ else()
         list(APPEND static_libs "${lib_path}")
     endforeach()
     message(STATUS "Bundling libraries ${static_libs}")
-
     # Detect the toolchain to use for bundling.
-    if (CMAKE_CXX_COMPILER_ID MATCHES "^(Clang)$")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?(Clang)$")
         set(ar_tool ${CMAKE_CXX_COMPILER_AR})
         file(
             WRITE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_bundled.ar.in
@@ -105,7 +104,7 @@ else()
             VERBATIM
         )
     else()
-        message(FATAL_ERROR "Unknown bundle scenario!")
+        message(FATAL_ERROR "Unknown bundle scenario! ${CMAKE_CXX_COMPILER_ID}")
     endif()
 
     # Create a custom target to reqire building our bundled static library as a dependency.
