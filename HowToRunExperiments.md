@@ -8,14 +8,20 @@ Our implementation was done in `mutable`, for which we offer two methods on
 how to install it and its preliminaries: A native, local installation and `Docker`. 
 
 ### Local Installation
-For the local installation, please follow the instruction found [here](doc/setup.md) to build `mutable`. Note that you need to
-build mutable with its WebAssembly-Backend.
-You also need to perform the following steps:
-1. Set up a virtual python environment. Make sure to have Python3.10 installed!
+For the local installation, please follow the instructions found below to build `mutable`. # [here](doc/setup.md).
+1. Make sure you fulfill all [preliminaries](doc/preliminaries.md). 
+2. Create an artificial git repository, as mutable expects to be in a git repository.
+    ```console
+   $ git init
+   $ git add README.md
+   $ git commit -m "dummy commit"
+      ```
+3. Build mutable with its WebAssembly Backend following the instructions found [here](doc/setup.md#build-mutable).
+4. Set up a virtual python environment. Make sure to have Python3.10 installed!
 ```
 pipenv sync --python 3.10
 ```
-2. (Optional) Setup a local [PostgreSQL](https://www.postgresql.org/) installation. PostgreSQL will be required in order to generate
+5. (Optional) Setup a local [PostgreSQL](https://www.postgresql.org/) installation. PostgreSQL will be required in order to generate
 cardinality estimations later on. As cardinality estimations are already contained in the repository, this step is optional. 
 ### Docker
 In order to use docker, please follow the following instructions. We always assume you to be in the root directory
@@ -26,19 +32,19 @@ of the repository.
 ```
 mkdir postgres paper_benchmarks
 ```
-2. Build/download the required images. This can take up to an hour.
+3. Build/download the required images. This can take up to an hour.
 ```
 docker compose build
 ```
-3. Start the mutable container.
+4. Start the mutable container.
 ```
 docker compose up mutable -d
 ```
-4. (Optional) Start the postgres container. This is only required if you want to recreate the injected cardinality files.
+5. (Optional) Start the postgres container. This is only required if you want to recreate the injected cardinality files.
 ```
 docker compose up postgres -d
 ```
-4. Get an interactive shell in the `mutable` container. All following commands need to be executed from within that shell.
+6. Get an interactive shell in the `mutable` container. All following commands need to be executed from within that shell.
 ```
 docker compose exec -it mutable /bin/bash 
 ```
