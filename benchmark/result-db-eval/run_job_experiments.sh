@@ -30,8 +30,8 @@ job_benchmarks=(
 )
 
 for query in "${job_benchmarks[@]}"; do
-    python ./benchmark/Benchmark.py --output ./benchmark/result-db-eval/job/recreated_results.csv ./benchmark/result-db-eval/job/${query}/${query}_benchmark.yml
+    python ./benchmark/Benchmark.py --output ./benchmark/result-db-eval/job/recreated_results/acyclic_results.csv ./benchmark/result-db-eval/job/${query}/${query}_benchmark.yml
 done
 for query in "${job_benchmarks[@]}"; do
-    python ./benchmark/Benchmark.py --output ./benchmark/result-db-eval/job/recreated_cyclic_results.csv ./benchmark/result-db-eval/job/${query}/${query}_cyclic_benchmark.yml
+    python ./benchmark/Benchmark.py --output ./benchmark/result-db-eval/job/recreated_results/cyclic_results.csv ./benchmark/result-db-eval/job/${query}/${query}_cyclic_benchmark.yml
 done

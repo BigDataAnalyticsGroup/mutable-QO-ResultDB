@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from database_connectors import mutable, postgresql, hyper, duckdb, connector
+from database_connectors import mutable, duckdb, connector
 from database_connectors.connector import *
 from benchmark_utils import *
 

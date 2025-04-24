@@ -148,7 +148,7 @@ def create_injected_cardinalities(
                 )
             reduced_cardinality = completed_proc.stdout.strip()
         except:
-            print("RIP")
+            print("Cardinality Estimation took too long, utilize Cartesian Product.")
             reduced_cardinality = base_relations[tuple(sorted(main_set))]# remove whitespaces
             time.sleep(1)
         print(
@@ -196,7 +196,6 @@ def create_injected_cardinalities(
 
                 # Wait for the process to finish (with timeout)
                 completed_proc = process.communicate(timeout=60)
-                print(completed_proc)
                 return_code = process.returncode
                 # TODO: the exit code of a pipeline is the exit code of the last command, i.e. not the psql command
                 if return_code:  # something went wrong during execution
@@ -206,7 +205,7 @@ def create_injected_cardinalities(
                 cardinality = completed_proc[0].decode().strip()  # remove whitespaces
             except:
                 test = [base_relations[tuple(sorted((s,)))] for s in S]
-                print("RIP", test)
+                print("Cardinality Estimation took too long, utilize Cartesian Product", test)
                 subprocess.run([f'kill -9 {process.pid}'], shell=True, timeout=2)
                 cardinality = math.prod(test)
             print(S, cardinality)
@@ -324,14 +323,6 @@ if __name__ == "__main__":
 
     selectivities = [1800, 1400, 1000, 600, 200]
     for index, selectivity in enumerate(reversed(selectivities)):
-        redundant_graph = q_def.create_synthetic_chain_join(selectivity)
-        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_chain/{(2*index) + 1}_injected_cardinalities.json', False)
-
-    for index, selectivity in enumerate(reversed(selectivities)):
-        redundant_graph = q_def.create_synthetic_cycle_join(selectivity)
-        create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_cycle/{(2*index) + 1}_injected_cardinalities.json', False)
-
-    for index, selectivity in enumerate(reversed(selectivities)):
         redundant_graph = q_def.create_synthetic_tvc_join(selectivity)
         create_injected_cardinalities(redundant_graph, f"{(2*index) + 1}", config, f'{OUTPUT_DIR}/synthetic/experiments_tvc/{(2*index) + 1}_injected_cardinalities.json', False)
 
@@ -355,7 +346,7 @@ if __name__ == "__main__":
 
     import ce_query_definitions as q_def
     for query in ce_queries:
-       print(f"Cylic CE Query: {query}")
+       print(f"Cyclic CE Query: {query}")
        create_injected_cardinalities(getattr(q_def, f"create_q{query}")(), query, config, f"{OUTPUT_DIR}/ce/q{query}_injected_cardinalities.json", False)
 
 

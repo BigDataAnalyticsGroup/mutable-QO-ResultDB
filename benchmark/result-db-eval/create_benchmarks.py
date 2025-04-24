@@ -55,7 +55,8 @@ def create_reduced_data(query_name: str, config: dict[str, str]) -> None:
 
 def create_benchmark_file(query: str, schema: dict[str, dict[str, str]], config) -> None:
     join_graph: JoinGraph = getattr(q_def, f"create_q{query}")() # execute the function `create_<query>` of module `q_def`
-    # create_reduced_data(query, config)
+    create_reduced_data(query, config)
+    return
     data = '\n'
     for rel in join_graph.relations:
         data += f"\t'{rel.alias}':\n"
@@ -154,32 +155,32 @@ if __name__ == "__main__":
     config = vars(args)
 
     job_queries = [
-        # "1b",
-        # "2a",
-        # "3c",
-        # "4a",
-        # "5c",
+        "1b",
+        "2a",
+        "3c",
+        "4a",
+        "5c",
         "7a",
-        # "8a",
-        # "9c",
-        # "10c",
-        # "11c",
-        # "12a",
-        # "14a",
-        # "15d",
-        # "18c",
-        # "19a",
-        # "21a",
-        # "22c",
-        # "23a",
-        # "24a",
-        # "25b",
-        # "26a",
-        # "27a",
-        # "28c",
-        # "30c",
-        # "31a",
-        # "33c",
+        "8a",
+        "9c",
+        "10c",
+        "11c",
+        "12a",
+        "14a",
+        "15d",
+        "18c",
+        "19a",
+        "21a",
+        "22c",
+        "23a",
+        "24a",
+        "25b",
+        "26a",
+        "27a",
+        "28c",
+        "30c",
+        "31a",
+        "33c",
     ]
     for query in job_queries:
         query_folder_path = f"./benchmark/result-db-eval/job/q{query}/data"
@@ -193,5 +194,6 @@ if __name__ == "__main__":
         assert set(config["queries"]).issubset(job_queries), print(config["queries"])
     mutable_schema = parse_schema( "./benchmark/result-db-eval/job/schema_mutable_reduced.sql" )
     for query in job_queries:
-        create_benchmark_file(query, mutable_schema, config)
+        create_reduced_data(query, config)
+        # create_benchmark_file(query, mutable_schema, config)
     #create_benchmark_file("1b", mutable_schema, config)

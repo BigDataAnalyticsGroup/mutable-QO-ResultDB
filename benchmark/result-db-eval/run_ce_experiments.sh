@@ -16,5 +16,5 @@ ce_benchmarks=(
 )
 
 for query in "${ce_benchmarks[@]}"; do
-    python ./benchmark/Benchmark.py --output ./benchmark/result-db-eval/ce/recreated_results.csv ./benchmark/result-db-eval/ce/q${query}_benchmark.yml
+    python ./benchmark/Benchmark.py --output ./benchmark/result-db-eval/ce/recreated_results/results.csv ./benchmark/result-db-eval/ce/q${query}_benchmark.yml
 done
