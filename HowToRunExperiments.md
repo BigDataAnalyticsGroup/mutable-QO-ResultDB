@@ -21,7 +21,8 @@ For the local installation, please follow the instructions found below to build 
 ```
 pipenv sync --python 3.10
 ```
-5. (Optional) Setup a local [PostgreSQL](https://www.postgresql.org/) installation. PostgreSQL will be required in order to generate
+5. Setup a local [PostgreSQL](https://www.postgresql.org/) installation. PostgreSQL will be required in order to generate filtered data for JOB experiments, 
+   as well as optionally generate
 cardinality estimations later on. As cardinality estimations are already contained in the repository, this step is optional. 
 ### Docker
 In order to use docker, please follow the following instructions. We always assume you to be in the root directory
@@ -66,9 +67,8 @@ We first need to generate/download the required data. For that you need to:
     ```
     python benchmark/result-db-eval/synthetic/generate_synthetic_joins.py
     ```
-3. Download the DBLP data from [this link](https://figshare.com/s/7bf0512c9c8122d2d9ca) and unzip it into the folder `benchmark/result-db-eval/ce/`. 
-   The DBLP data is used for the JOB experiments.
-4. (Optional) Load the IMDb/synthetic/DBLP data into postgres. This is only required if you want to recreate the injected cardinalities.
+3. Download the DBLP data from [this link](https://figshare.com/s/7bf0512c9c8122d2d9ca) and unzip it into the folder `benchmark/result-db-eval/ce/`.
+4. Load the IMDb/synthetic (optional) / DBLP (optional) data into postgres. This is only required if you want to recreate the injected cardinalities. You might need to make some of these files executable.
     ```
     ./benchmark/result-db-eval/job/setup_postgres.sh <postgres_user>
     ```
@@ -78,7 +78,11 @@ We first need to generate/download the required data. For that you need to:
     ```
    ./benchmark/result-db-eval/ce/setup_postgres.sh <postgres_user>
     ```
-5. (Optional) Recreate the injected cardinality files used in the experiments. This may take some time. On our machine, this took multiple hours. Note that this step is optional, as the cardinality files are already contained in the repository.
+5. Create the prefiltered data for the JOB experiments.
+    ```
+    python benchmark/result-db-eval/create_benchmarks.py --user <postgres_user>
+    ```
+6. (Optional) Recreate the injected cardinality files used in the experiments. This may take some time. On our machine, this took multiple hours. Note that this step is optional, as the cardinality files are already contained in the repository.
     ```
     python benchmark/result-db-eval/create_injected_cardinalities.py --user <postgres_user>
     ```
