@@ -18,9 +18,9 @@ For the local installation, please follow the instructions found below to build 
       ```
 3. Build mutable with its WebAssembly Backend following the instructions found [here](doc/setup.md#build-mutable).
 4. Set up a virtual python environment. Make sure to have Python3.10 installed!
-```
-pipenv sync --python 3.10
-```
+    ```
+    pipenv sync --python 3.10
+    ```
 5. Setup a local [PostgreSQL](https://www.postgresql.org/) installation. PostgreSQL will be required in order to generate filtered data for JOB experiments, 
    as well as optionally generate
 cardinality estimations later on. As cardinality estimations are already contained in the repository, this step is optional. 
@@ -30,25 +30,25 @@ of the repository.
 
 1. Install [docker](https://www.docker.com/get-started/) and make sure your docker daemon is running.
 2. Create two folders used for volumes by the docker containers.
-```
-mkdir postgres paper_benchmarks
-```
+    ```
+    mkdir postgres paper_benchmarks
+    ```
 3. Build/download the required images. This can take up to an hour.
-```
-docker compose build
-```
+    ```
+    docker compose build
+    ```
 4. Start the mutable container.
-```
-docker compose up mutable -d
-```
+    ```
+    docker compose up mutable -d
+    ```
 5. (Optional) Start the postgres container. This is only required if you want to recreate the injected cardinality files.
-```
-docker compose up postgres -d
-```
+    ```
+    docker compose up postgres -d
+    ```
 6. Get an interactive shell in the `mutable` container. All following commands need to be executed from within that shell.
-```
-docker compose exec -it mutable /bin/bash 
-```
+    ```
+    docker compose exec -it mutable /bin/bash 
+    ```
 Note that the `postgres_user` in docker will always be `postgres`.
 
 ## Switch to virtual python environment
@@ -67,7 +67,8 @@ We first need to generate/download the required data. For that you need to:
     ```
     python benchmark/result-db-eval/synthetic/generate_synthetic_joins.py
     ```
-3. Download the DBLP data from [this link](https://figshare.com/s/7bf0512c9c8122d2d9ca) and unzip it into the folder `benchmark/result-db-eval/ce/`.
+3. Download the DBLP data from [this link](https://figshare.com/s/7bf0512c9c8122d2d9ca) and unzip it into the folder `benchmark/result-db-eval/ce/`. In Docker, you can 
+    simply utilize the mounted folder `paper_benchmarks` to store the DBLP data.
 4. Load the IMDb/synthetic (optional) / DBLP (optional) data into postgres. This is only required if you want to recreate the injected cardinalities. You might need to make some of these files executable.
     ```
     ./benchmark/result-db-eval/job/setup_postgres.sh <postgres_user>

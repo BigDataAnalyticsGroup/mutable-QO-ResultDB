@@ -41,4 +41,8 @@ RUN cmake --build build/release
 # Make shellscripts executable
 RUN chmod +x ./benchmark/result-db-eval/run_evaluation_time_experiments.sh
 RUN chmod +x ./benchmark/result-db-eval/run_synthetic_experiments.sh
+RUN chmod +x ./benchmark/result-db-eval/run_ce_experiments.sh
+RUN chmod +x ./benchmark/result-db-eval/run_job_experiments.sh
 RUN chmod +x ./benchmark/result-db-eval/job/setup_postgres.sh
+RUN chmod +x ./benchmark/result-db-eval/ce/setup_postgres.sh
+RUN chmod +x ./benchmark/result-db-eval/synthetic/setup_postgres.sh
