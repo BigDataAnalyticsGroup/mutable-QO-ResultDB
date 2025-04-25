@@ -18,6 +18,13 @@ RUN python3.10 get-pip.py
 RUN pipenv run python3.10 -m pip install --upgrade setuptools
 RUN pipenv install --python 3.10
 
+# Set up artificial git repository
+RUN git config --global user.email "you@example.com"
+RUN git config --global user.name "Your Name"
+RUN git init
+RUN git add README.md
+RUN git commit -m "dummy commit"
+
 
 # Build mutable
 RUN cmake -S . -B build/release \
