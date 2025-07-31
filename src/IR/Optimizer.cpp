@@ -12,6 +12,8 @@
 #include <vector>
 #include <queue>
 #include <unordered_set>
+#include <cassert>
+#include <sys/param.h>
 
 using namespace m;
 using namespace m::ast;
@@ -184,7 +186,7 @@ double SemiJoinCostFunction::estimate_semi_join_probe_costs(const CardinalityEst
 
 double SemiJoinCostFunction::estimate_semi_join_hash_costs(const CardinalityEstimator &CE, const DataModel &model)
 {
-    return 2 * static_cast<double>(CE.predict_cardinality(model));
+    return 3 * static_cast<double>(CE.predict_cardinality(model));
 }
 
 void TreeEnumerator::determine_reduced_models(QueryGraph &G, AdjacencyMatrix &adj_matrix, const CardinalityEstimator &CE, card_order_t card_orders[], std::vector<std::unique_ptr<DataModel>> &base_models)
@@ -884,7 +886,7 @@ Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::enumer
     if (fold_costs.contains(original_problem)) {
         single_costs = fold_costs.at(original_problem);
     } else {
-        single_costs = fold_costs[original_problem] = PT_order[original_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, original_problem, PT_order[original_problem], CE) + heuristic->estimate(G, adj_matrix, CE, PT_order,  folded_mapping, problem, Subproblem());
+        single_costs = fold_costs[original_problem] = PT_order[original_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, original_problem, PT_order[original_problem], CE) + heuristic->estimate(G, adj_matrix, CE, PT_order, folded_mapping, problem, Subproblem());
     }
     folding_table[original_problem]->second = single_costs;
     folding_table[original_problem]->first = {original_problem};
@@ -1190,26 +1192,419 @@ void Optimizer_ResultDB_utils::find_greedy_vertex_cuts(const AdjacencyMatrix &M,
     }
 }
 
+template <typename PlanTable>
+double Optimizer_ResultDB_utils::compute_costs_for_GHD_AGM(QueryGraph &G, std::vector<Subproblem>& join_attrs, GHNode& GHD, PlanTable &PT, const CardinalityEstimator &CE, bool use_table, std::unordered_map<Subproblem, double, SubproblemHash> &agm_costs) {
+
+    auto compute_agm_bound_for_subproblem = [&](const Subproblem problem) {
+        if (use_table and agm_costs.contains(problem)) {
+            return agm_costs[problem];
+        }
+
+        if (problem.size() == 1) {
+            agm_costs[problem] = std::log(CE.predict_cardinality(*PT[problem].model));
+            return agm_costs[problem];
+        }
+
+        /* Collect relevant joins for this problem, i.e., the joins which only happen within this problem */
+        std::vector<Subproblem> temp_join_problems(G.num_joins());
+        auto all_join_problems = Subproblem();
+
+
+        for (const auto node_id: problem) {
+            for (const auto attr_id: join_attrs[node_id]) {
+                temp_join_problems[attr_id] |= Subproblem::Singleton(node_id);
+            }
+        }
+
+        std::vector<Subproblem> join_problems;
+        for (auto temp_join: temp_join_problems) {
+            if (!temp_join.empty()) {
+                join_problems.emplace_back(temp_join);
+            }
+        }
+
+
+
+        /*
+        for (int i = 0; i < G.joins().size(); i++) {
+            bool part_of_problem = false;
+            auto data_sources_problem = Subproblem();
+            const auto &join = G.joins[i];
+            for (const auto &ds: join->sources()) {
+                auto relation_problem = Subproblem::Singleton(ds.get().id());
+                if (relation_problem.is_subset(problem)) {
+                    part_of_problem = true;
+                    data_sources_problem |= relation_problem;
+                }
+            }
+            if (part_of_problem) {
+                join_problems.emplace_back(data_sources_problem);
+                all_join_problems |= data_sources_problem;
+            }
+        }
+
+
+        /* Add artificial variable for unjoined relations
+        for (const auto node_id: problem - all_join_problems) {
+            join_problems.emplace_back(Subproblem::Singleton(node_id));
+        }
+        */
+
+        /* Collect sizes of relations */
+        std::vector<std::size_t> relation_sizes;
+        std::unordered_map<std::size_t, std::size_t> rel_to_pos;
+        for (const auto rel_id: problem) {
+            relation_sizes.emplace_back(CE.predict_cardinality(*PT[Subproblem::Singleton(rel_id)].model));
+            rel_to_pos[rel_id] = relation_sizes.size() - 1;
+        }
+
+        /* Collect log-based size of relations for linear programming */
+        std::vector<double> relation_log_sizes;
+        for (const auto &size : relation_sizes) {
+            relation_log_sizes.emplace_back(std::log(size));
+        }
+
+        /* Setup linear programming model */
+        glp_prob *lp = glp_create_prob();
+        glp_set_obj_dir(lp, GLP_MIN);
+
+        /* Setup first step for constrains */
+        glp_add_rows(lp, join_problems.size());
+        for (int i = 0; i < join_problems.size(); i++) {
+            glp_set_row_bnds(lp, i + 1, GLP_LO, 1.0, 0.0);
+        }
+
+        /* Setup variables, one for each relation in the problem */
+        glp_add_cols(lp, problem.size());
+        for (int i = 0; i < problem.size(); i++) {
+            /* Variable must be non-negative */
+            glp_set_col_bnds(lp, i + 1, GLP_LO, 0.0, 0.0);
+        }
+
+        /* Setup coefficients */
+        for (int i = 0; i < problem.size(); i++) {
+            /* Variable must be non-negative */
+            glp_set_obj_coef(lp, i + 1, relation_log_sizes[i]);
+        }
+
+        /* Setup matrix */
+        int array_size = 0;
+        for (const auto join_problem: join_problems) {
+            array_size += join_problem.size();
+        }
+
+        /* Define arrays */
+        int row[array_size + 1], col[array_size + 1];
+        double coef[array_size + 1];
+
+        int idx_inner = 1;
+        int idx_outer = 1;
+        for (const auto join_problem: join_problems) {
+            for (const auto rel: join_problem) {
+                /* Add coefficient for the variable */
+                row[idx_inner] = idx_outer;
+                col[idx_inner] = rel_to_pos[rel] + 1;
+                coef[idx_inner] = 1.0;
+                idx_inner++;
+            }
+            idx_outer++;
+        }
+
+        /* Load matrix */
+        glp_load_matrix(lp, array_size, row, col, coef);
+
+        /* Disable output prints (why is this even on by default??) */
+        glp_term_out(GLP_OFF);
+
+        /* Solve the linear program */
+        glp_simplex(lp, nullptr);
+
+        /* Compute AGM bound based on coefficients */
+        double agm_bound = 0;
+        for (auto rel: problem) {
+            const int position = rel_to_pos[rel];
+            agm_bound += relation_log_sizes[position] * glp_get_col_prim(lp, position + 1);
+        }
+
+        if (use_table) {
+            agm_costs[problem] = agm_bound;
+        }
+
+        return agm_bound;
+    };
+
+    /* Compute the AGM bound for each subproblem in the GHD, take the maximum as costs for this GHD */
+    double max_agm_bound = 0.0;
+    for (auto subproblem : GHD) {
+        const double agm_bound = compute_agm_bound_for_subproblem(subproblem);
+        if (agm_bound > max_agm_bound) {
+            max_agm_bound = agm_bound;
+        }
+    }
+
+    return max_agm_bound;
+}
+
+template <typename PlanTable>
+std::vector<Subproblem> Optimizer_ResultDB_utils::select_GHD_heuristically(QueryGraph &G, std::vector<std::vector<Subproblem>> &GHDs, const CardinalityEstimator &CE, PlanTable &PT) {
+    /* First, we want to filter our GHDs based on the height of GHD tree */
+    std::vector<std::vector<Subproblem>> filtered_GHDs;
+
+    size_t min_height = std::numeric_limits<size_t>::max();
+    std::unordered_map<size_t, std::vector<int>> ghd_heights;
+
+    /* Find min height */
+    for (int i = 0; i < GHDs.size(); i++) {
+        auto &ghd = GHDs[i];
+        /* Construct new, folded matrix, i.e., a new tree */
+        AdjacencyMatrix folded_matrix(G.adjacency_matrix());
+        std::unordered_map<Subproblem, Subproblem, SubproblemHash> new_folded_mapping{};
+        create_folded_adjacency_matrix(ghd, G.adjacency_matrix(), folded_matrix, new_folded_mapping);
+
+        /* The last subproblem is the root, so use that to compute the height */
+        size_t curr_height = folded_matrix.get_height_with_root(*ghd.back().begin());
+        if (ghd_heights.contains(curr_height)) {
+            ghd_heights[curr_height].emplace_back(i);
+        } else {
+            ghd_heights[curr_height] = {i};
+        }
+
+        if (curr_height < min_height) {
+            min_height = curr_height;
+        }
+    }
+
+    std::unordered_map<size_t, std::vector<int>> ghd_outputs;
+    size_t max_relations_per_root = 0;
+    int chosen_idx = 0;
+
+    /* Go through the GHDs with the minimal size, and return those with the maximum of output relations within the root */
+    for (const auto idx: ghd_heights[min_height]) {
+        auto &ghd = GHDs[idx];
+
+        size_t relations_for_root = 0;
+        if (PT.has_plan(ghd.back())) {
+            relations_for_root = PT[ghd.back()].tuple_size;
+        } else {
+            for (const auto node_id: ghd.back()) {
+                relations_for_root += PT[Subproblem::Singleton(node_id)].tuple_size;
+            }
+            PT[ghd.back()].tuple_size = relations_for_root;
+        }
+
+        if (relations_for_root > max_relations_per_root) {
+            max_relations_per_root = relations_for_root;
+            chosen_idx = idx;
+        }
+    }
+
+    return std::move(GHDs[chosen_idx]);
+
+}
+
+template<typename PlanTable>
+std::vector<Subproblem> Optimizer_ResultDB_utils::select_GHD_c_fold(QueryGraph &G, std::vector<std::vector<Subproblem> > &GHDs, const CardinalityEstimator &CE, PlanTable &PT) {
+    const auto &C = Catalog::Get();
+
+    /* Evaluate for each GHD */
+    auto join_order_callback = [&](const Subproblem left, const Subproblem right) -> void
+    {
+        /* Only update the plan table */
+        PT.update(G, CE, C.cost_function(), left, right, cnf::CNF{});
+    };
+
+    double best_costs = std::numeric_limits<double>::max();
+    int best_idx = -1;
+    std::unordered_map<Subproblem, Subproblem, SubproblemHash> folded_mapping;
+
+    for (int i = 0; i < GHDs.size(); i++) {
+        auto& ghd = GHDs[i];
+        double curr_costs = 0;
+        /* Determine optimal join order for each subproblem of the GHD */
+        for (auto subproblem: ghd) {
+            if (not PT.has_plan(subproblem))
+            {
+                /* Use DP_CCP */
+                G.adjacency_matrix().for_each_CSG_pair_undirected(subproblem, join_order_callback);
+            }
+            /* Perform some required precomputations for the Yannakakis Heuristic */
+            std::unique_ptr<YannakakisHeuristic> heuristic = std::make_unique<WeakCardinalityHeuristic>(WeakCardinalityHeuristic(PT, subproblem, G, G.adjacency_matrix(), CE, folded_mapping));
+
+            // + YannakakisHeuristic::estimate_decompose_costs(G, subproblem, PT[subproblem], CE)
+            curr_costs += YannakakisHeuristic::estimate_decompose_costs(G, subproblem, PT[subproblem], CE) + PT[subproblem].cost + heuristic->estimate(G, G.adjacency_matrix(), CE, PT, folded_mapping, subproblem, Subproblem());
+        }
+
+        // std::cerr << "C_Fold: " << curr_costs << ", idx: " << i << "\n";
+
+        if (curr_costs < best_costs) {
+            best_costs = curr_costs;
+            best_idx = i;
+        }
+    }
+
+    return std::move(GHDs[best_idx]);
+
+}
+
+
+template <typename PlanTable>
+Optimizer_ResultDB_utils::folding_table_entry_t Optimizer_ResultDB_utils::get_best_GHD(QueryGraph &G, PlanTable &PT, const CardinalityEstimator &CE) {
+
+    const auto joins_per_relation = G.get_joins_for_data_sources();
+
+    auto compute_node_combinations = [&](std::vector<std::vector<std::shared_ptr<GHNode>>>& nodes_per_partition, int i, auto&& rec) -> std::vector<std::vector<std::shared_ptr<GHNode>>> {
+        std::vector<std::vector<std::shared_ptr<GHNode>>> result;
+        if (i == nodes_per_partition.size() - 1) {
+            for (const auto &node: nodes_per_partition[i]) {
+                std::vector comb = {node};
+                result.emplace_back(comb);
+            }
+            return result;
+        }
+        auto intermediate_result = rec(nodes_per_partition, i + 1, rec);
+        for (auto &node: nodes_per_partition[i]) {
+            for (auto &children: intermediate_result) {
+                result.push_back(children);
+                result.back().emplace_back(node);
+            }
+        }
+        return result;
+    };
+
+    auto can_be_extended = [&](const Subproblem C_attr, const Subproblem R) {
+        for (const auto node_id: R) {
+            if (joins_per_relation[node_id].is_subset(C_attr)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    auto enumerate = [&](const Subproblem E, const Subproblem P, auto&& rec) -> std::vector<std::shared_ptr<GHNode>> {
+
+        auto get_joins_for_subset = [&](const Subproblem C) -> Subproblem {
+            auto joins = Subproblem(0);
+
+            for (const auto node_id : C) {
+                joins |= joins_per_relation[node_id];
+            }
+
+            return joins;
+        };
+
+        /* There is only one way to decompose a singleton */
+        if (E.is_singleton()) return {std::make_shared<GHNode>(GHNode(E))};
+
+        std::vector<std::shared_ptr<GHNode>> result;
+        const auto P_attr = get_joins_for_subset(P);
+
+        for (auto C(least_subset(E)); C != Subproblem(0); C = Subproblem(next_subset(C, E))) {
+            const auto R = E - C;
+
+            /* Ignore Cartesian Products */
+            if (not G.adjacency_matrix().is_connected(C)) continue;
+
+            /* Check whether the current subset would result in valid GHD, i.e., check whether the RIP is satisfied */
+            const auto R_attr = get_joins_for_subset(R);
+            const auto C_attr = get_joins_for_subset(C);
+
+            /* Ignore the set if it could be extended */
+            if (can_be_extended(C_attr, R)) continue;
+
+            if (!(P_attr & R_attr).is_subset(C_attr)) continue;
+
+            /* Compute the partition(s) resulting from this subset */
+            auto partitions = G.adjacency_matrix().get_partitions_after_removal(E, C);
+
+            /* No Partitions => E = C */
+            if (partitions.empty()) {
+                result.emplace_back(std::make_shared<GHNode>(GHNode(E)));
+                continue;
+            }
+
+            std::vector<std::vector<std::shared_ptr<GHNode>>> partition_nodes;
+
+            /* Recursively compute the GHDs of all partitions and combine them with the current subset */
+            for (const auto &partition : partitions) {
+                auto sub_ghds = rec(partition, C, rec);
+                partition_nodes.emplace_back(sub_ghds);
+            }
+
+            /* Compute each possible combination of subtrees */
+            auto subtree_combs = compute_node_combinations(partition_nodes, 0, compute_node_combinations);
+
+            /* Construct for each possible combination the corresponding GHNode */
+            for (auto &subtree_comb: subtree_combs) {
+                result.emplace_back(std::make_shared<GHNode>(GHNode(C, subtree_comb)));
+            }
+
+        }
+
+        return std::move(result);
+    };
+
+    /* Get all GHDs for the entire graph */
+    auto GHDs = enumerate(Subproblem::All(G.num_sources()), Subproblem(0), enumerate);
+
+    /* Evaluate GHDs based on AGM bound */
+    double best_bound = std::numeric_limits<double>::max();
+    std::vector<double> bounds_for_ghd;
+    std::unordered_map<Subproblem, double, SubproblemHash> agm_costs;
+    auto join_attrs = G.get_join_attributes_for_data_sources();
+
+    for (auto &ghd: GHDs) {
+        auto bound = compute_costs_for_GHD_AGM(G, join_attrs, *ghd, PT, CE, true, agm_costs);
+        bounds_for_ghd.emplace_back(bound);
+        if (bound < best_bound) {
+            best_bound = bound;
+        }
+    }
+
+    /* Further process all GHDs that within delta of the best bound */
+    constexpr double delta = 0.01;
+    std::vector<std::vector<Subproblem>> ghds_within_delta;
+
+    for (int i = 0; i < GHDs.size(); i++) {
+        if (std::abs(bounds_for_ghd[i] - best_bound) < delta) {
+            ghds_within_delta.emplace_back();
+            for (auto node: *GHDs[i]) {
+                ghds_within_delta.back().emplace_back(node);
+            }
+        }
+    }
+
+    std::vector<Subproblem> best_ghd = {};
+    if (Options::Get().result_db_optimizer == Options::GHD_Heuristic)
+        best_ghd = select_GHD_heuristically(G, ghds_within_delta, CE, PT);
+    else
+        best_ghd = select_GHD_c_fold(G, ghds_within_delta, CE, PT);
+
+    return std::make_shared<std::pair<std::vector<Subproblem>, double>>(best_ghd, -1);
+
+}
+
 
 template <typename PlanTable>
 std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb_with_plantable(QueryGraph &G) {
     PlanTable PT_order(G);
 
-    const auto &C = Catalog::Get();
+    auto &C = Catalog::Get();
     const auto &DB = C.get_database_in_use();
-    const auto &CE = DB.cardinality_estimator();
+    auto &CE = DB.cardinality_estimator();
 
     /* Create source plans for base relations */
     auto current_source_plans = optimize_source_plans(G, PT_order);
     auto complete_problem = Subproblem::All(G.num_sources());
-    /* Best ResultDB_Decompose Plan */
-    if (not PT_order.has_plan(complete_problem) and Options::Get().result_db_optimizer != Options::TD_Root)
+
+    auto join_order_callback = [&](const Subproblem left, const Subproblem right) -> void
     {
-        auto join_order_callback = [&](const Subproblem left, const Subproblem right) -> void
-        {
-            /* Only update the plan table */
-            PT_order.update(G, CE, C.cost_function(), left, right, cnf::CNF{});
-        };
+        /* Only update the plan table */
+        PT_order.update(G, CE, C.cost_function(), left, right, cnf::CNF{});
+    };
+
+    /* Best ResultDB_Decompose Plan */
+    if (not PT_order.has_plan(complete_problem) and Options::Get().result_db_optimizer == Options::DP_ResultDB)
+    {
         /* Use DP_CCP */
         G.adjacency_matrix().for_each_CSG_pair_undirected(complete_problem, join_order_callback);
     }
@@ -1221,16 +1616,25 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
     std::unordered_map<Subproblem, double, SubproblemHash> fold_costs{};
     const folding_problem_t folding_problem = std::make_pair(complete_problem, complete_problem);
     auto solution = std::make_shared<std::pair<std::vector<Subproblem>, double>>(std::vector<Subproblem>{}, 0);
-    if (G.is_cyclic()) solution = create_and_enumerate_problems(G, G.adjacency_matrix(), folded_mapping, folding_table, folding_problem, fold_costs, PT_order, true);
+    if (G.is_cyclic()) {
+        if (Options::Get().result_db_optimizer == Options::GHD_Heuristic or Options::Get().result_db_optimizer == Options::GHD_C_Fold) {
+            solution = get_best_GHD(G, PT_order, CE);
+        } else {
+            solution = create_and_enumerate_problems(G, G.adjacency_matrix(), folded_mapping, folding_table, folding_problem, fold_costs, PT_order, true);
+        }
+    }
 
     /* Helper function to determine the best way to best semi-join order on the final folds chosen */
     auto compute_semi_join_reducer_costs = [&] {
         /* We do not want to consider semi-join heuristics in the final comparisons, so we just recompute the existing costs for each
          * problem we have computed */
         double folding_costs = 0;
+        double join_costs = 0;
+        double decompose_costs = 0;
         for (auto problem : solution->first)
         {
-            // std::cerr << problem << " " << CE.predict_cardinality(*PT_order[problem].model) << " " << PT_order[problem].cost << " " << YannakakisHeuristic::estimate_decompose_costs(G, problem, PT_order[problem], CE) << "\n";
+            join_costs += PT_order[problem].cost;
+            decompose_costs += YannakakisHeuristic::estimate_decompose_costs(G, problem, PT_order[problem], CE);
             folding_costs += PT_order[problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, problem, PT_order[problem], CE);
         }
 
@@ -1250,13 +1654,13 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
                 continue;
             }
 
-
             Subproblem related_problem = new_folded_mapping[Subproblem::Singleton(node_id)];
             base_models.emplace_back(CE.copy(*PT_order[related_problem].model));
             if (PT_order[related_problem].tuple_size != 0)
                 required_reductions.emplace(node_id);
         }
         auto [reducer_order, reducer_costs] = enumerate_semi_join_reduction_order(G, required_reductions, folded_matrix, CE, base_models);
+        // std::cerr << "Overall costs: " << reducer_costs + folding_costs << ", Decomposing Costs: " << decompose_costs << ", Join Costs: " << join_costs << ", Reducing Costs: " << reducer_costs << "\n";
         return std::make_tuple(reducer_order, reducer_costs + folding_costs);
     };
 
@@ -1286,6 +1690,9 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
         const std::unordered_set<std::size_t> required_reductions;
         for (size_t i = 0; i < solution->first.size(); i++)
         {
+            if (not PT_order.has_plan(solution->first[i])) {
+                G.adjacency_matrix().for_each_CSG_pair_undirected(solution->first[i], join_order_callback);
+            }
             base_models.emplace_back(CE.copy(*PT_order[solution->first[i]].model));
             base_models[i]->assign_to(Subproblem::Singleton(i));
             source_plans[i] = construct_join_order(G, PT_order, solution->first[i], current_source_plans);
@@ -1306,8 +1713,9 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
         fold_query_graph(G, translated_folds);
 
         /* TODO: Avoid repeated computation of the same semi-join order, not a huge performance decrease though */
-        auto [reducer_order, _] = enumerate_semi_join_reduction_order(G, required_reductions, G.adjacency_matrix(), CE, base_models);
+        auto [reducer_order, costs] = enumerate_semi_join_reduction_order(G, required_reductions, G.adjacency_matrix(), CE, base_models);
 
+        // std::cerr << "Just Reduction: " << costs << ", Decompose: " << "\n";
         const auto num_sources = G.num_sources();
 
         // Create semi-join reducer plan
@@ -1321,16 +1729,15 @@ std::pair<std::unique_ptr<Producer>, bool> Optimizer_ResultDB_utils::dp_resultdb
             semi_join_reduction_op->add_child(source_plans[i]);
         return {std::move(semi_join_reduction_op), true};
     };
-    if (Options::Get().result_db_optimizer == Options::TD_Root) {
+    if (Options::Get().result_db_optimizer == Options::TD_Root or Options::Get().result_db_optimizer == Options::GHD_Heuristic or Options::Get().result_db_optimizer == Options::GHD_C_Fold) {
         return semi_join_reducer_plan();
     }
     /* Best ResultDB_SemiJoin Plan */
     auto [reducer_order, reducer_costs] = compute_semi_join_reducer_costs();
-    // std::cerr << complete_problem << " " << CE.predict_cardinality(*PT_order[complete_problem].model) << " " << PT_order[complete_problem].cost << " " << YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE) << "\n";
-    double decompose_costs = PT_order[complete_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE);
+    double decompose_costs = 1.9 * PT_order[complete_problem].cost + YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE);
 
     /* Decide whether to use ResultDB_SemiJoin or ResultDB_Decompose */
-    // std::cerr << "Reducer: " << reducer_costs << ", Decompose: " << decompose_costs << "\n";
+    // std::cerr << "Reducer: " << reducer_costs << ", Decompose: " << PT_order[complete_problem].cost << " + " << YannakakisHeuristic::estimate_decompose_costs(G, complete_problem, PT_order[complete_problem], CE) << "\n";
     if (reducer_costs < decompose_costs) return semi_join_reducer_plan();
     return decompose_plan();
 }

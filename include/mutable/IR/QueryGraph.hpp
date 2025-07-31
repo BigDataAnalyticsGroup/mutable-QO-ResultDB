@@ -423,6 +423,90 @@ struct M_EXPORT QueryGraph
         }
     }
 
+    std::vector<Subproblem> get_joins_for_data_sources() const {
+        std::vector joins_for_data_source(this->num_sources(), Subproblem(0));
+
+        for (std::size_t i = 0; i < joins_.size(); i++) {
+            const Subproblem curr_join = Subproblem::Singleton(i);
+            for (auto &src : joins_[i]->sources()) {
+                const auto id = src.get().id();
+                joins_for_data_source[id] |= curr_join;
+            }
+        }
+
+        return joins_for_data_source;
+    }
+
+    std::vector<Subproblem> get_join_attributes_for_data_sources() const {
+        std::vector join_attrs_for_data_source(this->num_sources(), Subproblem(0));
+
+        auto split = [&](const std::string& cond, const std::string& sep) {
+            std::vector<std::string> attrs;
+            size_t start = 0;
+            size_t end;
+
+            while ((end = cond.find(sep, start)) != std::string::npos) {
+                attrs.push_back(cond.substr(start, end - start));
+                start = end + sep.length();
+            }
+
+            attrs.push_back(cond.substr(start));
+            return attrs;
+        };
+
+        std::size_t counter = 0;
+        std::unordered_map<std::string, Subproblem> attr_map;
+        std::unordered_map<std::string, std::size_t> name_to_id;
+
+        for (auto& ds: sources()) {
+            name_to_id[*ds->name()] = ds->id();
+        }
+
+        for (const auto & join : joins_) {
+            /* Spit up the join condition */
+            auto cond = to_string(join->condition());
+            auto trimmed = cond.substr(1, cond.length() - 2);
+            auto join_attrs = split(trimmed, " = ");
+            std::cout << join_attrs[0] <<  " " << join_attrs[1] << "\n";
+            std::vector<std::size_t> indices;
+            for (int i = 0; i < 2; i++) {
+                if (const auto& join_attr = join_attrs[i]; attr_map.contains(join_attr)) {
+                    indices.emplace_back(i);
+                }
+            }
+            if (indices.size() == 1) {
+                attr_map[join_attrs[(indices[0] + 1) % 2]] = attr_map[join_attrs[indices[0]]];
+                auto rel = split(join_attrs[(indices[0] + 1) % 2], ".");
+            }
+
+            else if (indices.size() == 2) {
+                auto prob_0 = attr_map[join_attrs[indices[0]]];
+                auto prob_1 = attr_map[join_attrs[indices[1]]];
+
+                for (const auto& [attr, prob]: attr_map) {
+                    if (prob == prob_1) {
+                        attr_map[attr] = prob_0;
+                    }
+                }
+            }
+            else {
+                const auto new_prob = Subproblem::Singleton(counter);
+                for (std::size_t i = 0; i < join_attrs.size(); i++) {
+                    attr_map[join_attrs[i]] = new_prob;
+                }
+                counter += 1;
+            }
+        }
+
+        for (const auto& [attr, prob]: attr_map) {
+            auto rel = split(attr, ".");
+            join_attrs_for_data_source[name_to_id[rel[0]]] |= prob;
+        }
+
+        return join_attrs_for_data_source;
+    }
+
+
     void dump(std::ostream &out) const;
     void dump() const;
 

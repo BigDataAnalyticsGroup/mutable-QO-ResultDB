@@ -109,17 +109,17 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q18c/q18c_acyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'WasmV8, ResultDB_SemiJoin':
+            'ResultDB_SemiJoin':
                 args: --result-db
-                pattern: '^Process the query:.*'
-            'WasmV8, ResultDB_Decompose':
+                pattern: '^Execute machine code:.*'
+            'ResultDB_Decompose':
                 args: --decompose
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Root':
+                pattern: '^Execute machine code:.*'
+            'TD_Root':
                 args: --result-db --optimize-result-db --td_root
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_RESULTDB':
+                pattern: '^Execute machine code:.*'
+            'TD_ResultDB':
                 args: --result-db --optimize-result-db --td_resultdb
-                pattern: '^Process the query:.*'
+                pattern: '^Execute machine code:.*'
         cases:
             0: 'SELECT mi.info, mi_idx.info, t.title FROM ci AS ci, it1 AS it1, it1 AS it2, mi AS mi, mi_idx AS mi_idx, n AS n, t AS t WHERE t.id = mi_idx.movie_id AND ci.movie_id = mi.movie_id AND ci.movie_id = mi_idx.movie_id AND n.id = ci.person_id AND it1.id = mi.info_type_id AND it2.id = mi_idx.info_type_id;'

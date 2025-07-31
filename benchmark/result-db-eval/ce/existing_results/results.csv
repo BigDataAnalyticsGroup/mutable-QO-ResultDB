@@ -1,301 +1,421 @@
 commit,date,version,suite,benchmark,experiment,name,config,case,time,runid
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,154.931,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,142.778,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,143.152,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,143.236,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,143.609,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,95.69,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,87.684,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,87.702,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,86.546,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,87.01,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,144.205,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,134.098,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,135.04,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,134.405,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,134.53,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,143.085,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,133.912,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,134.468,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,134.398,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,133.933,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,95.925,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,88.272,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,88.957,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,88.818,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_1,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,88.529,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,143.578,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,136.063,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,138.258,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,135.018,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,134.742,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,125.638,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,117.41,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,118.901,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,120.505,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,119.641,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,109.903,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,98.377,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,97.228,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,97.807,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,106.227,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,109.287,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,99.141,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,97.656,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,99.004,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,106.494,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,109.088,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,98.845,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,99.231,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,105.465,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_2,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,99.51,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,243.142,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,222.458,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,221.606,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,226.116,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,233.14,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,132.371,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.721,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.833,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.72,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,125.261,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,179.064,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,170.788,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,168.785,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,168.133,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,168.501,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,180.338,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,171.404,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,168.489,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,169.058,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,168.519,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,132.264,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.523,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,124.239,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.38,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_3,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.668,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,214.5,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,199.667,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,202.803,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,201.385,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,201.657,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,167.745,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,159.432,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,159.684,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,159.729,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,160.404,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,180.371,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,170.147,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,169.583,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,170.594,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,168.923,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,178.868,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,167.843,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,167.17,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,167.574,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,166.359,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,167.88,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,160.087,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,160.468,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,159.904,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_4,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,159.173,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,216.717,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,206.691,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,210.103,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,206.497,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,205.803,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,183.239,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,175.373,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,175.604,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,174.278,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,176.921,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,189.89,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,179.517,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,181.423,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,181.606,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,179.743,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,192.842,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,184.066,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,180.883,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,180.64,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,181.074,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,185.39,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,176.287,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,173.987,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,176.233,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_5,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,175.74,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,183.754,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,172.706,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,170.328,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,172.301,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,173.312,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,132.246,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,123.67,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,123.462,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.527,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,123.48,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,165.807,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,152.962,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,152.712,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,150.701,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,152.902,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,165.477,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,151.647,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,152.003,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,156.239,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,152.882,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,131.302,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.362,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.248,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.973,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_6,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.889,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,182.215,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,171.068,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,170.207,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,171.566,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,170.394,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,132.196,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,123.914,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,123.319,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,122.927,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,123.202,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,183.988,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,173.05,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,173.33,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,173.645,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,175.348,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,185.94,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,174.827,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,175.32,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,174.373,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,176.653,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,132.239,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,124.432,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,123.657,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,124.11,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_7,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,124.711,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,124.766,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,115.585,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,114.936,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,113.593,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,114.642,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,129.147,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.945,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,121.71,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,122.765,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,122.624,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,98.704,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,84.851,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,86.347,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,84.299,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,84.611,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,98.373,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,85.868,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,85.852,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,85.025,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,85.698,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,97.277,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,85.692,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,85.701,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,86.16,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_8,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,85.143,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,238.483,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,217.155,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,215.663,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,216.539,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,216.373,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,133.162,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,125.283,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,125.187,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.997,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,124.384,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,196.036,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,186.619,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,185.473,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,184.35,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,185.99,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,199.228,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,186.717,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,187.075,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,186.255,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,186.486,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,133.982,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,128.256,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,125.24,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,125.305,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_9,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,125.893,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,227.227,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,213.879,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,215.489,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,215.32,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,215.621,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,130.2,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,117.968,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,119.397,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,118.16,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,118.747,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,192.497,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,174.223,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,174.056,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,174.794,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,175.083,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,193.345,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,175.204,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,172.716,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,173.488,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,173.535,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,127.219,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,119.911,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,120.343,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,118.003,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_10,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,119.664,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,166.208,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,153.73,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,152.994,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,153.393,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,155.211,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,112.823,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,104.239,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,104.27,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,103.691,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,105.126,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,151.242,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,140.787,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,140.975,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,141.663,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,141.3,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,150.609,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,142.328,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,142.298,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,143.65,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,143.047,4
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,112.836,0
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,105.287,1
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,104.318,2
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,104.268,3
-32a4644f2a56994220e6b1ef466d58e80b09bf00,2025-04-07,1,ce,ce,q8_11,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,104.444,4
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,207.026,0
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,167.354,1
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,162.46,2
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,168.293,3
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_SemiJoin)",Execution Time,0,175.953,4
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,66.028,0
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,59.365,1
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,59.868,2
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,58.727,3
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, ResultDB_Decompose)",Execution Time,0,58.874,4
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,115.884,0
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,105.931,1
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,107.691,2
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,105.879,3
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold)",Execution Time,0,106.456,4
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,117.212,0
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,108.616,1
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,109.385,2
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,106.512,3
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_Fold_NoTVC)",Execution Time,0,104.892,4
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,114.128,0
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,103.546,1
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,109.065,2
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,104.126,3
-9468fd92d5d96a9f107506be447e2c01ff19365e,2025-04-15,1,ce,ce,q8_12,"mutable (single core, WasmV8, TD_RESULTDB)",Execution Time,0,106.102,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,142.062,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,139.622,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,138.276,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,137.386,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,138.381,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold)",Execution Time,0,129.116,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold)",Execution Time,0,129.864,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold)",Execution Time,0,130.243,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold)",Execution Time,0,129.383,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold)",Execution Time,0,130.607,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,128.957,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,129.668,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,129.353,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,130.156,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,127.995,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_ResultDB)",Execution Time,0,84.435,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_ResultDB)",Execution Time,0,84.189,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_ResultDB)",Execution Time,0,83.826,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_ResultDB)",Execution Time,0,83.916,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, TD_ResultDB)",Execution Time,0,84.865,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_Decompose)",Execution Time,0,84.261,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_Decompose)",Execution Time,0,84.083,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_Decompose)",Execution Time,0,84.097,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_Decompose)",Execution Time,0,84.149,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, ResultDB_Decompose)",Execution Time,0,83.712,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_C_Fold)",Execution Time,0,132.2,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_C_Fold)",Execution Time,0,136.056,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_C_Fold)",Execution Time,0,129.994,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_C_Fold)",Execution Time,0,130.759,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_C_Fold)",Execution Time,0,129.124,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_Heuristic)",Execution Time,0,132.865,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_Heuristic)",Execution Time,0,129.354,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_Heuristic)",Execution Time,0,130.035,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_Heuristic)",Execution Time,0,129.548,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_1,"mutable (single core, GHD_Heuristic)",Execution Time,0,129.891,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,238.684,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,227.539,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,223.184,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,221.847,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,236.382,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold)",Execution Time,0,169.504,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold)",Execution Time,0,166.167,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold)",Execution Time,0,167.007,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold)",Execution Time,0,165.799,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold)",Execution Time,0,174.635,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,166.648,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,164.933,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,167.342,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,171.006,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,167.49,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_ResultDB)",Execution Time,0,121.094,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_ResultDB)",Execution Time,0,120.29,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_ResultDB)",Execution Time,0,121.419,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_ResultDB)",Execution Time,0,120.005,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, TD_ResultDB)",Execution Time,0,121.674,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_Decompose)",Execution Time,0,120.775,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_Decompose)",Execution Time,0,120.52,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_Decompose)",Execution Time,0,121.717,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_Decompose)",Execution Time,0,121.958,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, ResultDB_Decompose)",Execution Time,0,120.889,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_C_Fold)",Execution Time,0,167.245,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_C_Fold)",Execution Time,0,165.475,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_C_Fold)",Execution Time,0,166.108,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_C_Fold)",Execution Time,0,167.602,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_C_Fold)",Execution Time,0,166.56,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_Heuristic)",Execution Time,0,167.033,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_Heuristic)",Execution Time,0,166.095,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_Heuristic)",Execution Time,0,165.337,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_Heuristic)",Execution Time,0,168.243,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_3,"mutable (single core, GHD_Heuristic)",Execution Time,0,167.841,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,194.119,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,195.202,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,198.198,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,199.192,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,198.299,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold)",Execution Time,0,167.213,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold)",Execution Time,0,166.85,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold)",Execution Time,0,167.404,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold)",Execution Time,0,167.473,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold)",Execution Time,0,167.781,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,167.779,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,169.697,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,166.474,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,166.391,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,165.42,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_ResultDB)",Execution Time,0,155.441,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_ResultDB)",Execution Time,0,155.298,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_ResultDB)",Execution Time,0,154.337,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_ResultDB)",Execution Time,0,155.466,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, TD_ResultDB)",Execution Time,0,155.233,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_Decompose)",Execution Time,0,152.329,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_Decompose)",Execution Time,0,153.775,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_Decompose)",Execution Time,0,152.777,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_Decompose)",Execution Time,0,153.229,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, ResultDB_Decompose)",Execution Time,0,152.938,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_C_Fold)",Execution Time,0,167.743,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_C_Fold)",Execution Time,0,166.574,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_C_Fold)",Execution Time,0,166.927,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_C_Fold)",Execution Time,0,167.697,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_C_Fold)",Execution Time,0,173.39,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_Heuristic)",Execution Time,0,167.528,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_Heuristic)",Execution Time,0,166.651,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_Heuristic)",Execution Time,0,166.285,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_Heuristic)",Execution Time,0,168.565,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_4,"mutable (single core, GHD_Heuristic)",Execution Time,0,170.455,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,195.08,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,202.421,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,199.925,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,200.391,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,200.244,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold)",Execution Time,0,176.606,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold)",Execution Time,0,176.794,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold)",Execution Time,0,174.777,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold)",Execution Time,0,177.602,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold)",Execution Time,0,179.907,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,175.84,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,176.054,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,178.225,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,177.334,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,176.543,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_ResultDB)",Execution Time,0,169.328,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_ResultDB)",Execution Time,0,168.329,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_ResultDB)",Execution Time,0,168.49,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_ResultDB)",Execution Time,0,168.764,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, TD_ResultDB)",Execution Time,0,168.727,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_Decompose)",Execution Time,0,169.417,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_Decompose)",Execution Time,0,168.929,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_Decompose)",Execution Time,0,169.61,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_Decompose)",Execution Time,0,168.506,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, ResultDB_Decompose)",Execution Time,0,169.611,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_C_Fold)",Execution Time,0,178.526,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_C_Fold)",Execution Time,0,177.395,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_C_Fold)",Execution Time,0,177.483,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_C_Fold)",Execution Time,0,177.994,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_C_Fold)",Execution Time,0,180.365,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.608,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.438,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.374,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.557,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_5,"mutable (single core, GHD_Heuristic)",Execution Time,0,180.481,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,162.693,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,163.454,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,167.202,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,167.363,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,169.022,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold)",Execution Time,0,186.284,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold)",Execution Time,0,178.739,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold)",Execution Time,0,180.822,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold)",Execution Time,0,179.58,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold)",Execution Time,0,179.97,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,184.977,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,178.129,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,179.139,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,179.067,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,180.662,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_ResultDB)",Execution Time,0,121.503,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_ResultDB)",Execution Time,0,121.572,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_ResultDB)",Execution Time,0,121.108,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_ResultDB)",Execution Time,0,120.233,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, TD_ResultDB)",Execution Time,0,120.487,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_Decompose)",Execution Time,0,121.442,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_Decompose)",Execution Time,0,121.153,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_Decompose)",Execution Time,0,123.184,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_Decompose)",Execution Time,0,121.716,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, ResultDB_Decompose)",Execution Time,0,120.257,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_C_Fold)",Execution Time,0,178.776,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_C_Fold)",Execution Time,0,180.144,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_C_Fold)",Execution Time,0,180.898,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_C_Fold)",Execution Time,0,178.697,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_C_Fold)",Execution Time,0,181.05,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_Heuristic)",Execution Time,0,178.591,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_Heuristic)",Execution Time,0,179.813,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_Heuristic)",Execution Time,0,178.449,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_Heuristic)",Execution Time,0,180.242,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_6,"mutable (single core, GHD_Heuristic)",Execution Time,0,179.285,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,164.204,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,161.613,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,167.609,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,167.492,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,167.74,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold)",Execution Time,0,167.427,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold)",Execution Time,0,168.848,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold)",Execution Time,0,169.868,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold)",Execution Time,0,169.298,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold)",Execution Time,0,171.565,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,186.105,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,173.749,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,170.313,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,170.125,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,170.117,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_ResultDB)",Execution Time,0,120.047,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_ResultDB)",Execution Time,0,119.674,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_ResultDB)",Execution Time,0,119.579,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_ResultDB)",Execution Time,0,120.335,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, TD_ResultDB)",Execution Time,0,120.211,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_Decompose)",Execution Time,0,120.291,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.019,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.378,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.574,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.378,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_C_Fold)",Execution Time,0,169.282,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_C_Fold)",Execution Time,0,170.431,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_C_Fold)",Execution Time,0,170.803,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_C_Fold)",Execution Time,0,176.03,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_C_Fold)",Execution Time,0,171.77,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_Heuristic)",Execution Time,0,171.17,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_Heuristic)",Execution Time,0,173.987,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_Heuristic)",Execution Time,0,180.169,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_Heuristic)",Execution Time,0,169.994,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_7,"mutable (single core, GHD_Heuristic)",Execution Time,0,170.939,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,110.829,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,111.06,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,111.58,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,110.112,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,109.997,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold)",Execution Time,0,91.262,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold)",Execution Time,0,91.313,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold)",Execution Time,0,91.654,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold)",Execution Time,0,92.181,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold)",Execution Time,0,91.047,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,90.449,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,91.445,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,91.727,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,92.09,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,91.286,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_ResultDB)",Execution Time,0,91.418,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_ResultDB)",Execution Time,0,90.262,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_ResultDB)",Execution Time,0,91.273,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_ResultDB)",Execution Time,0,91.682,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, TD_ResultDB)",Execution Time,0,90.719,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_Decompose)",Execution Time,0,118.218,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_Decompose)",Execution Time,0,117.176,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_Decompose)",Execution Time,0,117.486,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_Decompose)",Execution Time,0,117.474,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, ResultDB_Decompose)",Execution Time,0,117.426,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_C_Fold)",Execution Time,0,94.933,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_C_Fold)",Execution Time,0,91.187,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_C_Fold)",Execution Time,0,91.22,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_C_Fold)",Execution Time,0,92.417,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_C_Fold)",Execution Time,0,92.062,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_Heuristic)",Execution Time,0,91.046,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_Heuristic)",Execution Time,0,91.376,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_Heuristic)",Execution Time,0,91.926,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_Heuristic)",Execution Time,0,92.416,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_8,"mutable (single core, GHD_Heuristic)",Execution Time,0,93.713,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,215.38,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,213.857,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,216.42,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,214.544,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,213.426,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold)",Execution Time,0,188.83,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold)",Execution Time,0,184.377,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold)",Execution Time,0,182.8,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold)",Execution Time,0,183.389,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold)",Execution Time,0,183.595,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,185.21,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,186.222,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,183.039,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,186.776,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,183.952,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_ResultDB)",Execution Time,0,123.539,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_ResultDB)",Execution Time,0,122.822,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_ResultDB)",Execution Time,0,125.872,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_ResultDB)",Execution Time,0,122.841,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, TD_ResultDB)",Execution Time,0,123.383,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_Decompose)",Execution Time,0,123.412,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_Decompose)",Execution Time,0,123.455,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_Decompose)",Execution Time,0,123.164,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_Decompose)",Execution Time,0,122.758,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, ResultDB_Decompose)",Execution Time,0,123.433,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_C_Fold)",Execution Time,0,183.031,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_C_Fold)",Execution Time,0,183.421,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_C_Fold)",Execution Time,0,182.512,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_C_Fold)",Execution Time,0,184.51,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_C_Fold)",Execution Time,0,187.515,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_Heuristic)",Execution Time,0,184.274,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_Heuristic)",Execution Time,0,184.21,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_Heuristic)",Execution Time,0,182.161,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_Heuristic)",Execution Time,0,185.621,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_9,"mutable (single core, GHD_Heuristic)",Execution Time,0,183.027,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,141.341,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,149.847,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,141.674,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,150.461,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,141.379,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold)",Execution Time,0,94.892,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold)",Execution Time,0,91.116,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold)",Execution Time,0,90.627,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold)",Execution Time,0,92.468,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold)",Execution Time,0,90.308,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,89.772,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,90.906,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,94.495,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,95.064,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,90.07,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_ResultDB)",Execution Time,0,89.455,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_ResultDB)",Execution Time,0,90.409,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_ResultDB)",Execution Time,0,89.819,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_ResultDB)",Execution Time,0,90.606,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, TD_ResultDB)",Execution Time,0,92.056,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_Decompose)",Execution Time,0,114.236,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_Decompose)",Execution Time,0,117.831,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_Decompose)",Execution Time,0,133.644,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_Decompose)",Execution Time,0,115.908,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, ResultDB_Decompose)",Execution Time,0,113.846,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_C_Fold)",Execution Time,0,94.974,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_C_Fold)",Execution Time,0,90.001,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_C_Fold)",Execution Time,0,90.605,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_C_Fold)",Execution Time,0,92.283,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_C_Fold)",Execution Time,0,91.157,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_Heuristic)",Execution Time,0,89.431,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_Heuristic)",Execution Time,0,89.907,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_Heuristic)",Execution Time,0,90.502,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_Heuristic)",Execution Time,0,90.575,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_2,"mutable (single core, GHD_Heuristic)",Execution Time,0,90.513,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,151.395,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,145.096,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,148.537,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,145.65,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,145.578,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold)",Execution Time,0,133.348,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold)",Execution Time,0,133.916,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold)",Execution Time,0,133.67,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold)",Execution Time,0,133.688,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold)",Execution Time,0,134.101,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,133.563,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,133.253,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,134.379,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,134.3,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,133.677,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_ResultDB)",Execution Time,0,100.425,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_ResultDB)",Execution Time,0,99.764,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_ResultDB)",Execution Time,0,99.766,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_ResultDB)",Execution Time,0,100.604,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, TD_ResultDB)",Execution Time,0,100.507,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_Decompose)",Execution Time,0,99.666,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_Decompose)",Execution Time,0,98.579,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_Decompose)",Execution Time,0,99.429,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_Decompose)",Execution Time,0,99.356,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, ResultDB_Decompose)",Execution Time,0,98.972,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_C_Fold)",Execution Time,0,134.719,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_C_Fold)",Execution Time,0,133.8,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_C_Fold)",Execution Time,0,135.138,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_C_Fold)",Execution Time,0,134.788,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_C_Fold)",Execution Time,0,136.444,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_Heuristic)",Execution Time,0,134.616,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_Heuristic)",Execution Time,0,133.059,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_Heuristic)",Execution Time,0,135.308,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_Heuristic)",Execution Time,0,135.188,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_11,"mutable (single core, GHD_Heuristic)",Execution Time,0,134.601,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,165.547,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,158.621,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,156.953,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,157.55,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,158.263,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold)",Execution Time,0,105.864,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold)",Execution Time,0,102.291,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold)",Execution Time,0,102.881,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold)",Execution Time,0,102.807,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold)",Execution Time,0,102.181,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,103.174,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,106.881,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,101.291,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,101.749,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,102.042,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_ResultDB)",Execution Time,0,54.678,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_ResultDB)",Execution Time,0,54.515,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_ResultDB)",Execution Time,0,55.337,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_ResultDB)",Execution Time,0,54.65,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, TD_ResultDB)",Execution Time,0,54.645,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_Decompose)",Execution Time,0,53.267,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_Decompose)",Execution Time,0,53.277,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_Decompose)",Execution Time,0,53.501,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_Decompose)",Execution Time,0,53.373,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, ResultDB_Decompose)",Execution Time,0,53.585,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_C_Fold)",Execution Time,0,112.909,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_C_Fold)",Execution Time,0,116.27,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_C_Fold)",Execution Time,0,101.956,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_C_Fold)",Execution Time,0,101.383,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_C_Fold)",Execution Time,0,102.958,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_Heuristic)",Execution Time,0,101.715,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_Heuristic)",Execution Time,0,101.299,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_Heuristic)",Execution Time,0,102.063,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_Heuristic)",Execution Time,0,101.856,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_12,"mutable (single core, GHD_Heuristic)",Execution Time,0,101.014,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,217.823,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,220.74,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,224.404,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,219.637,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_SemiJoin)",Execution Time,0,217.822,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold)",Execution Time,0,173.402,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold)",Execution Time,0,174.292,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold)",Execution Time,0,175.35,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold)",Execution Time,0,175.02,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold)",Execution Time,0,173.101,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,173.144,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,173.203,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,176.675,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,175.376,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_Fold_NoTVC)",Execution Time,0,173.335,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_ResultDB)",Execution Time,0,121.016,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_ResultDB)",Execution Time,0,119.992,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_ResultDB)",Execution Time,0,123.641,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_ResultDB)",Execution Time,0,119.253,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, TD_ResultDB)",Execution Time,0,117.822,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.76,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.513,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_Decompose)",Execution Time,0,118.933,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_Decompose)",Execution Time,0,118.506,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, ResultDB_Decompose)",Execution Time,0,119.333,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_C_Fold)",Execution Time,0,175.845,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_C_Fold)",Execution Time,0,174.751,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_C_Fold)",Execution Time,0,175.313,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_C_Fold)",Execution Time,0,176.364,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_C_Fold)",Execution Time,0,172.721,4
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.701,0
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_Heuristic)",Execution Time,0,176.539,1
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_Heuristic)",Execution Time,0,181.546,2
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.396,3
+a8184676898a3a527c4a5f7b6d9a669bf79c52b5,2025-07-31,1,ce,ce,q8_10,"mutable (single core, GHD_Heuristic)",Execution Time,0,177.895,4

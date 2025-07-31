@@ -6,6 +6,7 @@
 #include <mutable/IR/PlanEnumerator.hpp>
 #include <mutable/IR/PlanTable.hpp>
 #include <unordered_set>
+#include <glpk.h>
 
 namespace m
 {
@@ -84,6 +85,61 @@ namespace m
         double estimate_semi_join_probe_costs(const CardinalityEstimator &CE, const DataModel &model);
         double estimate_semi_join_hash_costs(const CardinalityEstimator &CE, const DataModel &model);
         double estimate_semi_join_costs(const CardinalityEstimator &CE, const DataModel &left, const DataModel &right);
+    };
+
+    struct M_EXPORT GHNode: std::enable_shared_from_this<GHNode> {
+        Subproblem nodes;
+        std::vector<std::shared_ptr<GHNode>> children = {};
+
+        GHNode() = delete;
+
+        explicit GHNode(Subproblem subproblem) : nodes(subproblem) {}
+
+        explicit GHNode(Subproblem subproblem, std::vector<std::shared_ptr<GHNode>>& children) : nodes(subproblem), children(std::move(children)) {}
+
+        struct iterator
+        {
+        private:
+            std::deque<const std::shared_ptr<const GHNode>> to_process;
+
+        public:
+            explicit iterator() = default;
+            explicit iterator(const std::shared_ptr<const GHNode>& node) {
+                to_process.emplace_back(node);
+                for (auto& child: node->children) {
+                    to_process.emplace_back(child);
+                }
+            }
+
+            bool operator==(const iterator& other) const {
+                if (this->to_process.size() != other.to_process.size()) {
+                    return false;
+                }
+                if (this->to_process.empty()) {
+                    return true;
+                }
+               return this->to_process.front() == other.to_process.front();
+            }
+            bool operator!=(const iterator& other) const { return not operator==(other); }
+
+            iterator & operator++() {
+                to_process.pop_front();
+                if (to_process.empty()) {
+                    return *this;
+                }
+                for (auto& child: to_process.front()->children) {
+                    to_process.emplace_back(child);
+                }
+                return *this;
+            }
+            iterator operator++(int) { auto clone = *this; operator++(); return clone; }
+
+            Subproblem operator*() const { return to_process.front()->nodes; }
+        };
+
+        [[nodiscard]] auto begin() const { return iterator(shared_from_this()); }
+        [[nodiscard]] auto end() const { return iterator(); }
+
     };
 
     struct M_EXPORT TreeEnumerator
@@ -189,6 +245,18 @@ namespace m
 
         template <typename PlanTable>
         std::unique_ptr<Producer *[]> optimize_source_plans(const QueryGraph &G, PlanTable &PT);
+
+        template <typename PlanTable>
+        double compute_costs_for_GHD_AGM(QueryGraph &G, std::vector<Subproblem>& join_attrs, GHNode& GHD, PlanTable &PT, const CardinalityEstimator &CE, bool use_table, std::unordered_map<Subproblem, double, SubproblemHash> &agm_costs);
+
+        template <typename PlanTable>
+        std::vector<Subproblem> select_GHD_heuristically(QueryGraph &G, std::vector<std::vector<Subproblem>> &GHDs, const CardinalityEstimator &CE, PlanTable &PT);
+
+        template <typename PlanTable>
+        std::vector<Subproblem> select_GHD_c_fold(QueryGraph &G, std::vector<std::vector<Subproblem>> &GHDs, const CardinalityEstimator &CE, PlanTable &PT);
+
+        template <typename PlanTable>
+        folding_table_entry_t get_best_GHD(QueryGraph &G, PlanTable &PT, const CardinalityEstimator &CE);
 
         std::pair<std::unique_ptr<Producer>, bool> dp_resultdb(QueryGraph &G);
 

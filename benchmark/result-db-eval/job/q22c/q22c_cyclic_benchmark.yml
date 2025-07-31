@@ -139,36 +139,50 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q22c/q22c_cyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'ResultDB-Heuristic':
-                args: >-
-                    --result-db
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_ResultDB':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_Fold':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                    --td_root
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_Fold_NoTVC':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                    --td_root
-                    --ignore_tvcs
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'Decompose':
-                args: >-
-                    --decompose
-                pattern:
-                    Execution Time: '^Process the query:.*'
+          'ResultDB_SemiJoin':
+            args: >-
+              --result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold_NoTVC':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+              --ignore_tvcs
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_ResultDB':
+            args: >-
+              --result-db
+              --optimize-result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'ResultDB_Decompose':
+            args: >-
+              --decompose
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_Heuristic':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_heuristic
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_C_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_c_fold
+            pattern:
+              Execution Time: '^Execute machine code:.*'
         cases:
             0: 'SELECT cn.name, mi_idx.info, t.title FROM cn AS cn, ct AS ct, it1 AS it1, it1 AS it2, k AS k, kt AS kt, mc AS mc, mi AS mi, mi_idx AS mi_idx, mk AS mk, t AS t WHERE kt.id = t.kind_id AND t.id = mk.movie_id AND mk.movie_id = mi_idx.movie_id AND mi.movie_id = mi_idx.movie_id AND mi.movie_id = mc.movie_id AND k.id = mk.keyword_id AND it1.id = mi.info_type_id AND it2.id = mi_idx.info_type_id AND ct.id = mc.company_type_id AND cn.id = mc.company_id;'

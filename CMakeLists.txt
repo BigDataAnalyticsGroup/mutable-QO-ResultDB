@@ -241,10 +241,15 @@ endif()
 ########################################################################################################################
 
 # Include directories
+find_library(GLPK_LIBRARY glpk)
+find_path(GLPK_INCLUDE_DIR glpk.h)
+include_directories(${GLPK_INCLUDE_DIR})
+link_libraries(${GLPK_LIBRARY})
 include_directories(include src)
+
 if(APPLE)
     include_directories(SYSTEM "/usr/local/include") # Fix macOS system includes
-	include_directories("/opt/homebrew/Cellar/graphviz/12.2.1/include")
+	include_directories("/opt/homebrew/")
 endif()
 
 # Link directories

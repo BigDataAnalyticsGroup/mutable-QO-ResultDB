@@ -122,36 +122,50 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q7a/q7a_cyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'ResultDB-Heuristic':
-                args: >-
-                    --result-db
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_ResultDB':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_Fold':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                    --td_root
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_Fold_NoTVC':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                    --td_root
-                    --ignore_tvcs
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'Decompose':
-                args: >-
-                    --decompose
-                pattern:
-                    Execution Time: '^Process the query:.*'
+          'ResultDB_SemiJoin':
+            args: >-
+              --result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold_NoTVC':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+              --ignore_tvcs
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_ResultDB':
+            args: >-
+              --result-db
+              --optimize-result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'ResultDB_Decompose':
+            args: >-
+              --decompose
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_Heuristic':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_heuristic
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_C_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_c_fold
+            pattern:
+              Execution Time: '^Execute machine code:.*'
         cases:
             0: 'SELECT n.name,        t.title FROM an AS an,      ci AS ci,      it AS it,      lt AS lt,      ml AS ml,      n AS n,      pi AS pi,      t AS t WHERE an.name LIKE "%a%"   AND it.info = "mini biography"   AND lt.link = "features"   AND n.name_pcode_cf >= "A"   AND n.name_pcode_cf <= "F"   AND (n.gender= "m" OR (n.gender = "f" AND n.name LIKE "B%"))   AND pi.note = "Volker Boehm"   AND t.production_year >= 1980   AND t.production_year <= 1995   AND n.id = an.person_id   AND n.id = pi.person_id   AND ci.person_id = n.id   AND t.id = ci.movie_id   AND ml.linked_movie_id = t.id   AND lt.id = ml.link_type_id   AND it.id = pi.info_type_id   AND pi.person_id = an.person_id   AND pi.person_id = ci.person_id   AND an.person_id = ci.person_id   AND ci.movie_id = ml.linked_movie_id;'

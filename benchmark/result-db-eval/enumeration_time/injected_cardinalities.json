@@ -1,0 +1,29 @@
+{
+  "plan_enumerators": [
+    {"relations": ["T0"], "size": 100},
+    {"relations": ["T1"], "size": 200},
+    {"relations": ["T2"], "size": 300},
+    {"relations": ["T3"], "size": 400},
+    {"relations": ["T4"], "size": 500},
+    {"relations": ["T5"], "size": 600},
+    {"relations": ["T6"], "size": 700},
+    {"relations": ["T7"], "size": 800},
+    {"relations": ["T8"], "size": 900},
+    {"relations": ["T9"], "size": 1000},
+    {"relations": ["T10"], "size": 1100},
+    {"relations": ["T11"], "size": 1200},
+    {"relations": ["T12"], "size": 1300},
+    {"relations": ["T13"], "size": 1400},
+    {"relations": ["T14"], "size": 1500},
+    {"relations": ["T15"], "size": 1600},
+    {"relations": ["T16"], "size": 1700},
+    {"relations": ["T17"], "size": 1800},
+    {"relations": ["T18"], "size": 1900},
+    {"relations": ["T19"], "size": 2000},
+    {"relations": ["T20"], "size": 2100},
+    {"relations": ["T21"], "size": 2200},
+    {"relations": ["T22"], "size": 2300},
+    {"relations": ["T23"], "size": 2400},
+    {"relations": ["T24"], "size": 2500}
+  ]
+}

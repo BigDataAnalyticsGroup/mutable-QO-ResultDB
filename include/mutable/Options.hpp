@@ -32,7 +32,9 @@ struct M_EXPORT Options
         DP_Fold,
         DP_Fold_Greedy,
         DP_ResultDB,
-        DP_ResultDB_Exhaustive
+        DP_ResultDB_Exhaustive,
+        GHD_Heuristic,
+        GHD_C_Fold
     };
 
     /*----- Help -----------------------------------------------------------------------------------------------------*/

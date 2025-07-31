@@ -150,7 +150,7 @@ class Connector(ABC):
         benchmark_info: str,
         verbose: bool,
         popen_args: dict[str, Any] = dict(),
-        encode_query: bool = True,
+        encode_query: bool = True
     ) -> str:
         if isinstance(command, Sequence) and not isinstance(command, str) and not isinstance(command, bytes):
             command = list(filter(lambda elem : len(elem) > 0, command))    # remove whitespaces in command sequence

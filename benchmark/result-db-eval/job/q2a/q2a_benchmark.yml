@@ -85,17 +85,17 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q2a/q2a_acyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'WasmV8, ResultDB_SemiJoin':
+            'ResultDB_SemiJoin':
                 args: --result-db
-                pattern: '^Process the query:.*'
-            'WasmV8, ResultDB_Decompose':
+                pattern: '^Execute machine code:.*'
+            'ResultDB_Decompose':
                 args: --decompose
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Root':
+                pattern: '^Execute machine code:.*'
+            'TD_Root':
                 args: --result-db --optimize-result-db --td_root
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_RESULTDB':
+                pattern: '^Execute machine code:.*'
+            'TD_ResultDB':
                 args: --result-db --optimize-result-db --td_resultdb
-                pattern: '^Process the query:.*'
+                pattern: '^Execute machine code:.*'
         cases:
             0: 'SELECT t.title FROM cn AS cn, k AS k, mc AS mc, mk AS mk, t AS t WHERE cn.id = mc.company_id AND mc.movie_id = t.id AND t.id = mk.movie_id AND mk.keyword_id = k.id;'

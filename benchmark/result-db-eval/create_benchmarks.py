@@ -104,37 +104,51 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q{query}/q{query}_cyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'ResultDB-Heuristic':
-                args: >-
-                    --result-db
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_ResultDB':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_Fold':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                    --td_root
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'TD_Fold_NoTVC':
-                args: >-
-                    --result-db
-                    --optimize-result-db
-                    --td_root
-                    --ignore_tvcs
-                pattern:
-                    Execution Time: '^Process the query:.*'
-            'Decompose':
-                args: >-
-                    --decompose
-                pattern:
-                    Execution Time: '^Process the query:.*'
+          'ResultDB_SemiJoin':
+            args: >-
+              --result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold_NoTVC':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+              --ignore_tvcs
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_ResultDB':
+            args: >-
+              --result-db
+              --optimize-result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'ResultDB_Decompose':
+            args: >-
+              --decompose
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_Heuristic':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_heuristic
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_C_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_c_fold
+            pattern:
+              Execution Time: '^Execute machine code:.*'
         cases:
             0: \'{mutable_query}\'
 """

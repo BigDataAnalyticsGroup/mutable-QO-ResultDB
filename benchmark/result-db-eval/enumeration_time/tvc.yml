@@ -115,9 +115,10 @@ data:
             'fkey': 'INT'
 systems:
     mutable:
-        args: --dryrun  --plan-enumerator DPccp
+        args: --dryrun  --quiet --plan-enumerator DPccp --cardinality-estimator Injected
+            --use-cardinality-file benchmark/result-db-eval/enumeration_time/injected_cardinalities.json
         configurations:
-            'ResultDB-Heuristic':
+            'ResultDB_SemiJoin':
                 args: >-
                     --result-db
                 pattern:
@@ -143,9 +144,23 @@ systems:
                     --ignore_tvcs
                 pattern:
                     Execution Time: '^Compute the logical query plan:.*'
-            'Decompose':
+            'ResultDB_Decompose':
                 args: >-
                     --decompose
+                pattern:
+                    Execution Time: '^Compute the logical query plan:.*'
+            'GHD_Heuristic':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                    --ghd_heuristic
+                pattern:
+                    Execution Time: '^Compute the logical query plan:.*'
+            'GHD_C_Fold':
+                args: >-
+                    --result-db
+                    --optimize-result-db
+                    --ghd_c_fold
                 pattern:
                     Execution Time: '^Compute the logical query plan:.*'
         cases:

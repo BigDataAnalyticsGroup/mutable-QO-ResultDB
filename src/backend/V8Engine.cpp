@@ -252,6 +252,12 @@ void m::wasm::detail::_throw(const v8::FunctionCallbackInfo<v8::Value> &info)
     auto idx = info[1].As<v8::BigInt>()->Uint64Value();
     auto [filename, line, msg] = Module::Get().get_message(idx);
 
+    auto now = std::chrono::system_clock::now(); // current time point
+    auto duration = now.time_since_epoch();      // duration since 1970-01-01
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+    std::cerr << "{Error end: " << millis << "}" << std::endl;
+
     std::ostringstream oss;
     oss << filename << ':' << line << ": Exception `" << m::wasm::exception::names_[type] << "` thrown.";
     if (msg)
@@ -927,9 +933,8 @@ void V8Engine::execute(const m::MatchBase &plan)
 
         /* Invoke the exported function `main` of the module. */
         args_t args { v8::Int32::New(isolate_, wasm_context.id), };
-        const uint64_t num_rows =
-            M_TIME_EXPR(main->Call(context, context->Global(), 1, args).ToLocalChecked().As<v8::BigInt>()->Uint64Value(),
-                        "Execute machine code", C.timer());
+        const uint64_t num_rows = M_TIME_EXPR(main->Call(context, context->Global(), 1, args).ToLocalChecked().As<v8::BigInt>()->Uint64Value(),
+                            "Execute machine code", C.timer());
 
         /* Print total number of result tuples. */
         auto &root_op = plan.get_matched_root();

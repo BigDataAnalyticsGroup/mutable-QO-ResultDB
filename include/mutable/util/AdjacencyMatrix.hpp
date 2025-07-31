@@ -3,6 +3,7 @@
 #include <array>
 #include <mutable/util/ADT.hpp>
 #include <unordered_set>
+#include <vector>
 
 namespace m
 {
@@ -210,7 +211,7 @@ namespace m
         {
 
             auto visited(removed);
-            auto rec = [&](SmallBitset node, auto &&rec) -> void
+            auto rec = [&](const SmallBitset node, auto &&rec) -> void
             {
                 visited |= node;
                 auto allowed_neighbors = (neighbors(node) & block) - visited;
@@ -232,6 +233,46 @@ namespace m
 
             /* At the end, all nodes should be visited to be connected still. */
             return visited == block;
+        }
+
+        /* Returns the partitions created by removing the nodes specified in `removed`. */
+        std::vector<SmallBitset> get_partitions_after_removal(const SmallBitset available, const SmallBitset removed) const {
+            auto to_be_visited = available - removed;
+            std::vector<SmallBitset> partitions;
+            auto next_partition = SmallBitset(0);
+            auto rec = [&](const SmallBitset node, auto &&rec) -> void
+            {
+                to_be_visited -= node;
+                next_partition |= node;
+                for (const auto allowed_neighbors = neighbors(node) & to_be_visited;
+                    const size_t neighbor_id : allowed_neighbors)
+                {
+                    auto neighbor = SmallBitset::Singleton(neighbor_id);
+                    rec(neighbor, rec);
+                }
+            };
+
+            while (to_be_visited != SmallBitset(0)) {
+                next_partition = to_be_visited.hi();
+                rec(next_partition, rec);
+                partitions.emplace_back(next_partition);
+            }
+
+            return partitions;
+        }
+
+        size_t get_height_with_root(size_t node_id) const {
+            auto rec = [&](size_t curr_node, size_t parent_node, auto &&rec) -> size_t {
+                size_t min = 0;
+                for (size_t neighbor_id : m_[curr_node] - SmallBitset::Singleton(parent_node)) {
+                    size_t height = rec(neighbor_id, curr_node, rec);
+                    if (height < min) {
+                        min = height;
+                    }
+                }
+                return min + 1;
+            };
+            return rec(node_id, node_id, rec);
         }
 
         /** Finds all 2-vertex cuts within the block (biconnected component) of graph and stores them as Smallbitsets in the vector passed as argument.

@@ -138,17 +138,17 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q23a/q23a_acyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'WasmV8, ResultDB_SemiJoin':
+            'ResultDB_SemiJoin':
                 args: --result-db
-                pattern: '^Process the query:.*'
-            'WasmV8, ResultDB_Decompose':
+                pattern: '^Execute machine code:.*'
+            'ResultDB_Decompose':
                 args: --decompose
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Root':
+                pattern: '^Execute machine code:.*'
+            'TD_Root':
                 args: --result-db --optimize-result-db --td_root
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_RESULTDB':
+                pattern: '^Execute machine code:.*'
+            'TD_ResultDB':
                 args: --result-db --optimize-result-db --td_resultdb
-                pattern: '^Process the query:.*'
+                pattern: '^Execute machine code:.*'
         cases:
             0: 'SELECT kt.kind, t.title FROM cc AS cc, cct1 AS cct1, cn AS cn, ct AS ct, it1 AS it1, k AS k, kt AS kt, mc AS mc, mi AS mi, mk AS mk, t AS t WHERE kt.id = t.kind_id AND t.id = cc.movie_id AND mk.movie_id = mi.movie_id AND mk.movie_id = mc.movie_id AND mi.movie_id = cc.movie_id AND k.id = mk.keyword_id AND it1.id = mi.info_type_id AND cn.id = mc.company_id AND ct.id = mc.company_type_id AND cct1.id = cc.status_id;'

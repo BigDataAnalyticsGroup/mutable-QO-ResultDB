@@ -148,17 +148,17 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q27a/q27a_acyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'WasmV8, ResultDB_SemiJoin':
+            'ResultDB_SemiJoin':
                 args: --result-db
-                pattern: '^Process the query:.*'
-            'WasmV8, ResultDB_Decompose':
+                pattern: '^Execute machine code:.*'
+            'ResultDB_Decompose':
                 args: --decompose
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Root':
+                pattern: '^Execute machine code:.*'
+            'TD_Root':
                 args: --result-db --optimize-result-db --td_root
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_RESULTDB':
+                pattern: '^Execute machine code:.*'
+            'TD_ResultDB':
                 args: --result-db --optimize-result-db --td_resultdb
-                pattern: '^Process the query:.*'
+                pattern: '^Execute machine code:.*'
         cases:
             0: 'SELECT cn.name, lt.link, t.title FROM cc AS cc, cct1 AS cct1, cct1 AS cct2, cn AS cn, ct AS ct, k AS k, lt AS lt, mc AS mc, mi AS mi, mk AS mk, ml AS ml, t AS t WHERE lt.id = ml.link_type_id AND t.id = mk.movie_id AND mk.keyword_id = k.id AND t.id = mc.movie_id AND mc.company_type_id = ct.id AND mc.company_id = cn.id AND cct1.id = cc.subject_id AND cct2.id = cc.status_id AND ml.movie_id = mk.movie_id AND ml.movie_id = cc.movie_id AND mi.movie_id = cc.movie_id;'

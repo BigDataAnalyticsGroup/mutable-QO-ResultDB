@@ -107,7 +107,7 @@ systems:
           --cardinality-estimator Injected
           --use-cardinality-file benchmark/result-db-eval/synthetic/experiments_tvc/7_injected_cardinalities.json
         configurations:
-          'ResultDB-Heuristic':
+          'ResultDB_SemiJoin':
             args: >-
               --result-db
             pattern:
@@ -119,7 +119,7 @@ systems:
               --td_root
             pattern:
               Execution Time: '^Execute machine code:.*'
-          'TD_Fold-NoTVC':
+          'TD_Fold_NoTVC':
             args: >-
               --result-db
               --optimize-result-db
@@ -133,9 +133,23 @@ systems:
               --optimize-result-db
             pattern:
               Execution Time: '^Execute machine code:.*'
-          'Decompose':
+          'ResultDB_Decompose':
             args: >-
               --decompose
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_Heuristic':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_heuristic
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_C_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_c_fold
             pattern:
               Execution Time: '^Execute machine code:.*'
         cases:

@@ -117,7 +117,7 @@ systems:
     mutable:
         args: --dryrun  --plan-enumerator DPccp
         configurations:
-            'ResultDB-Heuristic':
+            'ResultDB_SemiJoin':
                 args: >-
                     --result-db
                 pattern:
@@ -135,7 +135,7 @@ systems:
                     --td_root
                 pattern:
                     Execution Time: '^Compute the logical query plan:.*'
-            'Decompose':
+            'ResultDB_Decompose':
                 args: >-
                     --decompose
                 pattern:

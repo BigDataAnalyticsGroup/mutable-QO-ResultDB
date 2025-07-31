@@ -181,17 +181,17 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/job/q33c/q33c_acyclic_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'WasmV8, ResultDB_SemiJoin':
+            'ResultDB_SemiJoin':
                 args: --result-db
-                pattern: '^Process the query:.*'
-            'WasmV8, ResultDB_Decompose':
+                pattern: '^Execute machine code:.*'
+            'ResultDB_Decompose':
                 args: --decompose
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Root':
+                pattern: '^Execute machine code:.*'
+            'TD_Root':
                 args: --result-db --optimize-result-db --td_root
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_RESULTDB':
+                pattern: '^Execute machine code:.*'
+            'TD_ResultDB':
                 args: --result-db --optimize-result-db --td_resultdb
-                pattern: '^Process the query:.*'
+                pattern: '^Execute machine code:.*'
         cases:
             0: 'SELECT cn1.name, cn2.name, mi_idx1.info, mi_idx2.info, t1.title, t2.title FROM cn1 AS cn1, cn1 AS cn2, it1 AS it1, it1 AS it2, kt1 AS kt1, kt1 AS kt2, lt AS lt, mc1 AS mc1, mc1 AS mc2, mi_idx1 AS mi_idx1, mi_idx1 AS mi_idx2, ml AS ml, t1 AS t1, t1 AS t2 WHERE lt.id = ml.link_type_id AND t1.id = ml.movie_id AND it1.id = mi_idx1.info_type_id AND t1.id = mi_idx1.movie_id AND kt1.id = t1.kind_id AND cn1.id = mc1.company_id AND t1.id = mc1.movie_id AND it2.id = mi_idx2.info_type_id AND t2.id = mi_idx2.movie_id AND kt2.id = t2.kind_id AND cn2.id = mc2.company_id AND ml.linked_movie_id = mi_idx2.movie_id AND mi_idx2.movie_id = mc2.movie_id;'

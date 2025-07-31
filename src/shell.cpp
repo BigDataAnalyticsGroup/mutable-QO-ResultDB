@@ -349,10 +349,14 @@ int main(int argc, const char **argv)
         nullptr, "--td_resultdb",                                     /* Short, Long      */
         "Use DP_ResultDB for the ResultDB enumeration",    /* Description      */
         [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB; });
-    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB_Exhaustive,                      /* Type, Var, Init  */
-        nullptr, "--dp_resultdb_exhaustive",                                     /* Short, Long      */
-        "Use DP_ResultDB in exhaustive mode for the ResultDB enumeration",    /* Description      */
-        [&](bool) { Options::Get().result_db_optimizer = Options::DP_ResultDB_Exhaustive; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
+        nullptr, "--ghd_heuristic",                                     /* Short, Long      */
+        "Use GHDs heuristically",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::GHD_Heuristic; });
+    ADD(bool, Options::Get().result_db_optimizer, Options::DP_ResultDB,                      /* Type, Var, Init  */
+        nullptr, "--ghd_c_fold",                                     /* Short, Long      */
+        "Use GHDs together with C_Fold",    /* Description      */
+        [&](bool) { Options::Get().result_db_optimizer = Options::GHD_C_Fold; });
     ADD(bool, Options::Get().ignore_tvcs, false,                   /* Type, Var, Init  */
         nullptr, "--ignore_tvcs",                                     /* Short, Long      */
         "Ignore TVCs for TD_ResultDB",    /* Description      */

@@ -81,6 +81,7 @@ else()
     # Detect the toolchain to use for bundling.
     if (CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?(Clang)$")
         set(ar_tool ${CMAKE_CXX_COMPILER_AR})
+        message(STATUS "FOUND STUFF!!!!!!: ${CMAKE_CXX_COMPILER_AR}")
         file(
             WRITE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_bundled.ar.in
             "CREATE \"${BUNDLED_FULL_NAME}\"\n"

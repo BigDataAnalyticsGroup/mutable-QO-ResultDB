@@ -2146,7 +2146,7 @@ void QueryGraph::get_projection_sizes_of_subproblems(std::vector<std::size_t>& p
             else projections.emplace(D->table_name.text, std::unordered_set<ThreadSafePooledOptionalString>{D->attr_name.text});
         }
     }
-    for (auto node : Subproblem::All(num_sources())) {
+    for (const auto node : Subproblem::All(num_sources())) {
         projection_sizes.push_back(sources_[node]->projection_relations(projections));
     }
 }
@@ -2155,7 +2155,7 @@ void QueryGraph::dump() const { dump(std::cerr); }
 std::size_t Query::projection_relations(
         std::unordered_map<ThreadSafePooledOptionalString, std::unordered_set<ThreadSafePooledOptionalString>> &projections) const {
     std::size_t projection_relations = 0;
-    for (auto node : Subproblem::All(query_graph_->num_sources())) {
+    for (const auto node : Subproblem::All(query_graph_->num_sources())) {
         projection_relations += query_graph_->sources()[node]->projection_relations(projections);
     }
     return projection_relations;

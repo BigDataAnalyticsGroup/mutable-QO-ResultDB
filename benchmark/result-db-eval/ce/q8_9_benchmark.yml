@@ -49,21 +49,51 @@ systems:
           --use-cardinality-file benchmark/result-db-eval/ce/q8_9_injected_cardinalities.json
           --plan-enumerator DPccp
         configurations:                                   # Different experiment configurations.
-            'WasmV8, ResultDB_SemiJoin':
-                args: --result-db
-                pattern: '^Process the query:.*'
-            'WasmV8, ResultDB_Decompose':
-                args: --decompose
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Fold':
-                args: --result-db --optimize-result-db --td_root
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_Fold_NoTVC':
-                args: --result-db --optimize-result-db --td_root --ignore_tvcs
-                pattern: '^Process the query:.*'
-            'WasmV8, TD_RESULTDB':
-                args: --result-db --optimize-result-db --td_resultdb
-                pattern: '^Process the query:.*'
+          'ResultDB_SemiJoin':
+            args: >-
+              --result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold_NoTVC':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+              --ignore_tvcs
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_ResultDB':
+            args: >-
+              --result-db
+              --optimize-result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'ResultDB_Decompose':
+            args: >-
+              --decompose
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_C_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_c_fold
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_Heuristic':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_heuristic
+            pattern:
+              Execution Time: '^Execute machine code:.*'
         cases:
             0: 'SELECT * FROM dblp17, dblp8 AS dblp8_1, dblp8 AS dblp8_2, dblp8 AS dblp8_3, dblp20 AS dblp20_4, dblp20 AS dblp20_5 WHERE dblp17.s = dblp8_1.s AND dblp17.d = dblp8_2.s AND dblp8_1.d = dblp8_2.d AND dblp8_2.d = dblp8_3.s AND dblp8_3.s = dblp20_4.s AND dblp8_3.d = dblp20_5.s AND dblp20_4.d = dblp20_5.d;
 '

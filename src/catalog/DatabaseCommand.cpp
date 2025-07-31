@@ -90,7 +90,6 @@ void QueryDatabase::execute(Diagnostic &diag)
 
     /* Set logical optimizer to use. */
     std::unique_ptr<Producer> producer;
-    auto query_processing_computation = C.timer().create_timing("Process the query");
     auto logical_plan_computation = C.timer().create_timing("Compute the logical query plan");
     bool result_db_compatible = true;
     if (Options::Get().result_db) {
@@ -142,8 +141,7 @@ void QueryDatabase::execute(Diagnostic &diag)
         physical_plan_->dump(std::cout);
 
     if (not Options::Get().dryrun)
-        M_TIME_EXPR(backend->execute(*physical_plan_), "Execute query", C.timer());
-    query_processing_computation.stop();
+        backend->execute(*physical_plan_), "Execute query", C.timer();
 
 }
 

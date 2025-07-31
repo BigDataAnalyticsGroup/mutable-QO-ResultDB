@@ -12,7 +12,7 @@ double YannakakisHeuristic::estimate_decompose_costs(const QueryGraph &G, const 
     // Single Problems do not have to be decomposed
     if (complete_problem.size() == 1) return 0;
     const auto model = CE.estimate_full_reduction(G, *entry.model);
-    return 40 * static_cast<double>(CE.predict_cardinality(*model)) * static_cast<double>(entry.tuple_size);
+    return static_cast<double>(CE.predict_cardinality(*model)) * static_cast<double>(entry.tuple_size);
 }
 
 /*======================================================================================================================

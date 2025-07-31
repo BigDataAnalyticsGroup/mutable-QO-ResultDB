@@ -4976,6 +4976,8 @@ void SemiJoinReduction::execute(const Match<SemiJoinReduction> &M, setup_t, pipe
     }
 #endif
 
+    // Throw(m::wasm::exception::runtime_error, "semi-join");
+
     /*----- Remove duplicate entries (due to projection or join) and print result sets. -----*/
     for (std::size_t i = 0; i < buffers.size(); ++i) {
         auto &buffer = buffers[i];
