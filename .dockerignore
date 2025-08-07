@@ -1,3 +1,4 @@
-build
-postgres
-paper_benchmarks
+build/
+.git
+postgres/
+paper_benchmarks/

@@ -31,6 +31,8 @@ Below is a list of **mandatory** dependencies, that **must be installed**:
 - Graphviz development headers
     - Make sure `gvc.h` is found in one your system include directories.
     - On ArchLinux: `pacman -S graphviz`
+- GLPK (for linear programming)
+    - On ArchLinux: `pacman -S glpk'
 
 ### Optional Dependencies
 

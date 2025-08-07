@@ -160,5 +160,45 @@ systems:
               --result-db
             pattern:
               Execution Time: '^Execute machine code:.*'
+          'TD_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_Fold_NoTVC':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --td_root
+              --ignore_tvcs
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'TD_ResultDB':
+            args: >-
+              --result-db
+              --optimize-result-db
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'ResultDB_Decompose':
+            args: >-
+              --decompose
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_Heuristic':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_heuristic
+            pattern:
+              Execution Time: '^Execute machine code:.*'
+          'GHD_C_Fold':
+            args: >-
+              --result-db
+              --optimize-result-db
+              --ghd_c_fold
+            pattern:
+              Execution Time: '^Execute machine code:.*'
         cases:
             0: 'SELECT chn.name, mi_idx.info, n.name, t.title FROM cc AS cc, cct1 AS cct1, cct1 AS cct2, chn AS chn, ci AS ci, it2 AS it2, k AS k, kt AS kt, mi_idx AS mi_idx, mk AS mk, n AS n, t AS t WHERE kt.id = t.kind_id AND t.id = mk.movie_id AND t.id = ci.movie_id AND t.id = cc.movie_id AND t.id = mi_idx.movie_id AND mk.movie_id = ci.movie_id AND mk.movie_id = cc.movie_id AND mk.movie_id = mi_idx.movie_id AND ci.movie_id = cc.movie_id AND ci.movie_id = mi_idx.movie_id AND cc.movie_id = mi_idx.movie_id AND chn.id = ci.person_role_id AND n.id = ci.person_id AND k.id = mk.keyword_id AND cct1.id = cc.subject_id AND cct2.id = cc.status_id AND it2.id = mi_idx.info_type_id;'

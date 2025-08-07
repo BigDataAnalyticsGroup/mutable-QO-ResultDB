@@ -100,7 +100,7 @@ namespace m
         struct iterator
         {
         private:
-            std::deque<const std::shared_ptr<const GHNode>> to_process;
+            std::deque<std::shared_ptr<const GHNode>> to_process;
 
         public:
             explicit iterator() = default;
